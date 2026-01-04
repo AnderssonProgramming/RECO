@@ -276,13 +276,3 @@ Master the fundamentals of computer networks, build enterprise infrastructures, 
 > *"The Internet is becoming the town square for the global village of tomorrow."* – Bill Gates
 > 
 > Design. Connect. Secure. Scale. 🌐🚀
-
----
-
-<p align="center">
-  <strong>⭐ If you find this repository useful, please consider giving it a star! ⭐</strong>
-</p>
-
-<p align="center">
-  Made with 💙 at Escuela Colombiana de Ingeniería Julio Garavito
-</p>
