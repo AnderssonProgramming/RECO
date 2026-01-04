@@ -1,0 +1,304 @@
+# Script de Informacion de Red para Windows Server
+# Laboratorio 8 - RECo
+# Escuela Colombiana de Ingenieria Julio Garavito
+
+# Funcion para mostrar el encabezado
+function Show-Header {
+    Clear-Host
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host "  INFORMACION DE RED - WINDOWS SERVER" -ForegroundColor Green
+    Write-Host "========================================" -ForegroundColor Cyan
+    Write-Host ""
+}
+
+# Funcion para pausar
+function Pause-Script {
+    Write-Host ""
+    Write-Host "Presione cualquier tecla para continuar..." -ForegroundColor Yellow
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+}
+
+# Opcion 1: Mostrar informacion de interfaces de red
+function Show-NetworkInterfaces {
+    Show-Header
+    Write-Host "=== INTERFACES DE RED CONFIGURADAS ===" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Comando ejecutado: Get-NetAdapter y ipconfig /all" -ForegroundColor Yellow
+    Write-Host ""
+    
+    # Mostrar adaptadores de red
+    Get-NetAdapter | Format-Table Name, Status, MacAddress, LinkSpeed -AutoSize
+    
+    Write-Host ""
+    Write-Host "=== CONFIGURACION DETALLADA DE IP ===" -ForegroundColor Green
+    Write-Host ""
+    
+    $adapters = Get-NetIPConfiguration
+    foreach ($adapter in $adapters) {
+        Write-Host "Interfaz: $($adapter.InterfaceAlias)" -ForegroundColor Cyan
+        Write-Host "  IPv4: $($adapter.IPv4Address.IPAddress)"
+        Write-Host "  Gateway: $($adapter.IPv4DefaultGateway.NextHop)"
+        Write-Host "  DNS: $($adapter.DNSServer.ServerAddresses -join ', ')"
+        Write-Host ""
+    }
+    
+    Write-Host "=== RESUMEN ===" -ForegroundColor Green
+    $activeCount = (Get-NetAdapter | Where-Object {$_.Status -eq "Up"}).Count
+    $totalCount = (Get-NetAdapter).Count
+    Write-Host "Interfaces activas: $activeCount de $totalCount"
+    
+    Pause-Script
+}
+
+# Opcion 2: Mostrar estadisticas de red
+function Show-NetworkStatistics {
+    Show-Header
+    Write-Host "=== ESTADISTICAS DE RED ===" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Comando ejecutado: Get-NetAdapterStatistics y netstat" -ForegroundColor Yellow
+    Write-Host ""
+    
+    # Estadisticas de adaptadores
+    Get-NetAdapterStatistics | Format-Table Name, ReceivedBytes, SentBytes, ReceivedUnicastPackets, SentUnicastPackets -AutoSize
+    
+    Write-Host ""
+    Write-Host "=== CONEXIONES ACTIVAS ===" -ForegroundColor Green
+    Write-Host "Comando ejecutado: Get-NetTCPConnection -State Established" -ForegroundColor Yellow
+    Write-Host ""
+    
+    $established = Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue
+    $established | Select-Object LocalAddress, LocalPort, RemoteAddress, RemotePort, State | 
+                   Format-Table -AutoSize | Out-String -Width 150
+    
+    Write-Host ""
+    Write-Host "=== RESUMEN ===" -ForegroundColor Green
+    $totalEstablished = ($established | Measure-Object).Count
+    $totalListening = (Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | Measure-Object).Count
+    Write-Host "Conexiones establecidas: $totalEstablished"
+    Write-Host "Puertos en escucha: $totalListening"
+    
+    Pause-Script
+}
+
+# Opcion 3: Mostrar tabla de enrutamiento
+function Show-RoutingTable {
+    Show-Header
+    Write-Host "=== TABLA DE ENRUTAMIENTO ===" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Comando ejecutado: Get-NetRoute y route print" -ForegroundColor Yellow
+    Write-Host ""
+    
+    # Tabla de enrutamiento IPv4
+    Write-Host "--- Rutas IPv4 ---" -ForegroundColor Cyan
+    Get-NetRoute -AddressFamily IPv4 | 
+        Where-Object {$_.DestinationPrefix -ne "255.255.255.255/32"} |
+        Format-Table DestinationPrefix, NextHop, RouteMetric, ifIndex -AutoSize
+    
+    Write-Host ""
+    Write-Host "=== GATEWAY PREDETERMINADO ===" -ForegroundColor Green
+    $defaultGateway = Get-NetRoute -DestinationPrefix "0.0.0.0/0" -ErrorAction SilentlyContinue
+    if ($defaultGateway) {
+        Write-Host "Gateway: $($defaultGateway.NextHop)"
+        Write-Host "Metrica: $($defaultGateway.RouteMetric)"
+        Write-Host "Interfaz: $($defaultGateway.InterfaceAlias)"
+    } else {
+        Write-Host "No se encontro gateway predeterminado" -ForegroundColor Red
+    }
+    
+    Pause-Script
+}
+
+# Opcion 4: Mostrar puertos en escucha y conexiones
+function Show-ListeningPorts {
+    Show-Header
+    Write-Host "=== PUERTOS EN ESCUCHA ===" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Comando ejecutado: Get-NetTCPConnection -State Listen" -ForegroundColor Yellow
+    Write-Host ""
+    
+    Write-Host "--- Puertos TCP en Escucha ---" -ForegroundColor Cyan
+    $tcpListeners = Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue | 
+                    Select-Object LocalAddress, LocalPort, State, 
+                    @{Name='Process';Expression={(Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).ProcessName}} |
+                    Sort-Object LocalPort
+    
+    $tcpListeners | Format-Table -AutoSize
+    
+    Write-Host ""
+    Write-Host "--- Puertos UDP ---" -ForegroundColor Cyan
+    $udpEndpoints = Get-NetUDPEndpoint -ErrorAction SilentlyContinue | 
+                    Select-Object LocalAddress, LocalPort,
+                    @{Name='Process';Expression={(Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).ProcessName}} |
+                    Sort-Object LocalPort |
+                    Select-Object -First 20
+    
+    $udpEndpoints | Format-Table -AutoSize
+    
+    Write-Host ""
+    Write-Host "=== RESUMEN ===" -ForegroundColor Green
+    $tcpCount = ($tcpListeners | Measure-Object).Count
+    $udpCount = (Get-NetUDPEndpoint -ErrorAction SilentlyContinue | Measure-Object).Count
+    Write-Host "Total puertos TCP en escucha: $tcpCount"
+    Write-Host "Total puertos UDP: $udpCount"
+    
+    Pause-Script
+}
+
+# Opcion 5: Mostrar configuracion de DNS y conectividad
+function Show-DNSConfiguration {
+    Show-Header
+    Write-Host "=== CONFIGURACION DE DNS Y CONECTIVIDAD ===" -ForegroundColor Green
+    Write-Host ""
+    
+    Write-Host "--- Servidores DNS Configurados ---" -ForegroundColor Cyan
+    $dnsServers = Get-DnsClientServerAddress -AddressFamily IPv4 | 
+                  Where-Object {$_.ServerAddresses.Count -gt 0}
+    
+    foreach ($dns in $dnsServers) {
+        Write-Host "Interfaz: $($dns.InterfaceAlias)"
+        Write-Host "  Servidores DNS: $($dns.ServerAddresses -join ', ')"
+        Write-Host ""
+    }
+    
+    Write-Host "--- Cache DNS ---" -ForegroundColor Cyan
+    Write-Host "Comando ejecutado: Get-DnsClientCache" -ForegroundColor Yellow
+    Write-Host ""
+    $dnsCache = Get-DnsClientCache -ErrorAction SilentlyContinue | Select-Object -First 15
+    $dnsCache | Format-Table Entry, RecordName, Data -AutoSize
+    
+    Write-Host ""
+    Write-Host "--- Test de Conectividad ---" -ForegroundColor Cyan
+    Write-Host "Probando conectividad a 8.8.8.8 (Google DNS)..."
+    $pingResult = Test-Connection -ComputerName 8.8.8.8 -Count 2 -Quiet
+    if ($pingResult) {
+        Write-Host "  [OK] Conectividad exitosa" -ForegroundColor Green
+    } else {
+        Write-Host "  [FALLO] Sin conectividad" -ForegroundColor Red
+    }
+    
+    Pause-Script
+}
+
+# Opcion 6: Informacion completa del sistema de red
+function Show-CompleteInfo {
+    Show-Header
+    Write-Host "=== INFORMACION COMPLETA DEL SISTEMA DE RED ===" -ForegroundColor Green
+    Write-Host ""
+    
+    Write-Host "--- Informacion del Sistema ---" -ForegroundColor Cyan
+    Write-Host "Nombre del equipo: $env:COMPUTERNAME"
+    Write-Host "Dominio: $env:USERDNSDOMAIN"
+    Write-Host ""
+    
+    Write-Host "--- Configuracion IP Global ---" -ForegroundColor Cyan
+    Write-Host "Comando ejecutado: ipconfig /all" -ForegroundColor Yellow
+    Write-Host ""
+    ipconfig /all
+    
+    Write-Host ""
+    Write-Host "--- Estadisticas de Protocolos ---" -ForegroundColor Cyan
+    Write-Host "Comando ejecutado: netstat -s" -ForegroundColor Yellow
+    Write-Host ""
+    netstat -s | Select-Object -First 40
+    Write-Host "... (salida truncada para mejor visualizacion)"
+    
+    Write-Host ""
+    Write-Host "--- Firewall Status ---" -ForegroundColor Cyan
+    try {
+        $firewallProfiles = Get-NetFirewallProfile -ErrorAction Stop
+        foreach ($profile in $firewallProfiles) {
+            Write-Host "$($profile.Name): $($profile.Enabled)" -ForegroundColor $(if($profile.Enabled){"Green"}else{"Red"})
+        }
+    } catch {
+        Write-Host "No se pudo obtener informacion del firewall (requiere permisos elevados)" -ForegroundColor Yellow
+    }
+    
+    Pause-Script
+}
+
+# Opcion 7: Diagnostico de red avanzado
+function Show-NetworkDiagnostics {
+    Show-Header
+    Write-Host "=== DIAGNOSTICO DE RED AVANZADO ===" -ForegroundColor Green
+    Write-Host ""
+    
+    Write-Host "--- Tabla ARP ---" -ForegroundColor Cyan
+    Write-Host "Comando ejecutado: Get-NetNeighbor" -ForegroundColor Yellow
+    Write-Host ""
+    Get-NetNeighbor -AddressFamily IPv4 | 
+        Where-Object {$_.State -ne "Permanent"} |
+        Format-Table IPAddress, LinkLayerAddress, State, InterfaceAlias -AutoSize
+    
+    Write-Host ""
+    Write-Host "--- Rendimiento de Interfaces ---" -ForegroundColor Cyan
+    $adapters = Get-NetAdapter | Where-Object {$_.Status -eq "Up"}
+    foreach ($adapter in $adapters) {
+        $stats = Get-NetAdapterStatistics -Name $adapter.Name
+        Write-Host "$($adapter.Name):" -ForegroundColor Yellow
+        Write-Host "  Velocidad: $($adapter.LinkSpeed)"
+        Write-Host "  Recibidos: $([math]::Round($stats.ReceivedBytes/1MB, 2)) MB"
+        Write-Host "  Enviados: $([math]::Round($stats.SentBytes/1MB, 2)) MB"
+        Write-Host ""
+    }
+    
+    Write-Host "--- Configuracion de Red Avanzada ---" -ForegroundColor Cyan
+    Write-Host "Comando ejecutado: Get-NetIPInterface" -ForegroundColor Yellow
+    Write-Host ""
+    Get-NetIPInterface -AddressFamily IPv4 | 
+        Format-Table InterfaceAlias, InterfaceIndex, Dhcp, ConnectionState, AddressFamily -AutoSize
+    
+    Pause-Script
+}
+
+# Menu principal
+function Show-Menu {
+    while ($true) {
+        Show-Header
+        Write-Host "Seleccione una opcion:" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "  1) Mostrar interfaces de red"
+        Write-Host "  2) Mostrar estadisticas de red y conexiones"
+        Write-Host "  3) Mostrar tabla de enrutamiento"
+        Write-Host "  4) Mostrar puertos en escucha"
+        Write-Host "  5) Mostrar configuracion DNS y conectividad"
+        Write-Host "  6) Informacion completa del sistema de red"
+        Write-Host "  7) Diagnostico de red avanzado"
+        Write-Host "  8) Salir"
+        Write-Host ""
+        $opcion = Read-Host "Opcion"
+        
+        switch ($opcion) {
+            "1" { Show-NetworkInterfaces }
+            "2" { Show-NetworkStatistics }
+            "3" { Show-RoutingTable }
+            "4" { Show-ListeningPorts }
+            "5" { Show-DNSConfiguration }
+            "6" { Show-CompleteInfo }
+            "7" { Show-NetworkDiagnostics }
+            "8" { 
+                Write-Host ""
+                Write-Host "Hasta pronto!" -ForegroundColor Green
+                exit 
+            }
+            default {
+                Write-Host ""
+                Write-Host "Opcion invalida. Por favor intente nuevamente." -ForegroundColor Red
+                Start-Sleep -Seconds 2
+            }
+        }
+    }
+}
+
+# Verificar si se ejecuta como administrador
+$isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+if (-not $isAdmin) {
+    Write-Host "ADVERTENCIA: Este script no se esta ejecutando como Administrador" -ForegroundColor Yellow
+    Write-Host "Algunos comandos pueden no mostrar informacion completa" -ForegroundColor Yellow
+    Write-Host "Para mejor funcionalidad, ejecute PowerShell como Administrador" -ForegroundColor Yellow
+    Write-Host ""
+    Start-Sleep -Seconds 3
+}
+
+# Iniciar el menu
+Show-Menu

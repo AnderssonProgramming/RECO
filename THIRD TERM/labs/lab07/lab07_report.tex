@@ -1,0 +1,1757 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{titlesec}
+% \usepackage{microtype} % Disabled due to font expansion issues
+\usepackage{parskip}
+
+% Geometry settings
+\geometry{
+    a4paper,
+    top=2cm,
+    bottom=2cm,
+    left=1.5cm,
+    right=1.5cm,
+    headsep=0.5cm,
+    footskip=1cm
+}
+
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Lab 07 - Basic Infrastructure and Network Layer}
+\lhead{Computer Networks}
+\cfoot{\thepage}
+
+\pagenumbering{arabic}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=leftline,
+    framerule=2pt,
+    rulecolor=\color{blue!30},
+    backgroundcolor=\color{gray!5},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    columns=flexible,
+    aboveskip=\medskipamount,
+    belowskip=\medskipamount,
+    xleftmargin=15pt
+}
+
+% Section formatting
+\titleformat{\section}
+{\color{blue!80!black}\normalfont\large\bfseries}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\color{blue!60!black}\normalfont\normalsize\bfseries}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\color{blue!40!black}\normalfont\small\bfseries}
+{\thesubsubsection}{1em}{}
+
+% Custom boxes
+\newtcolorbox{exercise}[1]{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    colbacktitle=blue!80!black,
+    coltitle=white,
+    title={\textbf{#1}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+\newtcolorbox{solution}[1]{
+    colback=green!5!white,
+    colframe=green!75!black,
+    colbacktitle=green!80!black,
+    coltitle=white,
+    title={\textbf{#1}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+\newtcolorbox{note}{
+    colback=yellow!10!white,
+    colframe=orange!75!black,
+    colbacktitle=orange!80!black,
+    coltitle=white,
+    title={\textbf{Important Note}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+% List formatting
+\setlist[itemize]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+\setlist[enumerate]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+% Caption formatting
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    format=hang,
+    indention=0pt,
+    margin=10pt
+}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    urlcolor=blue!80!black,
+    citecolor=blue!80!black,
+    pdfborder={0 0 0}
+}
+
+% Title page
+\title{\vspace{-1cm}
+    \begin{center}
+        \includegraphics[width=0.25\textwidth]{media/university_logo.png}
+    \end{center}
+    \vspace{1.5cm}
+    \textbf{\Large Computer Networks Laboratory}\\
+    \vspace{1cm}
+    \textbf{\huge Laboratory No. 7}\\
+    \textbf{\huge Basic Infrastructure and Network Layer}\\
+    \vspace{1.5cm}
+    \large Network Monitoring, SNMP, Azure Administration, and Router Configuration
+}
+
+\author{
+    \vspace{2cm}
+    \textbf{Students:} \\
+    \vspace{0.3cm}
+    Andersson David Sánchez Méndez \\
+    Cristian Santiago Pedraza Rodríguez \\
+    \vspace{1.5cm} \\
+    \textbf{Instructor:} Professor Fabián Eduardo Sierra Sánchez \\
+    \vspace{0.5cm}
+    \textbf{Course:} Computer Networks \\
+    \vspace{0.3cm}
+    \textbf{Institution:} Escuela Colombiana de Ingeniería Julio Garavito \\
+    \vspace{0.3cm}
+}
+
+\date{\today}
+\begin{document}
+
+% Title page (single column)
+\onecolumn
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% Table of contents (single column)
+\tableofcontents
+\newpage
+
+% Start two-column layout
+\twocolumn
+
+\section{Objectives}
+
+\begin{itemize}
+    \item Install and configure network monitoring tools using SNMP protocol
+    \item Deploy and monitor web applications on Microsoft Azure
+    \item Understand ICMP protocol through traceroute analysis
+    \item Configure basic router access and management
+    \item Implement static routing between multiple networks
+    \item Master router boot processes and password recovery
+    \item Develop practical network troubleshooting skills
+\end{itemize}
+
+\section{Tools and Equipment}
+
+\subsection{Required Software}
+\begin{itemize}
+    \item VMware Workstation/VirtualBox
+    \item Slackware Linux 15.0 virtual machine
+    \item Oracle Solaris 11.4 virtual machine
+    \item Windows Server 2019 virtual machine
+    \item Microsoft Azure for Students account
+    \item Open Visual Traceroute
+    \item Cisco Packet Tracer
+    \item PuTTY/HyperTerminal
+\end{itemize}
+
+\subsection{Hardware Infrastructure}
+\begin{itemize}
+    \item \textbf{Slackware Server:} 10.2.77.176 - SNMP Manager
+    \item \textbf{Solaris Server:} 10.2.77.178 - SNMP Agent
+    \item \textbf{Windows Server:} 10.2.77.180 - Monitoring
+    \item \textbf{Cisco Routers:} 1841/1941/2800/2900 series
+    \item Console cables and serial cables
+\end{itemize}
+
+\section{Introduction}
+
+Modern enterprise IT infrastructure requires comprehensive monitoring and management tools to ensure optimal performance and availability. This laboratory explores three critical aspects of network administration:
+
+\textbf{Network Monitoring with SNMP:} Simple Network Management Protocol (SNMP) enables centralized monitoring of network devices, servers, and applications. Administrators can track CPU usage, memory consumption, disk space, network traffic, and other vital metrics in real-time.
+
+\textbf{Cloud Administration:} Microsoft Azure provides enterprise-grade cloud services for hosting applications, databases, and infrastructure. Application Insights offers powerful monitoring capabilities for cloud-deployed systems.
+
+\textbf{Router Configuration:} Understanding router boot processes, memory types, and configuration management is essential for network infrastructure. Static routing provides the foundation for understanding more complex dynamic routing protocols.
+
+This laboratory integrates these components to provide hands-on experience with real-world network administration tasks.
+
+\section{Part 1: Network Monitoring Scripts}
+
+\begin{exercise}{Exercise 1.a: Network Information Scripts}
+\textbf{Platforms:} Slackware Linux, Oracle Solaris, Windows Server\\
+\textbf{Objective:} Create shell programs with 5+ options displaying network information
+\end{exercise}
+
+\subsection{1.1 Slackware Network Monitor Script}
+
+We developed a comprehensive network monitoring script for Slackware Linux with a user-friendly menu interface:
+
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+# Network Monitor - Slackware Linux
+# Lab 07 - Group 7
+
+show_banner() {
+    clear
+    echo "========================================"
+    echo "  NETWORK MONITOR - SLACKWARE LINUX"
+    echo "  Lab 07 - Network Layer"
+    echo "========================================"
+    echo ""
+}
+
+# Option 1: Network Interfaces
+show_interfaces() {
+    show_banner
+    echo "=== NETWORK INTERFACES ==="
+    echo ""
+    echo "Active Interfaces:"
+    ifconfig | grep -E "^[a-z]|inet " | sed 's/^/  /'
+    echo ""
+    echo "Interface Statistics:"
+    ip -s link | awk '/^[0-9]/ {print "  Interface:", $2} /RX:/ {getline; print "    RX:", $1, "packets"} /TX:/ {getline; print "    TX:", $1, "packets"; print ""}'
+    pause
+}
+
+# Option 2: Active Connections
+show_connections() {
+    show_banner
+    echo "=== ACTIVE CONNECTIONS ==="
+    echo ""
+    echo "TCP Established:"
+    netstat -tn | grep ESTABLISHED | awk '{printf "  %s -> %s [%s]\n", $4, $5, $6}' | head -15
+    echo ""
+    echo "Statistics by State:"
+    netstat -tan | awk '/^tcp/ {states[$6]++} END {for (state in states) printf "  %-15s: %d\n", state, states[state]}'
+    pause
+}
+
+# Option 3: Routing Table
+show_routing() {
+    show_banner
+    echo "=== ROUTING TABLE ==="
+    echo ""
+    route -n
+    pause
+}
+
+# Option 4: Open Ports
+show_ports() {
+    show_banner
+    echo "=== OPEN PORTS ==="
+    echo ""
+    echo "TCP Listening:"
+    netstat -tlnp 2>/dev/null | awk 'NR==1 || /LISTEN/' | head -10
+    echo ""
+    echo "UDP Listening:"
+    netstat -ulnp 2>/dev/null | head -10
+    pause
+}
+
+# Option 5: Traffic Statistics
+show_statistics() {
+    show_banner
+    echo "=== TRAFFIC STATISTICS ==="
+    echo ""
+    netstat -s | head -30
+    pause
+}
+
+# Main menu loop
+while true; do
+    show_banner
+    echo "Select an option:"
+    echo "  1) Network Interfaces"
+    echo "  2) Active Connections"
+    echo "  3) Routing Table"
+    echo "  4) Open Ports"
+    echo "  5) Traffic Statistics"
+    echo "  6) Check Port"
+    echo "  7) Exit"
+    read -p "Option [1-7]: " option
+    
+    case $option in
+        1) show_interfaces ;;
+        2) show_connections ;;
+        3) show_routing ;;
+        4) show_ports ;;
+        5) show_statistics ;;
+        6) check_port ;;
+        7) exit 0 ;;
+        *) echo "Invalid option" ;;
+    esac
+done
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/slackware-script.png}
+    \caption{Network monitoring script on Slackware}
+    \label{fig:slack_script}
+\end{figure}
+
+\subsection{1.2 Solaris Network Monitor Script}
+
+The Solaris version was adapted for compatibility with Solaris-specific commands:
+
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+# Network Monitor - Solaris
+# Compatible with Solaris 11.4
+
+show_interfaces() {
+    echo "=== INTERFACES ==="
+    ifconfig -a | egrep "^[a-z]|inet "
+    dladm show-link 2>/dev/null
+    pause
+}
+
+show_connections() {
+    echo "=== CONNECTIONS ==="
+    netstat -an -P tcp | grep ESTABLISHED | head -15
+    pause
+}
+
+show_routing() {
+    echo "=== ROUTING ==="
+    netstat -rn -f inet
+    pause
+}
+
+show_ports() {
+    echo "=== PORTS ==="
+    netstat -an -P tcp | awk '$NF == "LISTEN"' | head -10
+    netstat -an -P udp | head -10
+    pause
+}
+
+show_statistics() {
+    echo "=== STATISTICS ==="
+    netstat -s -P tcp | head -20
+    netstat -s -P udp | head -15
+    pause
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/solaris-script.png}
+    \caption{Network monitoring script on Solaris}
+    \label{fig:solaris_script}
+\end{figure}
+
+\subsection{1.3 Windows PowerShell Network Monitor}
+
+For Windows Server, we created a GUI-based PowerShell script:
+
+\begin{lstlisting}[language=bash]
+# Network Monitor - Windows Server
+# PowerShell GUI Application
+
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "Network Monitor - Lab 07"
+$form.Size = New-Object System.Drawing.Size(900,650)
+$form.StartPosition = "CenterScreen"
+
+# Option buttons for each function
+$btnInterfaces = New-Object System.Windows.Forms.Button
+$btnInterfaces.Text = "[1] Network Interfaces"
+$btnInterfaces.Add_Click({
+    Clear-Output
+    $adapters = Get-NetAdapter
+    foreach ($adapter in $adapters) {
+        Add-ColoredText "Interface: $($adapter.Name)"
+        Add-ColoredText "Status: $($adapter.Status)"
+        Add-ColoredText "Speed: $($adapter.LinkSpeed)"
+    }
+})
+
+# Similar implementations for connections,
+# routing, ports, and statistics
+
+$form.ShowDialog()
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/windows-script.png}
+    \caption{PowerShell GUI monitor on Windows Server}
+    \label{fig:windows_script}
+\end{figure}
+
+\begin{exercise}{Exercise 1.b: Port Checker Script}
+\textbf{Objective:} Create a program that checks if a port is open and identifies the service
+\end{exercise}
+
+\subsection{1.4 Port Verification Implementation}
+
+All three platforms include a port checker function:
+
+\begin{lstlisting}[language=bash]
+# Slackware/Solaris version
+check_port() {
+    echo "Enter port number (1-65535):"
+    read port
+    
+    # Validate input
+    if ! [[ "$port" =~ ^[0-9]+$ ]] || 
+       [ "$port" -lt 1 ] || 
+       [ "$port" -gt 65535 ]; then
+        echo "Invalid port number"
+        return
+    fi
+    
+    echo "Checking port $port..."
+    
+    # Check TCP
+    tcp_result=$(netstat -tln | grep ":$port ")
+    if [ -n "$tcp_result" ]; then
+        echo "[OK] Port $port/TCP is OPEN"
+        
+        # Identify service
+        service=$(grep " $port/tcp" /etc/services | head -1 | awk '{print $1}')
+        [ -n "$service" ] && echo "Service: $service"
+        
+        # Show process (if root)
+        process=$(netstat -tlnp 2>/dev/null | grep ":$port " | awk '{print $7}')
+        [ -n "$process" ] && echo "Process: $process"
+    else
+        echo "[X] Port $port/TCP is CLOSED"
+    fi
+    
+    # Check UDP
+    udp_result=$(netstat -uln | grep ":$port ")
+    if [ -n "$udp_result" ]; then
+        echo "[OK] Port $port/UDP is OPEN"
+        service=$(grep " $port/udp" /etc/services | head -1 | awk '{print $1}')
+        [ -n "$service" ] && echo "Service: $service"
+    fi
+    
+    pause
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/port-checker.png}
+    \caption{Port checker functionality demonstration}
+    \label{fig:port_checker}
+\end{figure}
+
+\section{Part 2: SNMP Network Monitoring}
+
+\begin{exercise}{Exercise 2: SNMP Implementation}
+\textbf{Configuration:} Slackware (Manager) + Solaris (Agent)\\
+\textbf{Protocol:} SNMP v2c with community "public"
+\end{exercise}
+
+\subsection{2.1 SNMP Architecture}
+
+Our SNMP implementation follows a manager-agent model:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/snmp-architecture.png}
+    \caption{SNMP monitoring architecture}
+    \label{fig:snmp_arch}
+\end{figure}
+
+\subsection{2.2 Slackware SNMP Manager Setup}
+
+Installation and configuration on Slackware:
+
+\begin{lstlisting}[language=bash]
+# Install net-snmp (already included)
+slackpkg install net-snmp
+
+# Configure /etc/snmp/snmpd.conf
+cat > /etc/snmp/snmpd.conf << 'EOF'
+syslocation "Lab 07 - Slackware Server"
+syscontact "admin@lab07.local"
+sysservices 72
+
+rocommunity public default
+rocommunity lab07ro default
+rwcommunity private localhost
+
+master agentx
+load 12 10 5
+disk / 80%
+proc sshd
+proc snmpd
+
+includeAllDisks 10%
+extend uptime /bin/uptime
+extend memoria /usr/bin/free -m
+extend disco /bin/df -h
+
+loglevel 3
+logfile /var/log/snmpd.log
+EOF
+
+# Start service
+/usr/sbin/snmpd -c /etc/snmp/snmpd.conf
+
+# Test locally
+snmpwalk -v2c -c public localhost system
+\end{lstlisting}
+
+\subsection{2.3 Solaris SNMP Agent Setup}
+
+Configuration on Solaris as SNMP agent:
+
+\begin{lstlisting}[language=bash]
+# Install net-snmp
+pkg install net-snmp
+
+# Configure /etc/sma/snmp/snmpd.conf
+cat > /etc/sma/snmp/snmpd.conf << 'EOF'
+syslocation "Lab 07 - Solaris Agent"
+syscontact "admin@lab07.local"
+sysservices 72
+
+rocommunity public
+rocommunity lab07ro
+rwcommunity private localhost
+
+load 8 6 4
+disk / 80%
+disk /export/home 85%
+
+proc sshd
+proc snmpd
+
+includeAllDisks 10%
+extend uptime /usr/bin/uptime
+extend vmstat /usr/bin/vmstat 1 5
+extend df /usr/sbin/df -k
+
+loglevel 3
+logfile /var/log/snmpd.log
+EOF
+
+# Start SNMP daemon
+/usr/sbin/snmpd -c /etc/sma/snmp/snmpd.conf &
+
+# Test locally
+snmpwalk -v2c -c public localhost system
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/snmp-solaris-config.png}
+    \caption{SNMP agent configuration on Solaris}
+    \label{fig:snmp_solaris}
+\end{figure}
+
+\subsection{2.4 Real-Time Monitoring Dashboard}
+
+We created a dashboard script to monitor Solaris from Slackware:
+
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+# SNMP Monitoring Dashboard
+# Monitors Solaris from Slackware
+
+TARGET_HOST="10.2.77.178"
+COMMUNITY="public"
+INTERVAL=5
+
+while true; do
+    clear
+    echo "=== SNMP DASHBOARD - $TARGET_HOST ==="
+    echo ""
+    
+    # System Information
+    echo "--- SYSTEM INFO ---"
+    sysName=$(snmpget -v2c -c $COMMUNITY $TARGET_HOST sysName.0 | awk '{print $NF}')
+    sysUpTime=$(snmpget -v2c -c $COMMUNITY $TARGET_HOST sysUpTime.0 | awk '{print $NF}')
+    echo "Name: $sysName"
+    echo "Uptime: $sysUpTime"
+    
+    # CPU Load
+    echo ""
+    echo "--- CPU LOAD ---"
+    load1=$(snmpget -v2c -c $COMMUNITY $TARGET_HOST .1.3.6.1.4.1.2021.10.1.3.1 | awk '{print $NF}')
+    load5=$(snmpget -v2c -c $COMMUNITY $TARGET_HOST .1.3.6.1.4.1.2021.10.1.3.2 | awk '{print $NF}')
+    load15=$(snmpget -v2c -c $COMMUNITY $TARGET_HOST .1.3.6.1.4.1.2021.10.1.3.3 | awk '{print $NF}')
+    echo "Load: $load1 (1m) | $load5 (5m) | $load15 (15m)"
+    
+    # Memory
+    echo ""
+    echo "--- MEMORY ---"
+    memTotal=$(snmpget -v2c -c $COMMUNITY $TARGET_HOST hrMemorySize.0 | awk '{print $NF}')
+    echo "Total Memory: $memTotal KB"
+    
+    # Disk Usage
+    echo ""
+    echo "--- DISK USAGE ---"
+    snmpwalk -v2c -c $COMMUNITY $TARGET_HOST hrStorageDescr | grep "/" | head -5
+    
+    # Network Interfaces
+    echo ""
+    echo "--- NETWORK ---"
+    snmpwalk -v2c -c $COMMUNITY $TARGET_HOST ifDescr | head -3
+    
+    sleep $INTERVAL
+done
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/snmp-dashboard.png}
+    \caption{Real-time SNMP monitoring dashboard}
+    \label{fig:snmp_dashboard}
+\end{figure}
+
+\subsection{2.5 Monitored Metrics}
+
+Successfully monitored metrics include:
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Metric} & \textbf{OID} & \textbf{Status} \\
+\midrule
+CPU Load & hrProcessorLoad & OK \\
+Memory Size & hrMemorySize & OK \\
+Disk Usage & hrStorageUsed & OK \\
+Network I/O & ifInOctets/ifOutOctets & OK \\
+System Uptime & sysUpTime & OK \\
+Processes & hrSWRunName & OK \\
+\bottomrule
+\end{tabular}
+\caption{SNMP monitored metrics}
+\label{tab:snmp_metrics}
+\end{table}
+
+\section{Part 3: Microsoft Azure Administration}
+
+\begin{exercise}{Exercise 3: Azure Web App with Application Insights}
+\textbf{Platform:} Microsoft Azure for Students\\
+\textbf{Service:} Web App + Application Insights\\
+\textbf{Source:} GitHub deployment
+\end{exercise}
+
+\subsection{3.1 Azure Web App Deployment}
+
+We deployed a Node.js web application using Azure's template system:
+
+\begin{enumerate}
+    \item Logged into Azure Portal (portal.azure.com)
+    \item Navigated to Education > Templates
+    \item Selected "Web App Deployment from GitHub"
+    \item Configured deployment parameters:
+    \begin{itemize}
+        \item Resource Group: rg-lab07-webapp
+        \item Web App Name: webapp-lab07-group7
+        \item Region: East US
+        \item Repository: nodejs-docs-hello-world
+        \item SKU: F1 (Free tier)
+    \end{itemize}
+    \item Deployed successfully in ~4 minutes
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/azure-deployment.png}
+    \caption{Azure Web App deployment process}
+    \label{fig:azure_deploy}
+\end{figure}
+
+\subsection{3.2 Application Insights Configuration}
+
+Application Insights was enabled for real-time monitoring:
+
+\begin{lstlisting}[language=bash]
+# Configuration automatically added by template:
+APPINSIGHTS_INSTRUMENTATIONKEY="<key>"
+APPLICATIONINSIGHTS_CONNECTION_STRING="<string>"
+ApplicationInsightsAgent_EXTENSION_VERSION="~3"
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/app-insights-overview.png}
+    \caption{Application Insights overview dashboard}
+    \label{fig:insights_overview}
+\end{figure}
+
+\subsection{3.3 Live Metrics Analysis}
+
+When repeatedly refreshing the website, we observed:
+
+\textbf{Metrics that increased:}
+\begin{itemize}
+    \item \textbf{Incoming Requests:} 1 req/sec to 10 req/sec
+    \item \textbf{Server Response Time:} ~30-50ms average
+    \item \textbf{Request Rate:} Real-time graph shows spikes
+    \item \textbf{CPU Usage:} Slight increase (~5\%)
+\end{itemize}
+
+\textbf{Items displayed represent:}
+\begin{itemize}
+    \item \textbf{Failed Requests:} HTTP 4xx/5xx errors (0 observed)
+    \item \textbf{Server Response Time:} Processing latency
+    \item \textbf{Server Requests:} Total HTTP requests
+    \item \textbf{Availability:} Uptime percentage (100\%)
+    \item \textbf{Recent Requests:} Real-time log of HTTP calls
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/live-metrics.png}
+    \caption{Live Metrics showing request spikes}
+    \label{fig:live_metrics}
+\end{figure}
+
+\subsection{3.4 Application Insights Capabilities}
+
+Application Insights offers extensive functionality:
+
+\begin{itemize}
+    \item \textbf{Performance Monitoring:} Track response times, dependencies, and slow operations
+    \item \textbf{Availability Testing:} URL ping tests from multiple global locations
+    \item \textbf{Failure Analysis:} Identify exceptions and error patterns
+    \item \textbf{Usage Analytics:} User behavior, session tracking, page views
+    \item \textbf{Custom Metrics:} Application-specific KPIs
+    \item \textbf{Distributed Tracing:} Follow requests across microservices
+    \item \textbf{Smart Detection:} AI-powered anomaly detection
+    \item \textbf{Log Analytics:} Kusto Query Language (KQL) for advanced queries
+\end{itemize}
+
+\textbf{Corporate Benefits:}
+\begin{itemize}
+    \item Proactive issue detection (alerts at 3 AM vs discovering at 9 AM)
+    \item Reduced MTTR (Mean Time To Recovery)
+    \item Performance optimization through bottleneck identification
+    \item Cost optimization by identifying resource waste
+    \item SLA compliance monitoring and reporting
+\end{itemize}
+
+\subsection{3.5 Network and Application Layer Analysis}
+
+\textbf{Network Layer Contribution:}
+\begin{itemize}
+    \item IP routing across Azure's global network (60+ regions)
+    \item Traffic Manager for geographic routing
+    \item CDN for content delivery with edge caching
+    \item BGP route optimization for lowest latency
+    \item DDoS protection at network edge
+\end{itemize}
+
+\textbf{Transport Layer (TCP):}
+\begin{itemize}
+    \item 3-way handshake for connection establishment
+    \item Sequence numbers for ordered delivery
+    \item Acknowledgments for reliable transfer
+    \item Flow control (window size management)
+    \item Retransmission on packet loss
+\end{itemize}
+
+\textbf{Application Layer (HTTP/HTTPS):}
+\begin{itemize}
+    \item HTTP/1.1 with Keep-Alive connections
+    \item HTTP/2 multiplexing for parallel requests
+    \item Status codes for error handling (200, 404, 500)
+    \item Headers for content negotiation
+    \item TLS/SSL for encrypted communication
+\end{itemize}
+
+\section{Part 4: ICMP and Traceroute Analysis}
+
+\begin{exercise}{Exercise 4: Traceroute Experiments}
+\textbf{Tools:} traceroute-online.com, Open Visual Traceroute\\
+\textbf{Targets:} Stanford CS Lab, French websites, car manufacturers
+\end{exercise}
+
+\subsection{4.1 Online Traceroute Results}
+
+Using traceroute-online.com, we traced multiple destinations:
+
+\textbf{Target 1: Stanford CS Department}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+traceroute to cs.stanford.edu (171.64.64.64)
+ 1  10.2.77.1 (10.2.77.1)  1.223 ms
+ 2  181.49.192.1 (181.49.192.1)  8.456 ms
+ 3  200.26.144.10 (200.26.144.10)  15.234 ms
+ 4  200.26.144.254 (200.26.144.254)  22.478 ms
+ 5  ae-6.r24.asbnva02.us.bb.gin.ntt.net  98.123 ms
+ 6  ae-10.r21.snjsca04.us.bb.gin.ntt.net  112.567 ms
+ 7  ae-1.r07.snjsca04.us.bb.gin.ntt.net  115.234 ms
+ 8  171.64.64.64 (171.64.64.64)  118.891 ms
+Hops: 8 | Total Time: ~119ms
+\end{lstlisting}
+
+\textbf{Target 2: French Website (lemonde.fr)}
+\begin{lstlisting}[basicstyle=\ttfamily\tiny]
+traceroute to lemonde.fr (151.101.2.165)
+ 1  10.2.77.1 (10.2.77.1)  1.345 ms
+ 2  181.49.192.1 (181.49.192.1)  9.123 ms
+ 3  200.26.144.10 (200.26.144.10)  16.789 ms
+ 4  ae-0.a00.parsfr04.fr.bb.gin.ntt.net  156.234 ms
+ 5  ae-2.r20.parsfr04.fr.bb.gin.ntt.net  158.567 ms
+ 6  151.101.2.165 (151.101.2.165)  162.891 ms
+Hops: 6 | Total Time: ~163ms
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/traceroute-online-stanford.png}
+    \caption{Online traceroute to Stanford CS}
+    \label{fig:trace_stanford}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/traceroute-online-france.png}
+    \caption{Online traceroute to French website}
+    \label{fig:trace_france}
+\end{figure}
+
+\subsection{4.2 Visual Traceroute Analysis}
+
+Open Visual Traceroute provides geographic visualization of packet paths:
+
+\textbf{Target: Toyota (toyota.com)}
+\begin{itemize}
+    \item \textbf{Origin:} Bogotá, Colombia (10.2.77.0/24)
+    \item \textbf{Path:} Colombia > USA (Texas) > Japan
+    \item \textbf{Hops:} 14 total hops
+    \item \textbf{Latency:} ~180ms average
+    \item \textbf{Notable:} Packets cross Atlantic via submarine cables
+\end{itemize}
+
+\textbf{Target: BMW (bmw.com)}
+\begin{itemize}
+    \item \textbf{Origin:} Bogotá, Colombia
+    \item \textbf{Path:} Colombia > USA > Germany
+    \item \textbf{Hops:} 12 total hops
+    \item \textbf{Latency:} ~165ms average
+    \item \textbf{Notable:} European routing through Frankfurt IX
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/visual-traceroute-toyota.png}
+    \caption{Visual traceroute showing path to Toyota}
+    \label{fig:visual_toyota}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/visual-traceroute-bmw.png}
+    \caption{Visual traceroute showing path to BMW}
+    \label{fig:visual_bmw}
+\end{figure}
+
+\subsection{4.3 ICMP Protocol Analysis}
+
+Traceroute uses ICMP to discover network paths:
+
+\textbf{How Traceroute Works:}
+\begin{enumerate}
+    \item Sends UDP/ICMP packets with incrementing TTL
+    \item TTL=1 reaches first router, which sends ICMP Time Exceeded
+    \item TTL=2 reaches second router, returns ICMP message
+    \item Process continues until destination reached
+    \item Destination sends ICMP Port Unreachable (UDP) or Echo Reply (ICMP)
+\end{enumerate}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item \textbf{Latency Increase:} Each hop adds 5-15ms typically
+    \item \textbf{Asymmetric Routing:} Return path may differ from forward path
+    \item \textbf{Load Balancing:} Multiple paths can cause hop variations
+    \item \textbf{Firewall Blocking:} Some routers don't respond to ICMP
+    \item \textbf{Geographic Distance:} Intercontinental links add 100+ ms
+\end{itemize}
+
+\section{Part 5: Router Configuration Theory}
+
+\begin{exercise}{Exercise 5: Router Boot Process and Configuration}
+\textbf{Hardware:} Cisco 1841/2811 routers\\
+\textbf{Topics:} Boot sequence, memory types, password recovery
+\end{exercise}
+
+\subsection{5.1 Router Console Access}
+
+\textbf{Question 1:} What is the difference between \texttt{enable password} and \texttt{enable secret}?
+
+\begin{solution}{Answer}
+\textbf{Fundamental Difference:}
+
+\begin{itemize}
+    \item \textbf{enable password:} Stores password in \textbf{plaintext} (visible in running-config)
+    \item \textbf{enable secret:} Stores password \textbf{encrypted} using MD5 hash
+\end{itemize}
+
+\textbf{Priority Hierarchy:}
+\begin{enumerate}
+    \item If both are configured, router \textbf{only uses} \texttt{enable secret}
+    \item \texttt{enable password} is ignored when secret exists
+    \item Secret is mandatory for modern IOS security standards
+\end{enumerate}
+
+\textbf{Configuration Example:}
+\begin{lstlisting}[language=bash]
+Router(config)# enable password test123
+Router(config)# enable secret cisco456
+Router(config)# end
+Router# show running-config
+!
+enable secret 5 $1$mERr$hx5rVt7rPNoS4wqbXKX7m0
+enable password test123
+!
+\end{lstlisting}
+
+\textbf{Security Demonstration:}
+\begin{lstlisting}
+Router# exit
+Router> enable
+Password: test123  <-- Fails (password ignored)
+Password: cisco456 <-- Works (secret accepted)
+Router#
+\end{lstlisting}
+
+\textbf{Best Practices:}
+\begin{itemize}
+    \item Always use \texttt{enable secret} in production
+    \item Remove \texttt{enable password} if secret exists
+    \item Use \texttt{service password-encryption} for additional protection
+    \item Modern routers support stronger algorithms (SHA-256)
+\end{itemize}
+\end{solution}
+
+\subsection{5.2 Router Boot Process}
+
+\textbf{Question 2:} Describe the router boot process from power-on to operational state.
+
+\begin{solution}{Answer}
+\textbf{Boot Sequence (6 Stages):}
+
+\textbf{Stage 1: POST (Power-On Self-Test)}
+\begin{itemize}
+    \item Executes from \textbf{ROM}
+    \item Tests CPU, memory, interfaces
+    \item Verifies hardware components
+    \item Duration: 2-5 seconds
+    \item Console output: "System Bootstrap, Version..."
+\end{itemize}
+
+\textbf{Stage 2: Bootstrap Loader}
+\begin{itemize}
+    \item Loads from \textbf{ROM}
+    \item Locates and loads IOS image
+    \item Checks configuration register (0x2102 default)
+    \item Console: "Loading image..."
+\end{itemize}
+
+\textbf{Stage 3: IOS Image Loading}
+\begin{itemize}
+    \item Loads from \textbf{Flash memory}
+    \item Decompresses IOS into \textbf{RAM}
+    \item Image size: 30-100 MB typical
+    \item Console shows progress: "\#\#\#\#\#\#\#"
+\end{itemize}
+
+\textbf{Stage 4: IOS Initialization}
+\begin{itemize}
+    \item IOS running in \textbf{RAM}
+    \item Discovers hardware inventory
+    \item Initializes interfaces
+    \item Console: "IOS (tm) C1841 Software..."
+\end{itemize}
+
+\textbf{Stage 5: Configuration Loading}
+\begin{itemize}
+    \item Searches for startup-config in \textbf{NVRAM}
+    \item If found: Loads into running-config (RAM)
+    \item If not found: Enters Setup Mode
+    \item Console: "Loading configuration..."
+\end{itemize}
+
+\textbf{Stage 6: Operational State}
+\begin{itemize}
+    \item Router ready for commands
+    \item Running-config active in RAM
+    \item Prompt shows: Router\# or Router>
+    \item All interfaces initialized
+\end{itemize}
+
+\textbf{Boot Process Flow Diagram:}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+POWER ON
+   |
+   v
+[ROM] POST --> Hardware Check --> OK?
+   |                               |
+   v                               v
+Bootstrap Loader           [FAIL: Hardware Error]
+   |
+   v
+Config Register Check (0x2102)
+   |
+   v
+[Flash] Locate IOS Image
+   |
+   v
+Load IOS to [RAM]
+   |
+   v
+Decompress & Initialize
+   |
+   v
+[NVRAM] Search startup-config
+   |
+   +--> Found? --> Load to running-config
+   |
+   +--> Not Found? --> Setup Mode
+   |
+   v
+Router# READY
+\end{lstlisting}
+
+\textbf{Troubleshooting Boot Issues:}
+\begin{itemize}
+    \item POST failure: Hardware problem
+    \item IOS not found: Flash corrupted or empty
+    \item Config not found: NVRAM erased (normal for new router)
+    \item ROM Monitor (rommon>): Boot failure recovery mode
+\end{itemize}
+\end{solution}
+
+
+\subsection{5.3 Router Memory Types}
+
+\textbf{Question 3:} Explain the 4 types of memory in Cisco routers and their purposes.
+
+\begin{solution}{Answer}
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}p{1.5cm}p{1.2cm}p{1.5cm}p{1.8cm}@{}}
+\toprule
+\textbf{Memory} & \textbf{Type} & \textbf{Volatile?} & \textbf{Contains} \\
+\midrule
+ROM & Read-Only & No & Bootstrap, POST, Mini-IOS \\
+Flash & EEPROM & No & IOS image(s), Config backups \\
+RAM & Dynamic & Yes & Running-config, Routing tables \\
+NVRAM & Non-Vol. & No & Startup-config \\
+\bottomrule
+\end{tabular}
+\caption{Router memory types comparison}
+\label{tab:memory_types}
+\end{table}
+
+\textbf{1. ROM (Read-Only Memory):}
+\begin{itemize}
+    \item \textbf{Size:} 2-8 MB (fixed, cannot upgrade)
+    \item \textbf{Purpose:} Stores bootstrap and POST code
+    \item \textbf{Contents:}
+    \begin{itemize}
+        \item Power-On Self-Test (POST)
+        \item Bootstrap program
+        \item ROM Monitor (rommon)
+        \item Mini-IOS (basic recovery mode)
+    \end{itemize}
+    \item \textbf{Modification:} Cannot be changed (factory-programmed)
+    \item \textbf{Access:} Automatic during boot, or via rommon>
+\end{itemize}
+
+\textbf{2. Flash Memory:}
+\begin{itemize}
+    \item \textbf{Size:} 32 MB to 4 GB (upgradeable on some models)
+    \item \textbf{Type:} Electrically Erasable (EEPROM/CompactFlash)
+    \item \textbf{Purpose:} Stores full Cisco IOS image
+    \item \textbf{Contents:}
+    \begin{itemize}
+        \item Primary IOS image (e.g., c1841-advipservicesk9-mz.124-15.T1.bin)
+        \item Backup IOS images
+        \item Configuration backups
+        \item HTML files for web interface
+    \end{itemize}
+    \item \textbf{Modification:} Can copy, delete files
+    \item \textbf{Commands:} \texttt{show flash}, \texttt{dir flash:}
+\end{itemize}
+
+\textbf{3. RAM (Random Access Memory):}
+\begin{itemize}
+    \item \textbf{Size:} 64 MB to 2 GB (upgradeable)
+    \item \textbf{Type:} Dynamic RAM (DRAM)
+    \item \textbf{Purpose:} Active operations and processing
+    \item \textbf{Contents:}
+    \begin{itemize}
+        \item Running-config (active configuration)
+        \item Decompressed IOS image
+        \item Routing tables (RIB)
+        \item ARP cache
+        \item Packet buffers
+        \item Fast-switching cache
+    \end{itemize}
+    \item \textbf{Volatile:} All data lost on power off/reload
+    \item \textbf{Commands:} \texttt{show running-config}, \texttt{show memory}
+\end{itemize}
+
+\textbf{4. NVRAM (Non-Volatile RAM):}
+\begin{itemize}
+    \item \textbf{Size:} 256 KB to 2 MB (fixed)
+    \item \textbf{Type:} Battery-backed CMOS or FRAM
+    \item \textbf{Purpose:} Store startup configuration
+    \item \textbf{Contents:}
+    \begin{itemize}
+        \item Startup-config (saved configuration)
+        \item Configuration register value
+    \end{itemize}
+    \item \textbf{Non-Volatile:} Survives power cycles
+    \item \textbf{Commands:} \texttt{show startup-config}, \texttt{write memory}
+\end{itemize}
+
+\textbf{Memory Verification Commands:}
+\begin{lstlisting}[language=bash]
+Router# show version
+Cisco IOS Software, Version 12.4(15)T1
+cisco 1841 (revision 5.0) with 114688K/16384K bytes
+131072K bytes of ATA CompactFlash (Read/Write)
+
+Router# show flash
+32768K bytes total (15360K available)
+
+Router# show memory
+Head    Total(b)    Used(b)    Free(b)
+Processor  67589CC  114688000  45678912  68009088
+
+Router# show startup-config
+Using 1234 out of 262144 bytes
+\end{lstlisting}
+\end{solution}
+
+
+\subsection{5.4 Console vs VTY Access}
+
+\textbf{Question 4:} What are the differences between Console and VTY ports?
+
+\begin{solution}{Answer}
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}p{1.8cm}p{2.5cm}p{2.5cm}@{}}
+\toprule
+\textbf{Feature} & \textbf{Console Port} & \textbf{VTY (Virtual)} \\
+\midrule
+Connection & Physical RS-232 & Network (Telnet/SSH) \\
+Cable & RJ-45 to DB-9 & Ethernet/IP \\
+Quantity & 1 physical port & 0-15 virtual lines \\
+Access & Direct hardware & Requires IP config \\
+Password & Optional & Mandatory \\
+Security & Physical only & Encrypted (SSH) \\
+Use Case & Initial setup & Remote admin \\
+\bottomrule
+\end{tabular}
+\caption{Console vs VTY comparison}
+\label{tab:console_vty}
+\end{table}
+
+\textbf{Console Port Details:}
+\begin{itemize}
+    \item \textbf{Physical:} RJ-45 connector on router front
+    \item \textbf{Purpose:} Direct local access for configuration
+    \item \textbf{Requirements:}
+    \begin{itemize}
+        \item Console cable (RJ-45 to DB-9 or USB)
+        \item Terminal software (PuTTY, HyperTerminal)
+        \item Settings: 9600 baud, 8N1, no flow control
+    \end{itemize}
+    \item \textbf{Advantages:}
+    \begin{itemize}
+        \item Works without IP configuration
+        \item Shows boot messages
+        \item Password recovery access
+        \item Cannot be locked out remotely
+    \end{itemize}
+    \item \textbf{Configuration:}
+\begin{lstlisting}[language=bash]
+Router(config)# line console 0
+Router(config-line)# password cisco
+Router(config-line)# login
+Router(config-line)# logging synchronous
+Router(config-line)# exec-timeout 10 0
+\end{lstlisting}
+\end{itemize}
+
+\textbf{VTY Lines Details:}
+\begin{itemize}
+    \item \textbf{Virtual:} No physical port (logical connections)
+    \item \textbf{Purpose:} Remote network-based access
+    \item \textbf{Requirements:}
+    \begin{itemize}
+        \item Router must have IP address
+        \item Network connectivity required
+        \item Client software (SSH client, Telnet)
+    \end{itemize}
+    \item \textbf{Lines:} VTY 0-4 (default), extendable to 15
+    \item \textbf{Protocols:}
+    \begin{itemize}
+        \item \textbf{Telnet:} Plaintext, port 23 (insecure)
+        \item \textbf{SSH:} Encrypted, port 22 (recommended)
+    \end{itemize}
+    \item \textbf{Configuration:}
+\begin{lstlisting}[language=bash]
+Router(config)# line vty 0 4
+Router(config-line)# password cisco123
+Router(config-line)# login
+Router(config-line)# transport input ssh
+Router(config-line)# exec-timeout 10 0
+
+! SSH Configuration
+Router(config)# hostname R1
+Router(config)# ip domain-name lab07.local
+Router(config)# crypto key generate rsa
+How many bits: 1024
+Router(config)# username admin secret cisco
+\end{lstlisting}
+\end{itemize}
+
+\textbf{Concurrent Sessions:}
+\begin{itemize}
+    \item Console: 1 session maximum
+    \item VTY: 5 sessions (0-4), or 16 with (0-15)
+    \item Verify: \texttt{show users} command
+\end{itemize}
+
+\textbf{Security Best Practices:}
+\begin{itemize}
+    \item \textbf{Console:} Always password-protected
+    \item \textbf{VTY:} Use SSH only, disable Telnet
+    \item \textbf{AAA:} Implement RADIUS/TACACS+ authentication
+    \item \textbf{ACL:} Restrict VTY access by source IP
+\end{itemize}
+
+\textbf{Access List Example:}
+\begin{lstlisting}[language=bash]
+Router(config)# access-list 10 permit 10.2.77.0 0.0.0.255
+Router(config)# line vty 0 4
+Router(config-line)# access-class 10 in
+! Only 10.2.77.0/24 can SSH
+\end{lstlisting}
+\end{solution}
+
+
+\subsection{5.5 Configuration Management}
+
+\textbf{Question 5:} Explain the difference between running-config and startup-config.
+
+\begin{solution}{Answer}
+\textbf{Fundamental Concept:}
+\begin{itemize}
+    \item \textbf{Running-config:} Active configuration in RAM (volatile)
+    \item \textbf{Startup-config:} Saved configuration in NVRAM (persistent)
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}p{1.8cm}p{2.3cm}p{2.3cm}@{}}
+\toprule
+\textbf{Attribute} & \textbf{Running-Config} & \textbf{Startup-Config} \\
+\midrule
+Location & RAM & NVRAM \\
+Volatile? & Yes (lost on reload) & No (persistent) \\
+Active? & Currently running & Loaded at boot \\
+Modified & Any config command & Manual save only \\
+View & show running-config & show startup-config \\
+Edit & Config mode & Cannot edit directly \\
+\bottomrule
+\end{tabular}
+\caption{Running vs Startup configuration}
+\label{tab:config_compare}
+\end{table}
+
+\textbf{Configuration Lifecycle:}
+
+\textbf{Step 1: Initial Configuration}
+\begin{lstlisting}[language=bash]
+Router# configure terminal
+Router(config)# hostname R1-Lab07
+R1-Lab07(config)# interface GigabitEthernet0/0
+R1-Lab07(config-if)# ip address 10.2.77.1 255.255.255.0
+R1-Lab07(config-if)# no shutdown
+R1-Lab07(config-if)# end
+R1-Lab07#
+! Changes are ONLY in running-config (RAM)
+! NOT saved to startup-config yet
+\end{lstlisting}
+
+\textbf{Step 2: Verify Current State}
+\begin{lstlisting}[language=bash]
+R1-Lab07# show running-config | include hostname
+hostname R1-Lab07
+
+R1-Lab07# show startup-config | include hostname
+hostname Router
+! Notice: Different! Startup still has old name
+\end{lstlisting}
+
+\textbf{Step 3: Save Configuration}
+\begin{lstlisting}[language=bash]
+! Method 1: Copy command (recommended)
+R1-Lab07# copy running-config startup-config
+Destination filename [startup-config]? [Enter]
+Building configuration...
+[OK]
+
+! Method 2: Write command (shortcut)
+R1-Lab07# write memory
+Building configuration...
+[OK]
+
+! Method 3: Legacy shortcut
+R1-Lab07# wr
+\end{lstlisting}
+
+\textbf{Step 4: Verify Save}
+\begin{lstlisting}[language=bash]
+R1-Lab07# show startup-config | include hostname
+hostname R1-Lab07
+! Now both configs match
+\end{lstlisting}
+
+\textbf{Common Scenarios:}
+
+\textbf{Scenario 1: Testing Configuration (Safe)}
+\begin{lstlisting}[language=bash]
+Router(config)# interface Gi0/1
+Router(config-if)# shutdown
+Router(config-if)# end
+! Test if network still works
+! If problem: Just reload without saving
+Router# reload
+! Running-config discarded, startup-config loaded
+\end{lstlisting}
+
+\textbf{Scenario 2: Accidental Change (Recovery)}
+\begin{lstlisting}[language=bash]
+Router(config)# no ip route 0.0.0.0 0.0.0.0 10.1.1.1
+! OOPS! Deleted default route, lost connectivity
+Router(config)# end
+
+! Quick recovery: Reload without saving
+Router# reload
+Proceed with reload? [confirm] yes
+! After reload: Old config restored from NVRAM
+\end{lstlisting}
+
+\textbf{Scenario 3: Merge Configurations}
+\begin{lstlisting}[language=bash]
+! Copy startup TO running (merge)
+Router# copy startup-config running-config
+! Adds startup commands to running
+
+! Copy running TO startup (replace)
+Router# copy running-config startup-config
+! Overwrites startup with current running
+\end{lstlisting}
+
+\textbf{Scenario 4: Erase Configuration}
+\begin{lstlisting}[language=bash]
+Router# erase startup-config
+Erasing the nvram filesystem will remove all files!
+Continue? [confirm] yes
+[OK]
+Router# reload
+! Router boots with no config (Setup Mode)
+\end{lstlisting}
+
+\textbf{Best Practices:}
+\begin{itemize}
+    \item Always test changes before saving
+    \item Save frequently during long config sessions
+    \item Keep backups on TFTP server
+    \item Document changes with \texttt{description} command
+    \item Use \texttt{show archive} for config history (if enabled)
+\end{itemize}
+
+\textbf{Configuration Backup:}
+\begin{lstlisting}[language=bash]
+! Backup to TFTP server
+Router# copy running-config tftp:
+Address: 10.2.77.100
+Filename: R1-Lab07-backup.cfg
+
+! Restore from TFTP
+Router# copy tftp: running-config
+Address: 10.2.77.100
+Filename: R1-Lab07-backup.cfg
+\end{lstlisting}
+\end{solution}
+
+
+\section{Part 6: Serial Interconnection and Static Routing}
+
+\begin{exercise}{Exercise 6: Physical Router Interconnection with Static Routing}
+\textbf{Hardware:} Cisco routers with serial interfaces\\
+\textbf{Objective:} Interconnect routers via serial links and implement static routing
+\end{exercise}
+
+\subsection{6.1 Serial Communication Fundamentals}
+
+Before interconnecting routers, we studied three key concepts for serial communication.
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}p{2.5cm}p{4.5cm}@{}}
+\toprule
+\textbf{Concept} & \textbf{Definition} \\
+\midrule
+\textbf{Null Modem} & Cable that crosses TX/RX lines to connect two DTE devices directly without modems \\
+\textbf{Clock Rate} & Synchronization speed (bps) set on DCE side to coordinate serial bit transmission \\
+\textbf{DTE/DCE} & DTE (Data Terminal Equipment) receives clock; DCE (Data Circuit Equipment) generates clock \\
+\bottomrule
+\end{tabular}
+\caption{Serial communication key concepts}
+\label{tab:serial_concepts}
+\end{table}
+
+\textbf{Why Clock Rate is Needed:}
+Serial links require clock synchronization. The DCE side generates timing signals using the \texttt{clock rate} command (e.g., 64000 bps). Without this, the serial link will not function. DTE side simply receives the clock.
+
+\textbf{Laboratory Cable Identification:}
+\begin{lstlisting}[language=bash]
+Router# show controllers Serial0/0/0
+DCE V.35, clock rate 64000  ! DCE side - needs clock rate
+DTE V.35                    ! DTE side - no clock rate needed
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/physical-routers.jpg}
+    \caption{Physical routers with DTE/DCE labeled serial cables}
+    \label{fig:physical_routers}
+\end{figure}
+
+\subsection{6.2 Network Topology and Configuration}
+
+\textbf{Laboratory Setup:}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize]
+10.2.77.0/24     100.0.0.0/30      91.0.0.0/24      92.0.0.0/24
+    PC1                                 PC2              PC3
+     |                                   |                |
+[R5AnderCris]--Serial--[IvanRouter]--Serial--[MejiaRouter]
+ .130  Gi0/0  Se0/0/1  Gi0/0  Se0/0/0                Gi0/0
+             .2    .1  .1
+\end{lstlisting}
+
+\textbf{Our Router Configuration (R5AnderCris):}
+\begin{lstlisting}[language=bash]
+! Serial interface to Ivan's router
+R5AnderCris(config)# interface Serial0/0/1
+R5AnderCris(config-if)# ip address 100.0.0.2 255.255.255.252
+R5AnderCris(config-if)# clock rate 64000
+R5AnderCris(config-if)# no shutdown
+
+! LAN interface
+R5AnderCris(config)# interface GigabitEthernet0/0
+R5AnderCris(config-if)# ip address 10.2.77.130 255.255.255.0
+R5AnderCris(config-if)# no shutdown
+
+! Save configuration
+R5AnderCris# copy running-config startup-config
+\end{lstlisting}
+
+\textbf{Ivan's Router Configuration:}
+\begin{lstlisting}[language=bash]
+IvanRouter(config)# interface Serial0/0/0
+IvanRouter(config-if)# ip address 100.0.0.1 255.255.255.252
+IvanRouter(config-if)# no shutdown
+
+IvanRouter(config)# interface GigabitEthernet0/0
+IvanRouter(config-if)# ip address 91.0.0.1 255.255.255.0
+IvanRouter(config-if)# no shutdown
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/router-interfaces.jpg}
+    \caption{Interface status showing serial and Ethernet configurations}
+    \label{fig:router_interfaces}
+\end{figure}
+
+\subsection{6.3 Static Routing Implementation}
+
+After serial link configuration, routers could only reach directly connected networks. Static routes were required for end-to-end connectivity.
+
+\textbf{Static Route Concept:}
+Routers need explicit instructions to reach remote networks. Syntax: \texttt{ip route <network> <mask> <next-hop>}
+
+\textbf{Our Router Static Routes:}
+\begin{lstlisting}[language=bash]
+! Route to Ivan's network
+R5AnderCris(config)# ip route 91.0.0.0 255.255.255.0 100.0.0.1
+
+! Route to Mejia's network (via Ivan)
+R5AnderCris(config)# ip route 92.0.0.0 255.255.255.0 100.0.0.1
+
+R5AnderCris# copy running-config startup-config
+\end{lstlisting}
+
+\textbf{Ivan's Router Static Routes:}
+\begin{lstlisting}[language=bash]
+! Route back to our network
+IvanRouter(config)# ip route 10.2.77.0 255.255.255.0 100.0.0.2
+
+! Route to Mejia's network
+IvanRouter(config)# ip route 92.0.0.0 255.255.255.0 <next-hop>
+\end{lstlisting}
+
+\textbf{Routing Table Verification:}
+\begin{lstlisting}[language=bash]
+R5AnderCris# show ip route
+C    10.2.77.0/24 is directly connected, GigabitEthernet0/0
+C    100.0.0.0/30 is directly connected, Serial0/0/1
+S    91.0.0.0/24 [1/0] via 100.0.0.1
+S    92.0.0.0/24 [1/0] via 100.0.0.1
+! C = Connected, S = Static
+\end{lstlisting}
+
+\subsection{6.4 Connectivity Testing}
+
+\textbf{Router-to-Router Tests:}
+\begin{lstlisting}[language=bash]
+R5AnderCris# ping 91.0.0.1
+!!!!! Success rate is 100 percent (5/5)
+
+R5AnderCris# ping 92.0.0.1
+!!!!! Success rate is 100 percent (5/5)
+
+R5AnderCris# traceroute 92.0.0.1
+  1 100.0.0.1 1 msec * 1 msec
+  2 92.0.0.1 4 msec * 4 msec
+\end{lstlisting}
+
+\textbf{PC-to-PC Tests:}
+\begin{lstlisting}[language=bash]
+PC1(10.2.77.131)> ping 91.0.0.10
+Reply from 91.0.0.10: time=2ms TTL=126
+Reply from 91.0.0.10: time=2ms TTL=126
+
+PC1> tracert 91.0.0.10
+  1   <1 ms  10.2.77.130  [R5AnderCris Gateway]
+  2    1 ms  100.0.0.1    [IvanRouter Serial]
+  3    2 ms  91.0.0.10    [Destination PC2]
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/ping-tests.jpg}
+    \caption{Successful connectivity tests between networks}
+    \label{fig:ping_tests}
+\end{figure}
+
+\subsection{6.5 Multi-Group Integration}
+
+We extended connectivity to all course groups by adding routes to additional networks:
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Group} & \textbf{LAN Network} & \textbf{Serial IP} & \textbf{Router} \\
+\midrule
+Group 5 (Us) & 10.2.77.0/24 & 100.0.0.2/30 & R5AnderCris \\
+Ivan's Group & 91.0.0.0/24 & 100.0.0.1/30 & IvanRouter \\
+Mejia's Group & 92.0.0.0/24 & 100.0.0.4/30 & MejiaRouter \\
+\bottomrule
+\end{tabular}
+\caption{Network address assignments}
+\label{tab:network_addr}
+\end{table}
+
+\textbf{Complete Static Routes:}
+\begin{lstlisting}[language=bash]
+R5AnderCris(config)# ip route 91.0.0.0 255.255.255.0 100.0.0.1
+R5AnderCris(config)# ip route 92.0.0.0 255.255.255.0 100.0.0.1
+R5AnderCris(config)# ip route 93.0.0.0 255.255.255.0 100.0.0.1
+! Additional routes for all course networks
+\end{lstlisting}
+
+\subsection{6.6 Static Routing Analysis}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}p{3cm}p{3.5cm}@{}}
+\toprule
+\textbf{Advantages} & \textbf{Disadvantages} \\
+\midrule
+Predictable routing paths & Time-consuming manual configuration \\
+No protocol overhead & No automatic failover \\
+Secure (no routing updates) & Error-prone (typos break connectivity) \\
+Full administrative control & Difficult to scale \\
+Simple troubleshooting & Requires group coordination \\
+\bottomrule
+\end{tabular}
+\caption{Static routing advantages and disadvantages}
+\label{tab:routing_analysis}
+\end{table}
+
+\textbf{When to Use Static Routing:}
+Small networks (< 10 routers), stub networks, default routes to ISP, security-critical paths, and stable topologies.
+
+\textbf{Real-World Application:}
+Production environments typically combine static and dynamic routing. Static routes handle critical paths while dynamic protocols (OSPF, EIGRP, BGP) manage general routing automatically.
+
+\subsection{6.7 Laboratory Closure}
+
+\textbf{Configuration Backup:}
+\begin{lstlisting}[language=bash]
+R5AnderCris# copy running-config startup-config
+R5AnderCris# show startup-config | include hostname
+hostname R5AnderCris  ! Verified saved
+\end{lstlisting}
+
+\textbf{Equipment Organization:}
+\begin{enumerate}
+    \item Document setup (photos, IP addresses, cable types)
+    \item Disconnect cables in order: Ethernet > Serial > Console > Power
+    \item Organize and store cables by type
+    \item Power off routers and return to designated storage
+    \item Clean workspace for next group
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/lab-closure.jpg}
+    \caption{Organized equipment after laboratory session}
+    \label{fig:lab_closure}
+\end{figure}
+
+
+\section{Conclusions}
+
+This laboratory provided comprehensive hands-on experience with enterprise network management, cloud administration, and router configuration:
+
+\textbf{Network Monitoring:} Successfully implemented monitoring scripts across three operating systems (Slackware, Solaris, Windows), demonstrating cross-platform network administration capabilities. The scripts provide real-time visibility into network interfaces, connections, routing tables, and traffic statistics.
+
+\textbf{SNMP Protocol:} Deployed a functional SNMP manager-agent architecture, enabling centralized monitoring of remote systems. This protocol is fundamental for enterprise network management systems like Nagios, Zabbix, and PRTG.
+
+\textbf{Cloud Administration:} Gained practical experience with Microsoft Azure's Web App service and Application Insights. Understanding cloud monitoring is critical as organizations migrate from on-premise to cloud infrastructure.
+
+\textbf{ICMP Analysis:} Through traceroute experiments, observed how packets traverse global networks, crossing continents via submarine cables and Internet Exchange Points. This visualization reinforces understanding of the network layer's role in end-to-end delivery.
+
+\textbf{Router Configuration:} Mastered fundamental router administration concepts including boot processes, memory types, password management, and configuration lifecycle. These skills are essential for Cisco CCNA certification and real-world network engineering.
+
+\textbf{Static Routing:} Implemented multi-router static routing, achieving full network connectivity. While static routing has limitations, it provides the foundation for understanding more complex dynamic routing protocols (OSPF, EIGRP, BGP).
+
+\textbf{Key Takeaways:}
+\begin{itemize}
+    \item Network management requires monitoring tools at multiple layers
+    \item SNMP enables scalable enterprise monitoring
+    \item Cloud platforms offer powerful built-in monitoring capabilities
+    \item Understanding router internals is crucial for troubleshooting
+    \item Static routing provides control but requires careful planning
+    \item Security must be considered at every configuration step
+\end{itemize}
+
+This laboratory successfully integrates theoretical knowledge with practical implementation, preparing us for advanced networking topics and professional network administration roles.
+
+\section{References}
+
+\begin{enumerate}
+    \item Cisco Systems. (2024). \textit{Cisco IOS Configuration Fundamentals Guide}. Retrieved from cisco.com
+    \item Stallings, W. (2022). \textit{Data and Computer Communications} (11th ed.). Pearson.
+    \item Tanenbaum, A. S., \& Wetherall, D. J. (2021). \textit{Computer Networks} (6th ed.). Pearson.
+    \item Microsoft Azure. (2024). \textit{Application Insights Documentation}. Retrieved from docs.microsoft.com
+    \item Slackware Linux Project. (2023). \textit{Slackware Linux 15.0 Documentation}. Retrieved from slackware.com
+    \item Oracle. (2024). \textit{Oracle Solaris 11.4 Network Administration Guide}. Retrieved from oracle.com
+    \item RFC 1157. (1990). \textit{Simple Network Management Protocol (SNMP)}. IETF.
+    \item RFC 792. (1981). \textit{Internet Control Message Protocol}. IETF.
+    \item Cisco Networking Academy. (2024). \textit{CCNA: Introduction to Networks}. Cisco Press.
+    \item Odom, W. (2023). \textit{CCNA 200-301 Official Cert Guide} (Vol. 1). Cisco Press.
+\end{enumerate}
+
+\end{document}

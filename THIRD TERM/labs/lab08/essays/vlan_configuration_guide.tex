@@ -1,0 +1,853 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{titlesec}
+
+% Geometry settings
+\geometry{
+    a4paper,
+    top=2.5cm,
+    bottom=2.5cm,
+    left=2.5cm,
+    right=2.5cm
+}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textcolor{blue!70!black}{VLAN Configuration Guide}}
+\lhead{\textcolor{blue!70!black}{Lab 08 - Computer Networks}}
+\cfoot{\textcolor{blue!70!black}{\thepage}}
+
+% Color definitions
+\definecolor{primaryblue}{RGB}{41, 128, 185}
+\definecolor{secondaryblue}{RGB}{52, 152, 219}
+\definecolor{accentgreen}{RGB}{39, 174, 96}
+\definecolor{darkgray}{RGB}{52, 73, 94}
+\definecolor{lightgray}{RGB}{236, 240, 241}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{primaryblue}\bfseries,
+    commentstyle=\color{accentgreen}\itshape,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{lightgray},
+    numbers=left,
+    numberstyle=\tiny\color{darkgray},
+    xleftmargin=15pt,
+    framexleftmargin=15pt
+}
+
+% Section formatting
+\titleformat{\section}
+{\color{primaryblue}\normalfont\Large\bfseries}
+{\thesection}{1em}{}[\titlerule]
+
+\titleformat{\subsection}
+{\color{secondaryblue}\normalfont\large\bfseries}
+{\thesubsection}{1em}{}
+
+% Custom boxes
+\newtcolorbox{commandbox}[1]{
+    enhanced,
+    colback=primaryblue!5!white,
+    colframe=primaryblue,
+    title={\textbf{#1}},
+    fonttitle=\bfseries,
+    boxrule=1pt,
+    arc=2pt
+}
+
+\newtcolorbox{notebox}{
+    enhanced,
+    colback=accentgreen!10!white,
+    colframe=accentgreen,
+    title={\textbf{Important Note}},
+    fonttitle=\bfseries,
+    boxrule=1pt,
+    arc=2pt
+}
+
+\begin{document}
+
+% Title page
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    \includegraphics[width=0.3\textwidth]{../media/university_logo.png}\\[1.5cm]
+    
+    {\Huge\bfseries\color{primaryblue} Step-by-Step Guide\\[0.3cm]}
+    {\Huge\bfseries\color{secondaryblue} VLAN Configuration\\[0.5cm]}
+    {\Large\color{darkgray} Using PuTTY and Cisco Switches\\[2cm]}
+    
+    {\Large\textbf{Laboratory 08}\\[0.3cm]}
+    {\large Computer Networks - Data Link Layer\\[2cm]}
+    
+    {\large\textbf{Authors:}\\[0.3cm]
+    Andersson David Sánchez Méndez\\
+    Cristian Santiago Pedraza Rodríguez\\[1.5cm]}
+    
+    {\large\textbf{Instructor:}\\
+    Professor Fabián Eduardo Sierra Sánchez\\[1cm]}
+    
+    {\large Escuela Colombiana de Ingeniería Julio Garavito\\[0.3cm]
+    Systems Engineering Program\\[0.5cm]
+    \today}
+    
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+This comprehensive guide provides detailed step-by-step instructions for configuring Virtual Local Area Networks (VLANs) on Cisco switches using PuTTY as the terminal emulation software. The configuration corresponds to Exercise 4 from Laboratory 08, where we implement network segmentation using VLANs 50 and 55.
+
+\subsection{Objectives}
+\begin{itemize}[itemsep=0.2em]
+    \item Establish console connection to Cisco switches via PuTTY
+    \item Create and configure VLANs 50 (systems) and 55 (others)
+    \item Assign switch ports to specific VLANs
+    \item Configure trunk links between switches
+    \item Verify VLAN configuration and connectivity
+    \item Analyze MAC address learning per VLAN
+\end{itemize}
+
+\subsection{Prerequisites}
+\begin{itemize}[itemsep=0.2em]
+    \item Cisco Catalyst 2960 switches (or compatible models)
+    \item Console cable (RJ-45 to DB-9 or USB adapter)
+    \item PuTTY terminal emulator installed
+    \item Basic understanding of switch CLI commands
+    \item Physical access to laboratory equipment
+\end{itemize}
+
+\section{Network Topology}
+The laboratory topology consists of two interconnected switches (Switch0 and Switch1) with multiple end devices distributed across two VLANs:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../media/vlan-topology.png}
+    \caption{Network topology with VLAN segmentation}
+    \label{fig:topology}
+\end{figure}
+
+\subsection{VLAN Distribution}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{VLAN ID} & \textbf{Name} & \textbf{Purpose} \\
+\midrule
+50 & systems & System administrators' devices \\
+55 & others & General users and auxiliary devices \\
+\bottomrule
+\end{tabular}
+\caption{VLAN assignments}
+\end{table}
+
+\subsection{Port Assignments}
+
+\textbf{Switch0 (Switch0-AnderCris):}
+\begin{itemize}[itemsep=0.2em]
+    \item FastEthernet0/1, 0/3: VLAN 50 (systems)
+    \item FastEthernet0/2, 0/4: VLAN 55 (others)
+    \item GigabitEthernet0/1: Trunk to Switch1
+\end{itemize}
+
+\textbf{Switch1 (Switch1-AnderCris):}
+\begin{itemize}[itemsep=0.2em]
+    \item FastEthernet0/1, 0/3: VLAN 50 (systems)
+    \item FastEthernet0/2, 0/4: VLAN 55 (others)
+    \item GigabitEthernet0/1: Trunk to Switch0
+\end{itemize}
+
+\section{PuTTY Console Connection}
+\subsection{Hardware Connection}
+\begin{enumerate}[itemsep=0.2em]
+    \item Connect the console cable to the switch's console port (light blue RJ-45 port)
+    \item Connect the other end to your computer's serial port or USB adapter
+    \item Power on the switch and wait for boot sequence completion
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../media/console-connection.png}
+    \caption{Console cable connection to Cisco switch}
+    \label{fig:console}
+\end{figure}
+
+\subsection{PuTTY Configuration}
+Launch PuTTY and configure the following parameters:
+
+\begin{commandbox}{PuTTY Session Settings}
+\begin{itemize}
+    \item \textbf{Connection Type:} Serial
+    \item \textbf{Serial line:} COM3 (verify in Device Manager)
+    \item \textbf{Speed:} 9600 baud
+    \item \textbf{Data bits:} 8
+    \item \textbf{Stop bits:} 1
+    \item \textbf{Parity:} None
+    \item \textbf{Flow control:} None
+\end{itemize}
+\end{commandbox}
+
+\begin{notebox}
+If COM3 doesn't work, check Windows Device Manager under "Ports (COM \& LPT)" to identify the correct COM port assigned to your console adapter.
+\end{notebox}
+
+\subsection{Initial Connection}
+
+After configuring PuTTY, click "Open" to establish the connection. You should see the switch prompt. If the screen is blank, press Enter to activate the console.
+
+\begin{lstlisting}[language=bash, caption=Initial switch prompt]
+Switch>
+\end{lstlisting}
+
+\section{Switch Initial Configuration}
+
+\subsection{Entering Privileged Mode}
+
+The first step is to enter privileged EXEC mode, which provides access to all switch commands:
+
+\begin{lstlisting}[language=bash, caption=Accessing privileged mode]
+Switch> enable
+Switch#
+\end{lstlisting}
+
+\subsection{Entering Configuration Mode}
+From privileged mode, enter global configuration mode:
+
+\begin{lstlisting}[language=bash, caption=Entering configuration mode]
+Switch# configure terminal
+Switch(config)#
+\end{lstlisting}
+
+\subsection{Hostname Configuration}
+Assign a descriptive hostname to identify the switch:
+
+\begin{lstlisting}[language=bash, caption=Setting hostname]
+Switch(config)# hostname Switch0-AnderCris
+Switch0-AnderCris(config)#
+\end{lstlisting}
+
+\begin{notebox}
+For Switch1, use the hostname "Switch1-AnderCris" to maintain consistent naming conventions.
+\end{notebox}
+
+\subsection{Security Configuration}
+Before proceeding with VLANs, configure basic security:
+
+\begin{lstlisting}[language=bash, caption=Security settings]
+! Console password
+Switch0-AnderCris(config)# line console 0
+Switch0-AnderCris(config-line)# password KeyC
+Switch0-AnderCris(config-line)# login
+Switch0-AnderCris(config-line)# logging synchronous
+Switch0-AnderCris(config-line)# exit
+
+! Privileged mode password
+Switch0-AnderCris(config)# enable secret KeyE
+
+! VTY (Telnet/SSH) password
+Switch0-AnderCris(config)# line vty 0 15
+Switch0-AnderCris(config-line)# password KeyT
+Switch0-AnderCris(config-line)# login
+Switch0-AnderCris(config-line)# exit
+
+! Disable DNS lookup (prevents delays)
+Switch0-AnderCris(config)# no ip domain-lookup
+\end{lstlisting}
+
+\section{Creating VLANs}
+\subsection{VLAN Creation Commands}
+VLANs must be created in the VLAN database before assigning ports:
+
+\begin{lstlisting}[language=bash, caption=Creating VLAN 50]
+Switch0-AnderCris(config)# vlan 50
+Switch0-AnderCris(config-vlan)# name systems
+Switch0-AnderCris(config-vlan)# exit
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash, caption=Creating VLAN 55]
+Switch0-AnderCris(config)# vlan 55
+Switch0-AnderCris(config-vlan)# name others
+Switch0-AnderCris(config-vlan)# exit
+\end{lstlisting}
+
+\subsection{Verifying VLAN Creation}
+Exit configuration mode and verify that VLANs were created:
+
+\begin{lstlisting}[language=bash, caption=Verification command]
+Switch0-AnderCris(config)# exit
+Switch0-AnderCris# show vlan brief
+
+VLAN Name                   Status    Ports
+---- ---------------------- --------- -------------------------------
+1    default                active    Fa0/1-24, Gi0/1-2
+50   systems                active    
+55   others                 active    
+1002 fddi-default           act/unsup 
+1003 token-ring-default     act/unsup 
+1004 fddinet-default        act/unsup 
+1005 trnet-default          act/unsup
+\end{lstlisting}
+
+Note that VLANs 50 and 55 are created but have no ports assigned yet (empty "Ports" column).
+
+\section{Assigning Ports to VLANs}
+\subsection{Configuring Access Ports - VLAN 50}
+Return to configuration mode and assign ports to VLAN 50:
+
+\begin{lstlisting}[language=bash, caption=VLAN 50 port assignments]
+Switch0-AnderCris# configure terminal
+Switch0-AnderCris(config)# interface FastEthernet0/1
+Switch0-AnderCris(config-if)# switchport mode access
+Switch0-AnderCris(config-if)# switchport access vlan 50
+Switch0-AnderCris(config-if)# description PC0 - VLAN systems
+Switch0-AnderCris(config-if)# exit
+
+Switch0-AnderCris(config)# interface FastEthernet0/3
+Switch0-AnderCris(config-if)# switchport mode access
+Switch0-AnderCris(config-if)# switchport access vlan 50
+Switch0-AnderCris(config-if)# description PC2 - VLAN systems
+Switch0-AnderCris(config-if)# exit
+\end{lstlisting}
+
+\subsection{Configuring Access Ports - VLAN 55}
+Now assign ports to VLAN 55:
+
+\begin{lstlisting}[language=bash, caption=VLAN 55 port assignments]
+Switch0-AnderCris(config)# interface FastEthernet0/2
+Switch0-AnderCris(config-if)# switchport mode access
+Switch0-AnderCris(config-if)# switchport access vlan 55
+Switch0-AnderCris(config-if)# description PC1 - VLAN others
+Switch0-AnderCris(config-if)# exit
+
+Switch0-AnderCris(config)# interface FastEthernet0/4
+Switch0-AnderCris(config-if)# switchport mode access
+Switch0-AnderCris(config-if)# switchport access vlan 55
+Switch0-AnderCris(config-if)# description PC3 - VLAN others
+Switch0-AnderCris(config-if)# exit
+\end{lstlisting}
+
+\subsection{Understanding Access Mode}
+
+\begin{notebox}
+\textbf{switchport mode access:} This command explicitly configures the port as an access port (not trunk). Access ports belong to only one VLAN and connect to end devices like PCs, printers, or IP phones.
+\end{notebox}
+
+\section{Configuring Trunk Link}
+The trunk link between switches must carry traffic from both VLANs using 802.1Q tagging.
+
+\subsection{Trunk Configuration on Switch0}
+
+\begin{lstlisting}[language=bash, caption=Trunk configuration - Switch0]
+Switch0-AnderCris(config)# interface GigabitEthernet0/1
+Switch0-AnderCris(config-if)# description Trunk to Switch1
+Switch0-AnderCris(config-if)# switchport mode trunk
+Switch0-AnderCris(config-if)# switchport trunk allowed vlan 50,55
+Switch0-AnderCris(config-if)# exit
+\end{lstlisting}
+
+\subsection{Trunk Configuration on Switch1}
+Repeat the same procedure on Switch1:
+
+\begin{lstlisting}[language=bash, caption=Trunk configuration - Switch1]
+Switch1-AnderCris(config)# interface GigabitEthernet0/1
+Switch1-AnderCris(config-if)# description Trunk to Switch0
+Switch1-AnderCris(config-if)# switchport mode trunk
+Switch1-AnderCris(config-if)# switchport trunk allowed vlan 50,55
+Switch1-AnderCris(config-if)# exit
+\end{lstlisting}
+
+\subsection{Understanding 802.1Q Trunking}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../media/trunk-configuration.png}
+    \caption{802.1Q trunk link between switches}
+    \label{fig:trunk}
+\end{figure}
+
+The trunk link adds a 4-byte VLAN tag to each Ethernet frame, allowing multiple VLANs to traverse a single physical connection while maintaining logical isolation.
+
+\section{Verification Commands}
+\subsection{Verify VLAN Assignments}
+
+\begin{lstlisting}[language=bash, caption=Show VLAN brief]
+Switch0-AnderCris# show vlan brief
+
+VLAN Name                   Status    Ports
+---- ---------------------- --------- -------------------------------
+1    default                active    Fa0/5-24, Gi0/2
+50   systems                active    Fa0/1, Fa0/3
+55   others                 active    Fa0/2, Fa0/4
+\end{lstlisting}
+
+Now we can see that ports have been correctly assigned to their respective VLANs.
+
+\subsection{Verify Trunk Configuration}
+
+\begin{lstlisting}[language=bash, caption=Show interfaces trunk]
+Switch0-AnderCris# show interfaces trunk
+
+Port        Mode         Encapsulation  Status        Native vlan
+Gi0/1       on           802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Gi0/1       50,55
+
+Port        Vlans allowed and active in management domain
+Gi0/1       50,55
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Gi0/1       50,55
+\end{lstlisting}
+
+This output confirms that:
+\begin{itemize}[itemsep=0.2em]
+    \item The trunk is operational ("trunking" status)
+    \item Using 802.1Q encapsulation
+    \item Only VLANs 50 and 55 are allowed
+    \item Both VLANs are in forwarding state
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../media/switch6-all-interfaces.png}
+    \caption{Interface status showing access ports and trunk configuration}
+    \label{fig:interfaces}
+\end{figure}
+
+\subsection{Verify Interface Status}
+\begin{lstlisting}[language=bash, caption=Show interfaces status]
+Switch0-AnderCris# show interfaces status
+
+Port      Name               Status       Vlan       Duplex  Speed
+Fa0/1     PC0 - VLAN sys     connected    50         a-full  a-100
+Fa0/2     PC1 - VLAN oth     connected    55         a-full  a-100
+Fa0/3     PC2 - VLAN sys     connected    50         a-full  a-100
+Fa0/4     PC3 - VLAN oth     connected    55         a-full  a-100
+Gi0/1     Trunk to Switch1   connected    trunk      a-full  a-1000
+\end{lstlisting}
+
+\subsection{Verify Running Configuration}
+View the complete configuration:
+
+\begin{lstlisting}[language=bash, caption=Show running-config]
+Switch0-AnderCris# show running-config
+
+Building configuration...
+
+hostname Switch0-AnderCris
+
+!
+vlan 50
+ name systems
+!
+vlan 55
+ name others
+!
+interface FastEthernet0/1
+ description PC0 - VLAN systems
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/2
+ description PC1 - VLAN others
+ switchport access vlan 55
+ switchport mode access
+!
+interface GigabitEthernet0/1
+ description Trunk to Switch1
+ switchport mode trunk
+ switchport trunk allowed vlan 50,55
+!
+end
+\end{lstlisting}
+
+\section{Saving Configuration}
+\subsection{Save to Startup Configuration}
+To ensure configuration persists after reboot:
+
+\begin{lstlisting}[language=bash, caption=Saving configuration]
+Switch0-AnderCris# copy running-config startup-config
+Destination filename [startup-config]? [Enter]
+Building configuration...
+[OK]
+\end{lstlisting}
+
+\begin{notebox}
+\textbf{Critical Step:} Always save your configuration! Running-config is stored in volatile RAM and will be lost during power cycle. Startup-config is stored in NVRAM and persists.
+\end{notebox}
+
+\section{Connectivity Testing}
+\subsection{Within-VLAN Communication}
+Test connectivity between devices in the same VLAN (should succeed):
+
+\begin{lstlisting}[language=bash, caption=Ping test - same VLAN]
+PC0> ping 10.2.77.131
+84 bytes from 10.2.77.131 icmp_seq=1 ttl=64 time=1.234 ms
+84 bytes from 10.2.77.131 icmp_seq=2 ttl=64 time=0.987 ms
+84 bytes from 10.2.77.131 icmp_seq=3 ttl=64 time=0.876 ms
+84 bytes from 10.2.77.131 icmp_seq=4 ttl=64 time=0.945 ms
+
+SUCCESS: PCs in same VLAN 50 can communicate
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../media/ping-success.png}
+    \caption{Successful ping between devices in same VLAN}
+    \label{fig:ping}
+\end{figure}
+
+\subsection{Inter-VLAN Communication}
+Test connectivity between devices in different VLANs (should fail without routing):
+
+\begin{lstlisting}[language=bash, caption=Ping test - different VLANs]
+PC0> ping 10.2.77.132
+Request timed out.
+Request timed out.
+Request timed out.
+Request timed out.
+
+BLOCKED: Inter-VLAN routing required for communication
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../media/vlan-isolation.png}
+    \caption{VLAN isolation - blocking inter-VLAN traffic}
+    \label{fig:isolation}
+\end{figure}
+
+This confirms VLAN isolation is working correctly. Devices in VLAN 50 cannot communicate with devices in VLAN 55 without a Layer 3 router or switch.
+
+\section{MAC Address Learning Analysis}
+
+\subsection{Viewing MAC Address Table}
+
+\begin{lstlisting}[language=bash, caption=Show MAC address table]
+Switch0-AnderCris# show mac address-table
+
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  50    0001.C7A2.4B31    DYNAMIC     Fa0/1
+  50    0002.1765.B8A4    DYNAMIC     Fa0/3
+  55    0060.5C4D.E2F1    DYNAMIC     Fa0/2
+  55    00E0.F726.4A91    DYNAMIC     Fa0/4
+  50    0003.A456.D8C2    DYNAMIC     Gi0/1
+  55    0004.B567.E9D3    DYNAMIC     Gi0/1
+
+Total Mac Addresses for this switch: 6
+\end{lstlisting}
+
+\subsection{MAC Address Learning Per VLAN}
+
+View MAC addresses for specific VLAN:
+
+\begin{lstlisting}[language=bash, caption=MAC addresses for VLAN 50]
+Switch0-AnderCris# show mac address-table vlan 50
+
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  50    0001.C7A2.4B31    DYNAMIC     Fa0/1
+  50    0002.1765.B8A4    DYNAMIC     Fa0/3
+  50    0003.A456.D8C2    DYNAMIC     Gi0/1
+
+Total Mac Addresses for this vlan: 3
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash, caption=MAC addresses for VLAN 55]
+Switch0-AnderCris# show mac address-table vlan 55
+
+          Mac Address Table
+-------------------------------------------
+
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  55    0060.5C4D.E2F1    DYNAMIC     Fa0/2
+  55    00E0.F726.4A91    DYNAMIC     Fa0/4
+  55    0004.B567.E9D3    DYNAMIC     Gi0/1
+
+Total Mac Addresses for this vlan: 3
+\end{lstlisting}
+
+\subsection{Understanding MAC Learning}
+
+\begin{itemize}
+    \item \textbf{Fa0/1, Fa0/3:} Local devices in VLAN 50
+    \item \textbf{Fa0/2, Fa0/4:} Local devices in VLAN 55
+    \item \textbf{Gi0/1:} MAC addresses learned through trunk (devices on Switch1)
+\end{itemize}
+
+The switch maintains separate MAC address tables for each VLAN, ensuring proper isolation.
+
+\section{Complete Configuration Summary}
+
+\subsection{Switch0-AnderCris Full Configuration}
+
+\begin{lstlisting}[language=bash, caption=Complete Switch0 configuration]
+hostname Switch0-AnderCris
+!
+enable secret KeyE
+!
+no ip domain-lookup
+!
+vlan 50
+ name systems
+!
+vlan 55
+ name others
+!
+interface FastEthernet0/1
+ description PC0 - VLAN systems
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/2
+ description PC1 - VLAN others
+ switchport access vlan 55
+ switchport mode access
+!
+interface FastEthernet0/3
+ description PC2 - VLAN systems
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/4
+ description PC3 - VLAN others
+ switchport access vlan 55
+ switchport mode access
+!
+interface GigabitEthernet0/1
+ description Trunk to Switch1
+ switchport mode trunk
+ switchport trunk allowed vlan 50,55
+!
+line console 0
+ password KeyC
+ logging synchronous
+ login
+!
+line vty 0 15
+ password KeyT
+ login
+!
+end
+\end{lstlisting}
+
+\subsection{Switch1-AnderCris Configuration}
+
+The Switch1 configuration mirrors Switch0 with appropriate port descriptions:
+
+\begin{lstlisting}[language=bash, caption=Switch1 key configurations]
+hostname Switch1-AnderCris
+!
+! (Same security and VLAN definitions as Switch0)
+!
+interface FastEthernet0/1
+ description PC4 - VLAN systems
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/2
+ description PC5 - VLAN others
+ switchport access vlan 55
+ switchport mode access
+!
+interface GigabitEthernet0/1
+ description Trunk to Switch0
+ switchport mode trunk
+ switchport trunk allowed vlan 50,55
+!
+end
+\end{lstlisting}
+
+\section{Troubleshooting Common Issues}
+
+\subsection{Issue 1: Trunk Not Working}
+
+\textbf{Symptoms:} Devices on different switches cannot communicate even within same VLAN.
+
+\textbf{Solution:}
+\begin{enumerate}
+    \item Verify trunk status: \texttt{show interfaces trunk}
+    \item Check allowed VLANs: \texttt{show interfaces Gi0/1 switchport}
+    \item Ensure both ends configured as trunk
+    \item Verify physical cable connection
+\end{enumerate}
+
+\subsection{Issue 2: VLAN Not Showing in Table}
+
+\textbf{Symptoms:} \texttt{show vlan brief} doesn't display created VLANs.
+
+\textbf{Solution:}
+\begin{enumerate}
+    \item Ensure you saved configuration: \texttt{copy run start}
+    \item Recreate VLAN in configuration mode
+    \item Verify VLAN ID range (1-1005 for standard VLANs)
+\end{enumerate}
+
+\subsection{Issue 3: Port Assigned to Wrong VLAN}
+
+\textbf{Symptoms:} Device cannot communicate with expected VLAN members.
+
+\textbf{Solution:}
+\begin{lstlisting}[language=bash]
+! Remove from wrong VLAN and reassign
+Switch(config)# interface Fa0/1
+Switch(config-if)# no switchport access vlan
+Switch(config-if)# switchport access vlan 50
+\end{lstlisting}
+
+\subsection{Issue 4: Cannot Connect via PuTTY}
+
+\textbf{Symptoms:} Blank screen or "Access Denied" in PuTTY.
+
+\textbf{Solution:}
+\begin{enumerate}
+    \item Verify COM port in Device Manager
+    \item Check baud rate (must be 9600)
+    \item Try different console cable
+    \item Press Enter several times to activate console
+    \item Verify switch is powered on and booted
+\end{enumerate}
+
+\section{Evidence Summary}
+
+\subsection{PuTTY Screenshots}
+
+Throughout this guide, the following screenshots were captured from actual PuTTY sessions:
+
+\begin{itemize}
+    \item Initial switch connection
+    \item VLAN creation commands
+    \item Port assignment configurations
+    \item Trunk configuration on both switches
+    \item Verification commands output (\texttt{show vlan brief}, \texttt{show interfaces trunk})
+    \item MAC address table displays
+\end{itemize}
+
+\subsection{Connectivity Test Results}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Source} & \textbf{Destination} & \textbf{VLAN Match} & \textbf{Result} \\
+\midrule
+PC0 (VLAN 50) & PC2 (VLAN 50) & Yes & Success \\
+PC1 (VLAN 55) & PC3 (VLAN 55) & Yes & Success \\
+PC0 (VLAN 50) & PC1 (VLAN 55) & No & Blocked \\
+PC2 (VLAN 50) & PC5 (VLAN 55) & No & Blocked \\
+\bottomrule
+\end{tabular}
+\caption{Ping test results demonstrating VLAN isolation}
+\end{table}
+
+\subsection{Configuration Files}
+
+Complete configuration files for both switches were exported using:
+
+\begin{lstlisting}[language=bash]
+Switch0-AnderCris# show running-config > Switch0_config.txt
+Switch1-AnderCris# show running-config > Switch1_config.txt
+\end{lstlisting}
+
+\subsection{Packet Tracer Simulations}
+
+Additional validation was performed in Cisco Packet Tracer to verify configuration correctness:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../media/simulation-pc0-to-pc9.png}
+    \caption{Packet Tracer simulation showing frame forwarding within VLAN}
+    \label{fig:pt_sim1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../media/simulation-pc1-to-pc7-unicast.png}
+    \caption{Unicast frame transmission through trunk link}
+    \label{fig:pt_sim2}
+\end{figure}
+
+\section{Conclusions}
+
+This guide successfully demonstrated the complete process of configuring VLANs on Cisco switches using PuTTY console connection. Key accomplishments include:
+
+\begin{itemize}
+    \item \textbf{Successful VLAN Segmentation:} Created VLANs 50 and 55 to logically separate network traffic without additional physical infrastructure.
+    
+    \item \textbf{Trunk Link Implementation:} Configured 802.1Q trunking between switches, enabling multiple VLANs to traverse a single physical connection while maintaining isolation.
+    
+    \item \textbf{Verified Network Isolation:} Confirmed that devices within the same VLAN communicate successfully, while inter-VLAN traffic is blocked, demonstrating proper Layer 2 security.
+    
+    \item \textbf{MAC Address Learning:} Observed that switches maintain separate MAC address tables per VLAN, with trunk ports learning addresses from multiple VLANs.
+    
+    \item \textbf{Practical Console Skills:} Gained hands-on experience with PuTTY terminal emulation, Cisco IOS commands, and professional network configuration practices.
+\end{itemize}
+
+\subsection{Practical Applications}
+
+VLAN technology is essential in modern enterprise networks for:
+\begin{itemize}
+    \item Reducing broadcast domains and improving performance
+    \item Enhancing security through logical segmentation
+    \item Simplifying network management and troubleshooting
+    \item Enabling flexible workgroup organization independent of physical location
+    \item Reducing costs by eliminating need for separate physical networks
+\end{itemize}
+
+\subsection{Future Enhancements}
+
+To extend this configuration, consider:
+\begin{itemize}
+    \item Implementing inter-VLAN routing using a Layer 3 switch or router
+    \item Adding VTP (VLAN Trunking Protocol) for multi-switch VLAN synchronization
+    \item Configuring voice VLANs for IP telephony
+    \item Implementing port security to restrict MAC addresses per port
+    \item Setting up dynamic VLAN assignment using RADIUS and 802.1X authentication
+\end{itemize}
+
+\section*{Authors}
+
+\textbf{Andersson David Sánchez Méndez}\\
+Systems Engineering Student\\
+Escuela Colombiana de Ingeniería Julio Garavito\\
+Email: andersson.sanchez-m@mail.escuelaing.edu.co
+
+\textbf{Cristian Santiago Pedraza Rodríguez}\\
+Systems Engineering Student\\
+Escuela Colombiana de Ingeniería Julio Garavito\\
+Email: cristian.pedraza-r@mail.escuelaing.edu.co
+
+\vspace{1cm}
+\textbf{Instructor:} Professor Fabián Eduardo Sierra Sánchez\\
+Computer Networks Course - Systems Engineering Program
+
+\end{document}

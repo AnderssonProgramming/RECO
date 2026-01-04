@@ -1,0 +1,1147 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{parskip}
+
+% Geometry settings for better two-column layout
+\geometry{
+    a4paper,
+    top=2cm,
+    bottom=2cm,
+    left=1.5cm,
+    right=1.5cm,
+    headsep=0.5cm,
+    footskip=1cm
+}
+
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Lab 05 - Databases and Network Protocols}
+\lhead{Computer Networks}
+\cfoot{\thepage}
+
+% Set page numbering
+\pagenumbering{arabic}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=leftline,
+    framerule=2pt,
+    rulecolor=\color{blue!30},
+    backgroundcolor=\color{gray!5},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    columns=flexible,
+    aboveskip=\medskipamount,
+    belowskip=\medskipamount,
+    xleftmargin=15pt
+}
+
+% Section formatting
+\titleformat{\section}
+{\color{blue!80!black}\normalfont\large\bfseries}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\color{blue!60!black}\normalfont\normalsize\bfseries}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\color{blue!40!black}\normalfont\small\bfseries}
+{\thesubsubsection}{1em}{}
+
+% Custom boxes
+\newtcolorbox{exercise}[1]{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    colbacktitle=blue!80!black,
+    coltitle=white,
+    title={\textbf{#1}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+\newtcolorbox{solution}[1]{
+    colback=green!5!white,
+    colframe=green!75!black,
+    colbacktitle=green!80!black,
+    coltitle=white,
+    title={\textbf{#1}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+\newtcolorbox{note}{
+    colback=yellow!10!white,
+    colframe=orange!75!black,
+    colbacktitle=orange!80!black,
+    coltitle=white,
+    title={\textbf{Important Note}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+% List formatting
+\setlist[itemize]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+\setlist[enumerate]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+% Caption formatting
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    format=hang,
+    indention=0pt,
+    margin=10pt
+}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    urlcolor=blue!80!black,
+    citecolor=blue!80!black,
+    pdfborder={0 0 0}
+}
+
+% Title page
+\title{\vspace{-1cm}
+    \begin{center}
+        \includegraphics[width=0.25\textwidth]{media/university_logo.png}
+    \end{center}
+    \vspace{1.5cm}
+    \textbf{\Large Computer Networks Laboratory}\\
+    \vspace{1cm}
+    \textbf{\huge Laboratory No. 5}\\
+    \textbf{\huge Databases and Network Protocols}\\
+    \vspace{1.5cm}
+    \large Database Management Systems Installation and Network Protocol Analysis
+}
+
+\author{
+    \vspace{2cm}
+    \textbf{Students:} \\
+    \vspace{0.3cm}
+    Cristian Santiago Pedraza Rodríguez \\
+    Andersson David Sánchez Méndez \\
+    \vspace{1.5cm} \\
+    \textbf{Instructor:} Professor Fabian Eduardo Sierra Sánchez \\
+    \vspace{0.5cm}
+    \textbf{Course:} Computer Networks \\
+    \vspace{0.3cm}
+    \textbf{Institution:} Escuela Colombiana de Ingeniería Julio Garavito \\
+    \vspace{2cm}
+}
+
+\date{\today}
+\begin{document}
+
+% Title page (single column)
+\onecolumn
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% Table of contents (single column)
+\tableofcontents
+\newpage
+
+% Start two-column layout for content
+\twocolumn
+
+\section{Objectives}
+
+\begin{itemize}
+    \item Install and configure database management systems (PostgreSQL, SQL Server, Azure SQL Database)
+    \item Create users and databases with proper access control
+    \item Design relational database schemas with multiple tables
+    \item Analyze network protocols using Wireshark
+    \item Configure remote database access and auto-start services
+    \item Understand cloud computing concepts and Azure services
+\end{itemize}
+
+\section{Tools and Equipment}
+
+\subsection{Required Software}
+\begin{itemize}
+    \item Virtualization software (VMware, VirtualBox)
+    \item Linux Slackware virtual machine
+    \item Windows Server virtual machine
+    \item Wireshark network protocol analyzer
+    \item DBeaver database client
+    \item Microsoft Azure account (free tier)
+\end{itemize}
+
+\subsection{Operating Systems}
+\begin{itemize}
+    \item Linux Slackware 15.0
+    \item Windows Server 2019/2022
+    \item Local Windows machine for testing
+\end{itemize}
+
+\section{Introduction}
+
+Modern enterprise IT infrastructure relies heavily on robust database management systems to store, manage, and retrieve organizational data. This laboratory explores the installation, configuration, and management of various database platforms across different operating systems, while also examining the network protocols that enable communication between database clients and servers.
+
+Database Management Systems (DBMS) can be deployed in multiple environments:
+\begin{enumerate}
+    \item \textbf{On-Premise Infrastructure} - Databases hosted in company datacenters with full administrative control
+    \item \textbf{Cloud Infrastructure} - Managed database services (e.g., Azure SQL Database) with scalability and high availability
+    \item \textbf{Hybrid Solutions} - Combination of on-premise and cloud deployments
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/network-infrastructure.png}
+    \caption{Enterprise network infrastructure with database servers}
+    \label{fig:network_infrastructure}
+\end{figure}
+
+This laboratory focuses on three major components:
+\begin{itemize}
+    \item Database installation and configuration on Linux and Windows platforms
+    \item Network protocol analysis for understanding data transmission
+    \item Cloud database deployment and management in Microsoft Azure
+\end{itemize}
+
+\section{Part 1: Network Protocol Analysis}
+
+Before deploying database systems, understanding the underlying network protocols is essential for troubleshooting and optimization.
+
+\begin{exercise}{Exercise 1: DNS Message Analysis}
+\textbf{Objective:} Analyze DNS name resolution process using Wireshark.
+
+\textbf{Procedure:}
+\begin{enumerate}
+    \item Start Wireshark packet capture
+    \item Navigate to \url{http://www.google.com}
+    \item Apply filter: \texttt{dns}
+    \item Examine DNS query and response messages
+\end{enumerate}
+\end{exercise}
+
+\textbf{DNS Message Fields Identified:}
+\begin{itemize}
+    \item \textbf{Transaction ID}: Unique identifier matching query with response
+    \item \textbf{Flags}: QR (Query/Response), Opcode, RD (Recursion Desired), RA (Recursion Available)
+    \item \textbf{Questions}: Number of queries (typically 1)
+    \item \textbf{Answer RRs}: Resource records in response
+    \item \textbf{Query Name}: Domain being resolved (www.google.com)
+    \item \textbf{Query Type}: A (IPv4) or AAAA (IPv6)
+    \item \textbf{TTL}: Time to live for caching
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/dns-wireshark.jpg}
+    \caption{DNS query and response packets in Wireshark}
+    \label{fig:dns_wireshark}
+\end{figure}
+
+\begin{exercise}{Exercise 2: HTTP Message Analysis}
+\textbf{Objective:} Examine HTTP protocol headers and request/response cycle.
+
+\textbf{Target URL:} \url{http://profesores.is.escuelaing.edu.co/~csantiago/}
+
+\textbf{Filter:} \texttt{http}
+\end{exercise}
+
+\textbf{HTTP Request Header Fields:}
+\begin{itemize}
+    \item \textbf{Method}: GET (requesting resource)
+    \item \textbf{URI}: Requested resource path
+    \item \textbf{Version}: HTTP/1.1
+    \item \textbf{Host}: Destination server
+    \item \textbf{User-Agent}: Browser information
+    \item \textbf{Accept}: MIME types client can handle
+    \item \textbf{Accept-Language}: Preferred languages
+    \item \textbf{Accept-Encoding}: Compression methods supported
+\end{itemize}
+
+\textbf{HTTP Response Header Fields:}
+\begin{itemize}
+    \item \textbf{Status Code}: 200 OK, 404 Not Found, etc.
+    \item \textbf{Server}: Web server software
+    \item \textbf{Content-Type}: MIME type of response
+    \item \textbf{Content-Length}: Response body size
+    \item \textbf{Date}: Response timestamp
+    \item \textbf{Last-Modified}: Resource modification date
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/http-wireshark.jpg}
+    \caption{HTTP request and response packets in Wireshark}
+    \label{fig:http_wireshark}
+\end{figure}
+
+\begin{exercise}{Exercise 3: Ethernet Frame Analysis}
+\textbf{Objective:} Analyze layer 2 Ethernet frame structure.
+
+\textbf{Filter:} \texttt{http.request.method == "GET"}
+\end{exercise}
+
+\textbf{Ethernet II Frame Fields:}
+\begin{itemize}
+    \item \textbf{Destination MAC} (6 bytes): Physical address of destination
+    \item \textbf{Source MAC} (6 bytes): Physical address of sender
+    \item \textbf{EtherType} (2 bytes): Protocol type (0x0800 for IPv4)
+    \item \textbf{Payload}: Upper layer protocols (IP, TCP, HTTP)
+    \item \textbf{FCS}: Frame Check Sequence for error detection
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/ethernet-wireshark.jpg}
+    \caption{Ethernet frame structure in Wireshark}
+    \label{fig:ethernet_wireshark}
+\end{figure}
+
+\section{Part 2: PostgreSQL on Linux Slackware}
+
+\begin{exercise}{Exercise 4: PostgreSQL Installation}
+\textbf{Platform:} Linux Slackware 15.0 VM
+
+\textbf{Team Members:} Cristian Santiago Pedraza Rodríguez, Andersson David Sánchez Méndez
+\end{exercise}
+
+\subsection{4.1 Installation Process}
+
+PostgreSQL was not available in standard Slackware repositories, requiring installation from SlackBuilds.org:
+
+\begin{lstlisting}[language=bash]
+# Create build directory
+mkdir -p /root/slackbuilds
+cd /root/slackbuilds
+
+# Download PostgreSQL SlackBuild
+wget https://slackbuilds.org/slackbuilds/15.0/system/postgresql.tar.gz
+tar xvf postgresql.tar.gz
+cd postgresql
+
+# Download PostgreSQL 14.19 source
+wget https://ftp.postgresql.org/pub/source/v14.19/postgresql-14.19.tar.gz
+
+# Create postgres user and group
+groupadd -g 209 postgres
+useradd -u 209 -g 209 -d /var/lib/pgsql -s /bin/bash postgres
+
+# Build and install
+chmod +x postgresql.SlackBuild
+./postgresql.SlackBuild
+installpkg /tmp/postgresql-14.19-i586-1_SBo.tgz
+\end{lstlisting}
+
+\subsection{4.2 Database Initialization}
+
+\begin{lstlisting}[language=bash]
+# Initialize database cluster
+mkdir -p /var/lib/pgsql/14/data
+chown -R postgres:postgres /var/lib/pgsql
+chmod 700 /var/lib/pgsql/14/data
+
+su - postgres
+initdb -D /var/lib/pgsql/14/data
+exit
+
+# Configure authentication
+nano /var/lib/pgsql/14/data/pg_hba.conf
+# Change 'trust' to 'md5' for password authentication
+
+# Start PostgreSQL
+/etc/rc.d/rc.postgresql start
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{media/postgresql-install.jpg}
+    \caption{PostgreSQL installation on Slackware}
+    \label{fig:postgresql_install}
+\end{figure}
+
+\subsection{4.3 User and Database Creation}
+
+\begin{lstlisting}[language=sql]
+-- Connect as postgres superuser
+psql
+
+-- Create users
+CREATE USER cristian_pedraza WITH PASSWORD 'secure_password1';
+CREATE USER andersson_sanchez WITH PASSWORD 'secure_password2';
+
+-- Create databases
+CREATE DATABASE cristian_tourism OWNER cristian_pedraza;
+CREATE DATABASE andersson_tourism OWNER andersson_sanchez;
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE cristian_tourism TO cristian_pedraza;
+GRANT ALL PRIVILEGES ON DATABASE andersson_tourism TO andersson_sanchez;
+
+-- Verify
+\du
+\l
+\end{lstlisting}
+
+\subsection{4.4 Database Schema Design}
+
+\textbf{Theme:} Colombian Tourist Sites
+
+\textbf{Tables:}
+\begin{enumerate}
+    \item \texttt{departments} - Colombian regions
+    \item \texttt{tourist\_sites} - Tourist destinations
+    \item \texttt{activities} - Available activities at each site
+\end{enumerate}
+
+\begin{lstlisting}[language=sql]
+-- Connect to cristian_tourism database
+psql -U cristian_pedraza -d cristian_tourism
+
+-- Table 1: Departments
+CREATE TABLE departments (
+    department_id SERIAL PRIMARY KEY,
+    department_name VARCHAR(100) NOT NULL UNIQUE,
+    region VARCHAR(50) NOT NULL,
+    description TEXT
+);
+
+-- Table 2: Tourist Sites
+CREATE TABLE tourist_sites (
+    site_id SERIAL PRIMARY KEY,
+    site_name VARCHAR(200) NOT NULL,
+    department_id INTEGER REFERENCES departments(department_id),
+    city VARCHAR(100) NOT NULL,
+    site_type VARCHAR(50) NOT NULL,
+    description TEXT,
+    best_season VARCHAR(50),
+    estimated_cost DECIMAL(10,2),
+    priority INTEGER CHECK (priority BETWEEN 1 AND 5),
+    visited BOOLEAN DEFAULT FALSE
+);
+
+-- Table 3: Activities
+CREATE TABLE activities (
+    activity_id SERIAL PRIMARY KEY,
+    site_id INTEGER REFERENCES tourist_sites(site_id) ON DELETE CASCADE,
+    activity_name VARCHAR(150) NOT NULL,
+    duration_hours DECIMAL(4,1),
+    difficulty_level VARCHAR(20),
+    cost DECIMAL(10,2)
+);
+\end{lstlisting}
+
+\subsection{4.5 Data Insertion}
+
+\begin{lstlisting}[language=sql]
+-- Insert departments
+INSERT INTO departments (department_name, region, description) VALUES
+('Bolivar', 'Caribe', 'Coastal region with colonial history'),
+('Cundinamarca', 'Andina', 'Central highlands containing Bogota'),
+('Antioquia', 'Andina', 'Coffee region with vibrant culture'),
+('Magdalena', 'Caribe', 'Sierra Nevada and Caribbean beaches'),
+('San Andres y Providencia', 'Insular', 'Caribbean islands');
+
+-- Insert tourist sites
+INSERT INTO tourist_sites (site_name, department_id, city, site_type, best_season, estimated_cost, priority) VALUES
+('Cartagena Walled City', 1, 'Cartagena', 'Historical', 'December-March', 800000.00, 5),
+('Tayrona National Park', 4, 'Santa Marta', 'Natural', 'December-March', 500000.00, 5),
+('Guatape and El Penol', 3, 'Guatape', 'Natural/Cultural', 'Year-round', 300000.00, 4),
+('Salt Cathedral of Zipaquira', 2, 'Zipaquira', 'Religious', 'Year-round', 150000.00, 4),
+('San Andres Island', 5, 'San Andres', 'Beach', 'December-May', 1500000.00, 5);
+
+-- Insert activities
+INSERT INTO activities (site_id, activity_name, duration_hours, difficulty_level, cost) VALUES
+(1, 'Walking tour of old city', 3.0, 'Easy', 50000.00),
+(1, 'Sunset boat tour', 2.5, 'Easy', 80000.00),
+(2, 'Hiking to Cabo San Juan', 4.0, 'Moderate', 60000.00),
+(2, 'Snorkeling', 2.0, 'Easy', 100000.00),
+(3, 'Climb El Penol rock', 1.5, 'Moderate', 25000.00);
+
+-- Verify data
+SELECT COUNT(*) FROM departments;
+SELECT COUNT(*) FROM tourist_sites;
+SELECT COUNT(*) FROM activities;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{media/postgresql-data.jpg}
+    \caption{Sample query results from PostgreSQL database}
+    \label{fig:postgresql_data}
+\end{figure}
+
+\section{Part 3: SQL Server on Windows Server}
+
+\begin{exercise}{Exercise 5: SQL Server Installation}
+\textbf{Platform:} Windows Server 2019 VM (accessed via SSH and Remote Desktop)
+
+\textbf{Database Theme:} Monthly Activity Schedule
+\end{exercise}
+
+\subsection{5.1 Remote Access Configuration}
+
+SSH was configured for remote command-line access:
+
+\begin{lstlisting}[language=bash]
+# Enable SSH (PowerShell as Administrator)
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+Start-Service sshd
+Set-Service -Name sshd -StartupType 'Automatic'
+
+# Configure firewall
+New-NetFirewallRule -Name sshd -DisplayName 'OpenSSH Server' -Enabled True -Direction Inbound -Protocol TCP -Action Allow -LocalPort 22
+
+# Connect from local machine
+ssh Administrator@10.2.77.180
+\end{lstlisting}
+
+\subsection{5.2 SQL Server Installation}
+
+Due to language compatibility issues with command-line installation, SQL Server was installed via Remote Desktop GUI:
+
+\begin{enumerate}
+    \item Downloaded SQL Server 2019 Express
+    \item Extracted installation media
+    \item Launched GUI installer (Básico installation)
+    \item Configured mixed-mode authentication
+    \item Set \texttt{sa} password: Admin123!
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{media/sqlserver-install.jpg}
+    \caption{SQL Server installation center}
+    \label{fig:sqlserver_install}
+\end{figure}
+
+\subsection{5.3 User and Database Creation}
+
+\begin{lstlisting}[language=sql]
+-- Create SQL logins
+sqlcmd -S localhost\SQLEXPRESS -E
+
+CREATE LOGIN cristian_pedraza WITH PASSWORD = 'Cris123!', CHECK_POLICY = OFF;
+GO
+CREATE LOGIN andersson_sanchez WITH PASSWORD = 'Ander123!', CHECK_POLICY = OFF;
+GO
+
+-- Create databases
+CREATE DATABASE cristian_schedule;
+GO
+CREATE DATABASE andersson_schedule;
+GO
+
+-- Create database users
+USE cristian_schedule;
+CREATE USER cristian_pedraza FOR LOGIN cristian_pedraza;
+ALTER ROLE db_owner ADD MEMBER cristian_pedraza;
+GO
+
+USE andersson_schedule;
+CREATE USER andersson_sanchez FOR LOGIN andersson_sanchez;
+ALTER ROLE db_owner ADD MEMBER andersson_sanchez;
+GO
+\end{lstlisting}
+
+\subsection{5.4 Database Schema Design}
+
+\textbf{Tables for Activity Schedule:}
+\begin{enumerate}
+    \item \texttt{categories} - Activity categories
+    \item \texttt{priorities} - Priority levels
+    \item \texttt{activities} - Scheduled activities
+\end{enumerate}
+
+\begin{lstlisting}[language=sql]
+USE cristian_schedule;
+GO
+
+-- Table 1: Categories
+CREATE TABLE categories (
+    category_id INT PRIMARY KEY IDENTITY(1,1),
+    category_name NVARCHAR(50) NOT NULL UNIQUE,
+    color_code NVARCHAR(7),
+    description NVARCHAR(200)
+);
+
+-- Table 2: Priorities
+CREATE TABLE priorities (
+    priority_id INT PRIMARY KEY IDENTITY(1,1),
+    priority_level NVARCHAR(20) NOT NULL UNIQUE,
+    urgency_score INT CHECK (urgency_score BETWEEN 1 AND 5),
+    description NVARCHAR(200)
+);
+
+-- Table 3: Activities
+CREATE TABLE activities (
+    activity_id INT PRIMARY KEY IDENTITY(1,1),
+    activity_title NVARCHAR(200) NOT NULL,
+    activity_description NVARCHAR(MAX),
+    category_id INT FOREIGN KEY REFERENCES categories(category_id),
+    priority_id INT FOREIGN KEY REFERENCES priorities(priority_id),
+    activity_date DATE NOT NULL,
+    start_time TIME,
+    end_time TIME,
+    location NVARCHAR(200),
+    is_completed BIT DEFAULT 0,
+    created_at DATETIME DEFAULT GETDATE()
+);
+\end{lstlisting}
+
+\subsection{5.5 Data Insertion}
+
+\begin{lstlisting}[language=sql]
+-- Insert categories
+INSERT INTO categories (category_name, color_code, description) VALUES
+('Academic', '#3498db', 'University classes'),
+('Work', '#e74c3c', 'Job activities'),
+('Personal', '#2ecc71', 'Personal development'),
+('Health', '#f39c12', 'Exercise and medical'),
+('Social', '#9b59b6', 'Social events'),
+('Family', '#1abc9c', 'Family time');
+
+-- Insert priorities
+INSERT INTO priorities (priority_level, urgency_score, description) VALUES
+('Critical', 5, 'Immediate'),
+('High', 4, 'Important and urgent'),
+('Medium', 3, 'Important not urgent'),
+('Low', 2, 'Nice to have'),
+('Optional', 1, 'Can postpone');
+
+-- Insert activities (October 2025)
+INSERT INTO activities (activity_title, category_id, priority_id, activity_date, start_time, end_time, location) VALUES
+('Network Protocols Lab', 1, 2, '2025-10-02', '14:00', '18:00', 'Computer Lab'),
+('Database Design Meeting', 1, 2, '2025-10-03', '10:00', '12:00', 'Virtual'),
+('Morning Workout', 4, 3, '2025-10-03', '06:30', '07:30', 'Gym'),
+('SQL Server Install', 1, 2, '2025-10-04', '15:00', '17:00', 'Home'),
+('Data Structures Quiz', 1, 1, '2025-10-07', '08:00', '10:00', 'Room 301');
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{media/sqlserver-data.jpg}
+    \caption{Activity schedule data in SQL Server}
+    \label{fig:sqlserver_data}
+\end{figure}
+
+\section{Part 4: Azure SQL Database}
+
+\begin{exercise}{Exercise 6: Cloud Database Deployment}
+\textbf{Platform:} Microsoft Azure SQL Database
+
+\textbf{Database Theme:} Library Management (Books and Scientific Articles)
+\end{exercise}
+
+\subsection{6.1 Cloud Computing Concepts}
+
+\textbf{What is Cloud Computing?}
+
+Cloud computing is the delivery of computing services (servers, storage, databases, networking, software) over the internet on a pay-as-you-go basis.
+
+\textbf{Advantages of Azure vs On-Premise:}
+\begin{itemize}
+    \item \textbf{Cost Efficiency}: No upfront hardware costs
+    \item \textbf{Scalability}: Easy vertical and horizontal scaling
+    \item \textbf{High Availability}: 99.99\% uptime SLA
+    \item \textbf{Global Reach}: Multiple regions worldwide
+    \item \textbf{Maintenance}: Microsoft handles updates and patches
+    \item \textbf{Disaster Recovery}: Built-in backup and replication
+\end{itemize}
+
+\textbf{Service Models:}
+\begin{itemize}
+    \item \textbf{IaaS}: Virtual Machines, Storage (user manages OS and apps)
+    \item \textbf{PaaS}: Azure SQL Database, App Service (user manages only data and apps)
+    \item \textbf{SaaS}: Microsoft 365, Office 365 (fully managed)
+\end{itemize}
+
+\textbf{Regions and Availability Zones:}
+
+Regions are geographic areas with data centers. Availability Zones are physically separate locations within regions, providing high availability and disaster recovery with 99.99\% uptime SLA.
+
+\textbf{Scaling Strategies:}
+\begin{itemize}
+    \item \textbf{Vertical Scaling}: Increase resources (CPU, RAM) of existing instance
+    \item \textbf{Horizontal Scaling}: Add more instances to distribute load
+\end{itemize}
+
+\textbf{Transport Layer Security:}
+
+Azure SQL Database enforces TLS 1.2+ encryption by default, ensuring all data in transit is encrypted. This differs from local VM databases where TLS must be manually configured.
+
+\textbf{TCP Connection Handling:}
+
+Azure SQL uses a gateway architecture that proxies connections, enabling automatic failover and load balancing. Local VM databases use direct TCP connections with static IP addresses.
+
+\subsection{6.2 Azure SQL Database Creation}
+
+\begin{lstlisting}[language=bash]
+# Azure Portal steps:
+1. Create Resource Group: lab05-database-rg
+2. Create SQL Server: lab05-sql-server-[unique]
+   - Location: East US
+   - Admin: sqladmin
+   - Password: Admin123!@#
+3. Create SQL Database: library_db
+   - Pricing tier: Basic (5 DTU)
+   - Backup storage: Locally-redundant
+4. Configure Firewall:
+   - Allow Azure services: Yes
+   - Add client IP: 192.168.1.2
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{media/azure-portal.jpg}
+    \caption{Azure SQL Database in portal}
+    \label{fig:azure_portal}
+\end{figure}
+
+\subsection{6.3 Database Schema}
+
+\textbf{Tables:}
+\begin{enumerate}
+    \item \texttt{authors} - Author information
+    \item \texttt{books} - Book records
+    \item \texttt{scientific\_articles} - Article records
+\end{enumerate}
+
+\begin{lstlisting}[language=sql]
+-- Table 1: Authors
+CREATE TABLE authors (
+    author_id INT PRIMARY KEY IDENTITY(1,1),
+    first_name NVARCHAR(50) NOT NULL,
+    last_name NVARCHAR(50) NOT NULL,
+    country NVARCHAR(50),
+    birth_year INT,
+    specialty NVARCHAR(100)
+);
+
+-- Table 2: Books
+CREATE TABLE books (
+    book_id INT PRIMARY KEY IDENTITY(1,1),
+    title NVARCHAR(200) NOT NULL,
+    author_id INT FOREIGN KEY REFERENCES authors(author_id),
+    isbn NVARCHAR(20) UNIQUE,
+    publication_year INT,
+    genre NVARCHAR(50),
+    pages INT,
+    language NVARCHAR(30),
+    available_copies INT DEFAULT 1
+);
+
+-- Table 3: Scientific Articles
+CREATE TABLE scientific_articles (
+    article_id INT PRIMARY KEY IDENTITY(1,1),
+    title NVARCHAR(300) NOT NULL,
+    author_id INT FOREIGN KEY REFERENCES authors(author_id),
+    journal_name NVARCHAR(150),
+    publication_date DATE,
+    doi NVARCHAR(100) UNIQUE,
+    field_of_study NVARCHAR(100),
+    citation_count INT DEFAULT 0,
+    open_access BIT DEFAULT 0
+);
+\end{lstlisting}
+
+\subsection{6.4 Sample Data}
+
+\begin{lstlisting}[language=sql]
+-- Insert authors
+INSERT INTO authors (first_name, last_name, country, birth_year, specialty) VALUES
+('Gabriel', 'Garcia Marquez', 'Colombia', 1927, 'Magical Realism'),
+('Stephen', 'Hawking', 'UK',1942, 'Theoretical Physics'),
+('Marie', 'Curie', 'Poland', 1867, 'Physics and Chemistry'),
+('Isaac', 'Asimov', 'Russia', 1920, 'Science Fiction');
+
+-- Insert books
+INSERT INTO books (title, author_id, isbn, publication_year, genre, pages, language) VALUES
+('Cien Anos de Soledad', 1, '978-0307474728', 1967, 'Magical Realism', 417, 'Spanish'),
+('A Brief History of Time', 2, '978-0553380163', 1988, 'Science', 256, 'English'),
+('Foundation', 4, '978-0553293357', 1951, 'Science Fiction', 255, 'English');
+
+-- Insert scientific articles
+INSERT INTO scientific_articles (title, author_id, journal_name, publication_date, doi, field_of_study, citation_count, open_access) VALUES
+('Radioactive Substances', 3, 'Nature', '1898-07-15', '10.1038/radioactive.1898', 'Physics', 15420, 0),
+('Black Holes and Thermodynamics', 2, 'Physical Review D', '1974-04-01', '10.1103/PhysRevD.blackholes', 'Theoretical Physics', 8934, 1),
+('Foundation of Robotics', 4, 'IEEE Robotics', '1950-12-01', '10.1109/robotics.foundation', 'Computer Science', 7821, 1);
+
+-- Query examples
+SELECT b.title, a.first_name + ' ' + a.last_name AS author 
+FROM books b 
+JOIN authors a ON b.author_id = a.author_id;
+
+SELECT field_of_study, COUNT(*) AS article_count, AVG(citation_count) AS avg_citations 
+FROM scientific_articles 
+GROUP BY field_of_study;
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{media/azure-query.jpg}
+    \caption{Query results in Azure Query Editor}
+    \label{fig:azure_query}
+\end{figure}
+
+\subsection{6.5 Video Demonstration}
+
+A comprehensive video demonstration of the Azure SQL Database implementation, including connection setup, table structure, and data queries, is available at:
+
+\begin{center}
+\href{https://youtu.be/Ye6jw5p2mKk}{\textbf{Azure SQL Database Demo Video}}\\
+\url{https://youtu.be/Ye6jw5p2mKk}
+\end{center}
+
+The video showcases:
+\begin{itemize}
+    \item Azure Portal navigation and database creation
+    \item Connection to library\_db database
+    \item Table structure and relationships (authors, books, scientific\_articles)
+    \item Sample queries demonstrating joins and aggregations
+    \item Data retrieval and analysis
+\end{itemize}
+
+\subsection{6.6 Resource Cleanup}
+
+After completing the demonstration and documentation, all Azure resources were deleted to avoid additional costs:
+
+\begin{lstlisting}[language=bash]
+# Delete resource group (removes all resources)
+1. Navigate to Resource Groups in Azure Portal
+2. Select lab05-database-rg
+3. Click "Delete resource group"
+4. Type resource group name to confirm
+5. Click Delete
+\end{lstlisting}
+
+This ensures no charges are incurred and free trial credits are preserved.
+
+\section{Part 5: Remote Access Configuration}
+
+\begin{exercise}{Exercise 7: Auto-Start and Remote Connectivity}
+\textbf{Objective:} Configure database auto-start on boot and enable remote connections via DBeaver
+\end{exercise}
+
+\subsection{7.1 PostgreSQL Auto-Start (Slackware)}
+
+\begin{lstlisting}[language=bash]
+# Make startup script executable
+chmod +x /etc/rc.d/rc.postgresql
+
+# Add to rc.local for auto-start
+echo "/etc/rc.d/rc.postgresql start" >> /etc/rc.d/rc.local
+chmod +x /etc/rc.d/rc.local
+
+# Configure for remote access
+nano /var/lib/pgsql/14/data/postgresql.conf
+# Change: listen_addresses = '*'
+
+nano /var/lib/pgsql/14/data/pg_hba.conf
+# Add: host all all 0.0.0.0/0 md5
+
+# Restart PostgreSQL
+/etc/rc.d/rc.postgresql restart
+
+# Verify listening on all interfaces
+netstat -an | grep 5432
+\end{lstlisting}
+
+\subsection{7.2 SQL Server Auto-Start (Windows)}
+
+\begin{lstlisting}[language=bash]
+# PowerShell - Set service to automatic
+Set-Service -Name "MSSQL`$SQLEXPRESS" -StartupType Automatic
+
+# Enable TCP/IP protocol
+# Via SQL Server Configuration Manager:
+1. Open SQL Server Configuration Manager
+2. Expand SQL Server Network Configuration
+3. Protocols for SQLEXPRESS
+4. Enable TCP/IP
+5. Set port 1433 in IPAll section
+6. Restart SQL Server service
+
+# Configure Windows Firewall
+New-NetFirewallRule -DisplayName "SQL Server TCP 1433" -Direction Inbound -Protocol TCP -LocalPort 1433 -Action Allow
+
+# Verify service status
+Get-Service "MSSQL`$SQLEXPRESS"
+netstat -an | findstr 1433
+\end{lstlisting}
+
+\subsection{7.3 DBeaver Remote Connection}
+
+\textbf{PostgreSQL Connection Settings:}
+\begin{itemize}
+    \item \textbf{Host}: 10.2.77.176 (Slackware VM IP)
+    \item \textbf{Port}: 5432
+    \item \textbf{Database}: cristian\_tourism
+    \item \textbf{Username}: cristian\_pedraza
+    \item \textbf{Password}: secure\_password1
+    \item \textbf{Authentication}: Database Native
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{media/dbeaver-postgresql.jpg}
+    \caption{DBeaver connected to PostgreSQL database}
+    \label{fig:dbeaver_postgresql}
+\end{figure}
+
+\textbf{SQL Server Connection Settings:}
+\begin{itemize}
+    \item \textbf{Host}: 10.2.77.180 (Windows Server VM IP)
+    \item \textbf{Port}: 1433
+    \item \textbf{Database}: cristian\_schedule
+    \item \textbf{Username}: cristian\_pedraza
+    \item \textbf{Password}: Cris123!
+    \item \textbf{Authentication}: SQL Server Authentication
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{media/dbeaver-sqlserver.jpg}
+    \caption{DBeaver connected to SQL Server database}
+    \label{fig:dbeaver_sqlserver}
+\end{figure}
+
+\textbf{Azure SQL Database Connection Settings:}
+\begin{itemize}
+    \item \textbf{Host}: lab05-sql-server-[unique].database.windows.net
+    \item \textbf{Port}: 1433
+    \item \textbf{Database}: library\_db
+    \item \textbf{Username}: sqladmin
+    \item \textbf{Password}: Admin123!@\#
+    \item \textbf{Driver Properties}: encrypt=true, trustServerCertificate=true
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{media/dbeaver-azure.jpg}
+    \caption{DBeaver connected to Azure SQL Database}
+    \label{fig:dbeaver_azure}
+\end{figure}
+
+\section{Sample Queries and Analysis}
+
+\subsection{PostgreSQL Query Examples}
+
+\begin{lstlisting}[language=sql]
+-- Query 1: Tourist sites by priority
+SELECT ts.site_name, d.department_name, ts.priority, ts.estimated_cost
+FROM tourist_sites ts
+JOIN departments d ON ts.department_id = d.department_id
+ORDER BY ts.priority DESC, ts.estimated_cost ASC;
+
+-- Query 2: Activities by site with total cost
+SELECT ts.site_name, 
+       COUNT(a.activity_id) AS activity_count,
+       SUM(a.cost) AS total_activity_cost
+FROM tourist_sites ts
+LEFT JOIN activities a ON ts.site_id = a.site_id
+GROUP BY ts.site_name
+ORDER BY total_activity_cost DESC;
+
+-- Query 3: Sites by region
+SELECT d.region, COUNT(ts.site_id) AS site_count
+FROM departments d
+LEFT JOIN tourist_sites ts ON d.department_id = ts.department_id
+GROUP BY d.region
+ORDER BY site_count DESC;
+\end{lstlisting}
+
+\subsection{SQL Server Query Examples}
+
+\begin{lstlisting}[language=sql]
+-- Query 1: Activities with category and priority
+SELECT a.activity_title, a.activity_date, a.start_time,
+       c.category_name, p.priority_level, a.location
+FROM activities a
+LEFT JOIN categories c ON a.category_id = c.category_id
+LEFT JOIN priorities p ON a.priority_id = p.priority_id
+ORDER BY a.activity_date, a.start_time;
+
+-- Query 2: Activity count by category
+SELECT c.category_name, COUNT(a.activity_id) AS count
+FROM categories c
+LEFT JOIN activities a ON c.category_id = a.category_id
+GROUP BY c.category_name
+ORDER BY count DESC;
+
+-- Query 3: High priority pending activities
+SELECT a.activity_title, a.activity_date, p.priority_level
+FROM activities a
+JOIN priorities p ON a.priority_id = p.priority_id
+WHERE a.is_completed = 0 AND p.urgency_score >= 4
+ORDER BY a.activity_date;
+\end{lstlisting}
+
+\subsection{Azure SQL Database Query Examples}
+
+\begin{lstlisting}[language=sql]
+-- Query 1: Books with author information
+SELECT b.title, a.first_name + ' ' + a.last_name AS author_name,
+       b.publication_year, b.genre, b.available_copies
+FROM books b
+JOIN authors a ON b.author_id = a.author_id
+ORDER BY b.publication_year DESC;
+
+-- Query 2: Most cited articles
+SELECT TOP 5 sa.title, a.first_name + ' ' + a.last_name AS author,
+       sa.journal_name, sa.citation_count
+FROM scientific_articles sa
+JOIN authors a ON sa.author_id = a.author_id
+ORDER BY sa.citation_count DESC;
+
+-- Query 3: Publications by author
+SELECT a.first_name + ' ' + a.last_name AS author_name,
+       a.specialty,
+       (SELECT COUNT(*) FROM books WHERE author_id = a.author_id) AS books_count,
+       (SELECT COUNT(*) FROM scientific_articles WHERE author_id = a.author_id) AS articles_count
+FROM authors a
+ORDER BY books_count + articles_count DESC;
+\end{lstlisting}
+
+\section{Troubleshooting and Lessons Learned}
+
+\subsection{PostgreSQL Installation Challenges}
+
+\textbf{Challenge}: PostgreSQL not available in standard Slackware repositories.
+
+\textbf{Solution}: Used SlackBuilds.org to compile from source. Required creating postgres user/group and proper directory permissions.
+
+\textbf{Key Learning}: Understanding manual package compilation and dependency management in Slackware.
+
+\subsection{SQL Server Installation Issues}
+
+\textbf{Challenge}: Spanish installer refused command-line installation on English Windows Server.
+
+\textbf{Solution}: Used Remote Desktop to access GUI installer, which bypassed language check.
+
+\textbf{Key Learning}: Not all enterprise software supports fully automated installation across all language configurations. GUI access is sometimes necessary.
+
+\subsection{Remote Connection Configuration}
+
+\textbf{Challenge}: Firewall blocking PostgreSQL port 5432 and SQL Server port 1433.
+
+\textbf{Solution}: 
+\begin{itemize}
+    \item Configured \texttt{listen\_addresses = '*'} in postgresql.conf
+    \item Modified pg\_hba.conf to allow network connections
+    \item Added Windows Firewall rules for SQL Server
+    \item Enabled TCP/IP protocol in SQL Server Configuration Manager
+\end{itemize}
+
+\textbf{Key Learning}: Database security involves multiple layers (authentication, network configuration, firewall rules).
+
+\subsection{Azure SQL Database Connection}
+
+\textbf{Challenge}: Initial connection timeout due to missing firewall rules.
+
+\textbf{Solution}: Added client IP address (192.168.1.2) to Azure SQL Server firewall rules through portal.
+
+\textbf{Key Learning}: Cloud databases require explicit firewall configuration for external access. Azure provides centralized management through portal interface.
+
+\section{Conclusions}
+
+This laboratory provided comprehensive hands-on experience with enterprise database management systems across multiple platforms. Key accomplishments include:
+
+\begin{itemize}
+    \item Successfully installed and configured PostgreSQL on Linux Slackware and SQL Server on Windows Server, demonstrating cross-platform database administration skills.
+    
+    \item Deployed and managed Azure SQL Database in the cloud, understanding the differences between IaaS, PaaS, and SaaS service models and the benefits of managed database services.
+    
+    \item Designed and implemented normalized database schemas with proper relationships using foreign keys for three different use cases: tourism management, activity scheduling, and library management.
+    
+    \item Configured remote database access through authentication settings, network protocols, and firewall rules, successfully connecting via DBeaver from a local machine to all three platforms.
+    
+    \item Analyzed network protocols (DNS, HTTP, Ethernet) using Wireshark, understanding how data flows through network layers and how this knowledge applies to database connectivity troubleshooting.
+    
+    \item Implemented user-based access control and security measures, including password authentication and understanding the importance of transport layer security (TLS) in cloud environments.
+\end{itemize}
+
+\textbf{Key Takeaway}: Modern IT infrastructure requires proficiency across multiple database platforms and deployment models. Understanding both on-premise and cloud solutions, along with network fundamentals, is essential for effective database administration.
+
+\section{References}
+
+\begin{enumerate}
+    \item PostgreSQL Global Development Group. \textit{PostgreSQL 14.19 Documentation}. Available: \url{https://www.postgresql.org/docs/14/}
+    
+    \item Microsoft Corporation. \textit{SQL Server 2019 Documentation}. Available: \url{https://docs.microsoft.com/en-us/sql/}
+    
+    \item Microsoft Corporation. \textit{Azure SQL Database Documentation}. Available: \url{https://docs.microsoft.com/en-us/azure/sql-database/}
+    
+    \item Wireshark Foundation. \textit{Wireshark User's Guide}. Available: \url{https://www.wireshark.org/docs/}
+    
+    \item SlackBuilds.org. \textit{PostgreSQL SlackBuild}. Available: \url{https://slackbuilds.org/repository/15.0/system/postgresql/}
+    
+    \item DBeaver Corporation. \textit{DBeaver Universal Database Tool}. Available: \url{https://dbeaver.io/}
+    
+    \item RFC 1035 - Domain Names - Implementation and Specification. IETF, 1987.
+    
+    \item RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1. IETF, 1999.
+    
+    \item Date, C.J. \textit{An Introduction to Database Systems}, 8th Edition. Addison-Wesley, 2003.
+    
+    \item Silberschatz, A., Korth, H., Sudarshan, S. \textit{Database System Concepts}, 7th Edition. McGraw-Hill, 2019.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,35 @@
+;
+; Zone file for cristian.com.it
+; Lab 03 - Computer Networks
+; Primary DNS Server: Solaris (10.2.77.178)
+;
+
+$TTL 86400
+
+; SOA Record
+@       IN      SOA     dns.cristian.com.it. admin.cristian.com.it. (
+                        2024120401      ; Serial (YYYYMMDDXX)
+                        3600            ; Refresh (1 hour)
+                        1800            ; Retry (30 minutes)
+                        604800          ; Expire (1 week)
+                        86400           ; Minimum TTL (1 day)
+)
+
+; Name Server Records
+@               IN      NS      dns.cristian.com.it.
+
+; IPv4 Address Records (A records)
+dns             IN      A       10.2.77.178
+server1         IN      A       10.2.77.180
+server2         IN      A       10.2.77.181
+server3         IN      A       10.2.77.182
+
+; IPv6 Address Records (AAAA records)
+server1         IN      AAAA    2001:db8:1::1
+server2         IN      AAAA    2001:db8:1::2
+
+; Alias Records (CNAME records)
+www             IN      CNAME   server1.cristian.com.it.
+mail            IN      CNAME   server2.cristian.com.it.
+web             IN      CNAME   server1.cristian.com.it.
+ftp             IN      CNAME   server3.cristian.com.it.

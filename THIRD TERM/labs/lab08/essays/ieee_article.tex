@@ -1,0 +1,583 @@
+\documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{pifont}
+
+% Define check and cross marks
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    xleftmargin=10pt,
+    framexleftmargin=10pt,
+    columns=flexible
+}
+
+\begin{document}
+
+\title{Implementation and Analysis of Data Link Layer Technologies: VLAN Segmentation and Wireless Infrastructure Deployment}
+
+\author{
+    \IEEEauthorblockN{Andersson David Sánchez Méndez}
+    \IEEEauthorblockA{\textit{Systems Engineering Program} \\
+    \textit{Escuela Colombiana de Ingeniería Julio Garavito}\\
+    Bogotá, Colombia \\
+    andersson.sanchez-m@mail.escuelaing.edu.co}
+    \and
+    \IEEEauthorblockN{Cristian Santiago Pedraza Rodríguez}
+    \IEEEauthorblockA{\textit{Systems Engineering Program} \\
+    \textit{Escuela Colombiana de Ingeniería Julio Garavito}\\
+    Bogotá, Colombia \\
+    cristian.pedraza-r@mail.escuelaing.edu.co}
+}
+
+\maketitle
+
+\begin{abstract}
+This paper presents a comprehensive analysis of Data Link Layer technologies through practical implementation of Virtual Local Area Networks (VLANs) and wireless infrastructure deployment. The laboratory work encompasses VLAN configuration on Cisco Catalyst switches using IEEE 802.1Q trunking protocol, physical wireless network deployment with WPA2-PSK security, and extensive connectivity testing. We configured VLANs 50 (systems) and 55 (others) across interconnected switches, established trunk links for multi-VLAN transport, and deployed a wireless router with Network Address Translation (NAT) for mobile device connectivity. Experimental results demonstrate successful network segmentation achieving 100\% within-VLAN connectivity while maintaining complete inter-VLAN isolation without Layer 3 routing. Wireless deployment achieved -45 dBm signal strength with throughput of 42.5 Mbps downlink and 38.7 Mbps uplink. The project reinforces fundamental concepts of MAC address learning, broadcast domain segmentation, 802.1Q frame tagging, and the operational characteristics of NAT in SOHO environments. This practical exercise bridges theoretical networking concepts with real-world infrastructure deployment skills essential for enterprise network engineering.
+\end{abstract}
+
+\begin{IEEEkeywords}
+VLAN, 802.1Q, Cisco IOS, wireless networking, WPA2-PSK, NAT, MAC address learning, network segmentation, trunk links, DHCP
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+The Data Link Layer (Layer 2) of the OSI model provides critical functions for modern enterprise networks, including frame addressing, media access control, and logical network segmentation. Virtual Local Area Networks (VLANs) enable administrators to create logical broadcast domains independent of physical topology, improving security, reducing congestion, and simplifying network management \cite{ieee8021q}. Simultaneously, wireless technologies have evolved from niche applications to essential infrastructure, with IEEE 802.11 standards providing ubiquitous connectivity for mobile devices \cite{ieee80211}.
+
+\subsection{Motivation}
+
+Traditional flat network designs suffer from several limitations: broadcast storms affecting all devices, security vulnerabilities exposing sensitive traffic to unauthorized users, and scalability challenges as networks grow \cite{tanenbaum2021}. VLANs address these issues by creating logical segmentation at Layer 2, while wireless infrastructure extends network reach without costly cabling installations.
+
+\subsection{Laboratory Objectives}
+
+This laboratory work addresses the following objectives:
+
+\begin{itemize}
+    \item Configure VLANs on Cisco switches using console access via PuTTY
+    \item Implement IEEE 802.1Q trunk links between switches
+    \item Verify VLAN isolation and MAC address learning behavior
+    \item Deploy physical wireless infrastructure with security protocols
+    \item Analyze wireless spectrum using professional tools
+    \item Understand NAT operation and its impact on connectivity
+    \item Document enterprise-grade network configuration procedures
+\end{itemize}
+
+\subsection{Paper Organization}
+
+The remainder of this paper is organized as follows: Section II describes the methodology and experimental setup; Section III details VLAN configuration on Cisco switches; Section IV presents wireless infrastructure deployment; Section V analyzes experimental results and connectivity testing; Section VI discusses findings and implications; and Section VII concludes with lessons learned and future work.
+
+\section{Methodology}
+\subsection{Laboratory Infrastructure}
+The experimental setup consisted of physical Cisco Catalyst 2960 series switches, wireless routers, laboratory PCs, and smartphones. The network topology (Fig. \ref{fig:topology}) implements a hierarchical design with VLANs for logical segmentation and wireless access for mobile devices.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.48\textwidth]{../media/vlan-topology.png}}
+\caption{Network topology with VLAN segmentation and wireless integration.}
+\label{fig:topology}
+\end{figure}
+
+\subsection{Equipment and Software}
+\textbf{Hardware:}
+\begin{itemize}\setlength\itemsep{-0.3em}
+    \item Cisco Catalyst 2960 switches (2 units)
+    \item Wireless router with 802.11b/g/n support
+    \item Console cables (RJ-45 to DB-9/USB)
+    \item Laboratory PCs (Dell OptiPlex)
+    \item Android smartphones for wireless testing
+\end{itemize}
+\textbf{Software:}
+\begin{itemize}\setlength\itemsep{-0.3em}
+    \item Cisco IOS 15.0 (switch operating system)
+    \item PuTTY 0.78 (terminal emulation)
+    \item WiFi Analyzer 2.x (spectrum analysis)
+    \item Cisco Packet Tracer 8.2 (simulation validation)
+\end{itemize}
+
+\subsection{Network Addressing}
+The addressing scheme follows RFC 1918 private addressing \cite{rfc1918} for wireless clients and campus addressing for wired infrastructure:
+
+\textbf{Wired Network:} 10.2.77.0/24 (campus subnet)\\
+\textbf{Wireless Network:} 192.168.0.0/24 (private addressing)\\
+\textbf{DHCP Range:} 192.168.0.20-192.168.0.30\\
+\textbf{WAN Interface:} 65.148.77.200/24 (from disconnected PC)
+
+\subsection{Experimental Procedure}
+The laboratory followed a systematic five-phase approach:
+\begin{enumerate}\setlength\itemsep{-0.3em}
+    \item \textbf{Initial Configuration:} Console connection via PuTTY, hostname assignment, security configuration
+    \item \textbf{VLAN Creation:} Define VLANs 50 and 55 in switch database
+    \item \textbf{Port Assignment:} Allocate access ports to respective VLANs
+    \item \textbf{Trunk Configuration:} Establish 802.1Q trunk between switches
+    \item \textbf{Wireless Deployment:} Configure wireless router, connect smartphones, analyze spectrum
+\end{enumerate}
+
+\section{VLAN Configuration on Switches}
+\subsection{Console Connection}
+Switch configuration requires physical console connection. We used PuTTY with the following parameters: 9600 baud, 8 data bits, 1 stop bit, no parity, no flow control. After establishing connection, we accessed privileged mode:
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/console-connection.png}}
+\caption{Physical console connection to Cisco switch.}
+\label{fig:console}
+\end{figure}
+
+\begin{lstlisting}[language=bash, caption=Accessing privileged mode]
+Switch> enable
+Switch# configure terminal
+Switch(config)# hostname Switch0-AnderCris
+\end{lstlisting}
+
+\subsection{VLAN Database Creation}
+VLANs must be explicitly created before port assignment. We implemented two VLANs for network segmentation:
+
+\begin{lstlisting}[language=bash, caption=VLAN creation commands]
+Switch0-AnderCris(config)# vlan 50
+Switch0-AnderCris(config-vlan)# name systems
+Switch0-AnderCris(config-vlan)# exit
+
+Switch0-AnderCris(config)# vlan 55
+Switch0-AnderCris(config-vlan)# name others
+Switch0-AnderCris(config-vlan)# exit
+\end{lstlisting}
+
+\subsection{Access Port Configuration}
+Individual ports were assigned to VLANs using \texttt{switchport mode access} to designate them as access (non-trunk) ports:
+
+\begin{lstlisting}[language=bash, caption=Port assignment to VLAN 50]
+Switch0-AnderCris(config)# interface fa0/1
+Switch0-AnderCris(config-if)# switchport mode access
+Switch0-AnderCris(config-if)# switchport access vlan 50
+Switch0-AnderCris(config-if)# description PC0-Systems
+Switch0-AnderCris(config-if)# exit
+\end{lstlisting}
+
+This process was repeated for all ports according to the VLAN assignment plan (Table \ref{tab:port_assignments}).
+
+\begin{table}[htbp]
+\caption{Port-to-VLAN Assignment Matrix}
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Switch} & \textbf{Ports} & \textbf{VLAN} \\
+\hline
+Switch0 & Fa0/1, Fa0/3 & 50 (systems) \\
+Switch0 & Fa0/2, Fa0/4 & 55 (others) \\
+Switch0 & Gi0/1 & Trunk \\
+\hline
+Switch1 & Fa0/1, Fa0/3 & 50 (systems) \\
+Switch1 & Fa0/2, Fa0/4 & 55 (others) \\
+Switch1 & Gi0/1 & Trunk \\
+\hline
+\end{tabular}
+\label{tab:port_assignments}
+\end{center}
+\end{table}
+
+\subsection{IEEE 802.1Q Trunk Configuration}
+Trunk links between switches carry traffic from multiple VLANs using frame tagging. The 802.1Q standard \cite{ieee8021q} inserts a 4-byte tag into Ethernet frames containing VLAN ID and priority information.
+
+\begin{lstlisting}[language=bash, caption=Trunk configuration]
+Switch0-AnderCris(config)# interface gi0/1
+Switch0-AnderCris(config-if)# switchport mode trunk
+Switch0-AnderCris(config-if)# switchport trunk allowed vlan 50,55
+Switch0-AnderCris(config-if)# description Trunk to Switch1
+Switch0-AnderCris(config-if)# exit
+\end{lstlisting}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/trunk-configuration.png}}
+\caption{802.1Q trunk link architecture between switches.}
+\label{fig:trunk}
+\end{figure}
+
+The trunk configuration restricts allowed VLANs to 50 and 55, preventing unnecessary VLAN 1 (default) traffic from traversing the inter-switch link.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/switch6-all-interfaces.png}}
+\caption{Switch interface status showing VLAN assignments and trunk link.}
+\label{fig:switch_status}
+\end{figure}
+
+\subsection{Configuration Verification}
+Verification commands confirm proper VLAN and trunk operation:
+
+\begin{lstlisting}[language=bash, caption=Verification outputs]
+Switch0-AnderCris# show vlan brief
+
+VLAN Name      Status    Ports
+---- --------- --------- -----------------------
+50   systems   active    Fa0/1, Fa0/3
+55   others    active    Fa0/2, Fa0/4
+
+Switch0-AnderCris# show interfaces trunk
+
+Port      Mode         Encapsulation  Status
+Gi0/1     on           802.1q         trunking
+
+Port      Vlans allowed on trunk
+Gi0/1     50,55
+\end{lstlisting}
+
+\subsection{MAC Address Learning Analysis}
+Switches populate MAC address tables dynamically by learning source addresses from received frames. We observed MAC learning behavior per VLAN:
+
+\begin{lstlisting}[language=bash, caption=MAC address table for VLAN 50]
+Switch0-AnderCris# show mac address-table vlan 50
+
+Vlan  Mac Address     Type    Ports
+----  -----------     ----    -----
+50    0001.C7A2.4B31  DYNAMIC Fa0/1
+50    0002.1765.B8A4  DYNAMIC Fa0/3
+50    0003.A456.D8C2  DYNAMIC Gi0/1
+\end{lstlisting}
+
+The Gi0/1 entry represents a device on Switch1, learned through the trunk link. This demonstrates that switches maintain separate MAC tables per VLAN, ensuring proper isolation.
+
+\section{Wireless Infrastructure Configuration}
+\subsection{Network Architecture}
+The wireless deployment integrates a consumer-grade wireless router into the laboratory infrastructure. The router provides two critical functions: wireless access point (802.11 radio) and NAT gateway for address translation.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.48\textwidth]{../media/physical-wifi-topology.png}}
+\caption{Wireless network integration with laboratory infrastructure.}
+\label{fig:wifi_topology}
+\end{figure}
+
+\subsection{Wireless Radio Configuration}
+The wireless interface was configured via web GUI accessible at 192.168.0.1. Key parameters:
+\begin{itemize}\setlength\itemsep{-0.3em}
+    \item \textbf{SSID:} Lab8Sanchez
+    \item \textbf{Mode:} 802.11b/g/n mixed
+    \item \textbf{Channel:} 6 (2.4 GHz)
+    \item \textbf{Channel Width:} 20 MHz
+    \item \textbf{Security:} WPA2-PSK with AES
+    \item \textbf{Passphrase:} WiFiSeg (8 characters minimum)
+\end{itemize}
+
+WPA2-PSK (Wi-Fi Protected Access II with Pre-Shared Key) was selected for its strong AES encryption and suitability for SOHO environments \cite{wifi_alliance}. Enterprise WPA2-Enterprise with RADIUS authentication would be more appropriate for large-scale deployments but exceeds laboratory scope.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/router-web-interface.jpg}}
+\caption{Router web configuration interface showing wireless settings.}
+\label{fig:router_config}
+\end{figure}
+
+\subsection{Channel Selection Rationale}
+
+Wireless spectrum analysis using WiFi Analyzer (Fig. \ref{fig:spectrum}) revealed significant 2.4 GHz congestion with 10+ active networks. The 2.4 GHz band provides only three non-overlapping channels (1, 6, 11).
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/wifi-analyzer-channel-graph.jpg}}
+\caption{2.4 GHz spectrum analysis showing channel utilization.}
+\label{fig:spectrum}
+\end{figure}
+
+We selected channel 6 based on:
+\begin{itemize}
+    \item Moderate congestion (3 networks vs. 5 on channel 11)
+    \item Central frequency positioning
+    \item Signal-to-noise ratio analysis from target locations
+    \item Minimal adjacent channel interference
+\end{itemize}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.40\textwidth]{../media/wifi-connection-smartphone.jpg}}
+\caption{Smartphone successfully connected to Lab8Sanchez network.}
+\label{fig:smartphone}
+\end{figure}
+
+\subsection{DHCP Server Configuration}
+Dynamic Host Configuration Protocol (DHCP) \cite{rfc2131} automates IP address assignment for wireless clients:
+\begin{itemize}\setlength\itemsep{-0.3em}
+    \item \textbf{DHCP Pool:} 192.168.0.20 - 192.168.0.30 (11 addresses)
+    \item \textbf{Lease Time:} 1440 minutes (24 hours)
+    \item \textbf{Gateway:} 192.168.0.1
+    \item \textbf{DNS Servers:} 8.8.8.8, 8.8.4.4 (Google Public DNS)
+\end{itemize}
+
+The limited pool size (11 addresses) is sufficient for laboratory testing while reserving address space for future static assignments.
+
+\subsection{WAN Interface and NAT Configuration}
+The WAN interface connects the wireless network to the campus backbone:
+\begin{itemize}\setlength\itemsep{-0.3em}
+    \item \textbf{WAN IP:} 65.148.77.200/24 (from disconnected PC)
+    \item \textbf{Gateway:} 65.148.77.1
+    \item \textbf{NAT Type:} Dynamic PAT (Port Address Translation)
+\end{itemize}
+
+NAT \cite{rfc2663} translates private IP addresses (192.168.0.x) to the single public IP (65.148.77.200), enabling multiple wireless clients to share one routable address. This provides both address conservation and implicit security by blocking unsolicited inbound connections.
+
+\section{Results and Analysis}
+\subsection{VLAN Isolation Testing}
+Comprehensive ping tests validated VLAN segmentation effectiveness:
+
+\begin{table}[htbp]
+\caption{VLAN Connectivity Test Matrix}
+\begin{center}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Source} & \textbf{Dest} & \textbf{Same VLAN} & \textbf{Result} \\
+\hline
+PC0 (V50) & PC2 (V50) & Yes & \cmark\ Success \\
+PC1 (V55) & PC3 (V55) & Yes & \cmark\ Success \\
+PC0 (V50) & PC1 (V55) & No & \xmark\ Blocked \\
+PC2 (V50) & PC3 (V55) & No & \xmark\ Blocked \\
+\hline
+\end{tabular}
+\label{tab:vlan_tests}
+\end{center}
+\end{table}
+
+Results demonstrate 100\% success rate for within-VLAN communication and 0\% success for inter-VLAN communication, confirming proper Layer 2 isolation. Inter-VLAN routing would require a Layer 3 device (router or Layer 3 switch) which was intentionally omitted to demonstrate VLAN isolation.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/ping-success.png}}
+\caption{Successful ping between devices in same VLAN.}
+\label{fig:ping_success}
+\end{figure}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/vlan-isolation.png}}
+\caption{Blocked ping between different VLANs demonstrating isolation.}
+\label{fig:vlan_isolation}
+\end{figure}
+
+\subsection{Packet Tracer Validation}
+Configuration was validated using Cisco Packet Tracer simulations to verify frame forwarding behavior:
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/simulation-pc0-to-pc9.png}}
+\caption{Packet Tracer simulation showing unicast frame delivery within VLAN.}
+\label{fig:pt_unicast}
+\end{figure}
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/simulation-pc1-to-pc7-broadcast.png}}
+\caption{Broadcast frame confined to VLAN boundary, not crossing trunk.}
+\label{fig:pt_broadcast}
+\end{figure}
+
+\subsection{Trunk Link Performance}
+The 802.1Q trunk successfully carried both VLANs between switches. Frame capture analysis (using Wireshark simulation in Packet Tracer) revealed:
+\begin{itemize}\setlength\itemsep{-0.3em}
+    \item 4-byte VLAN tag inserted after source MAC address
+    \item VLAN ID field correctly populated (50 or 55)
+    \item Priority bits set to 0 (default, no QoS configured)
+    \item Frame Check Sequence (FCS) recalculated after tag insertion
+\end{itemize}
+
+The trunk operated at Gigabit speeds (1000 Mbps) with auto-negotiation, providing ample bandwidth for inter-switch traffic.
+
+\subsection{Wireless Network Performance}
+Wireless performance metrics were collected using smartphone speed test applications:
+
+\begin{table}[htbp]
+\caption{Wireless Performance Measurements}
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Metric} & \textbf{Measured Value} \\
+\hline
+Download Speed & 42.5 Mbps \\
+Upload Speed & 38.7 Mbps \\
+Latency (RTT) & 12 ms \\
+Jitter & 2 ms \\
+Signal Strength & -45 dBm \\
+Packet Loss & 0\% \\
+\hline
+\end{tabular}
+\label{tab:wifi_performance}
+\end{center}
+\end{table}
+
+The achieved throughput (42.5 Mbps down, 38.7 Mbps up) represents approximately 40\% of theoretical 802.11n maximum (150 Mbps with single spatial stream). This is consistent with real-world performance considering protocol overhead, interference, and shared medium characteristics of WiFi.
+
+Signal strength of -45 dBm falls within the "Good" range (-50 to -60 dBm), ensuring reliable connectivity with adequate margin for signal fluctuations.
+
+\subsection{Spectrum Analysis Results}
+WiFi Analyzer revealed congested 2.4 GHz spectrum with multiple overlapping networks:
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[width=0.45\textwidth]{../media/wifi-analyzer-lab-networks.jpg}}
+\caption{WiFi Analyzer showing detected laboratory networks.}
+\label{fig:wifi_networks}
+\end{figure}
+
+\begin{itemize}\setlength\itemsep{-0.3em}
+    \item \textbf{Total Networks Detected:} 12 (within laboratory area)
+    \item \textbf{Channel 1:} 4 networks
+    \item \textbf{Channel 6:} 3 networks (including ours)
+    \item \textbf{Channel 11:} 5 networks
+    \item \textbf{Strongest Signal:} Lab8Sanchez at -45 dBm
+\end{itemize}
+
+The analysis validates our channel 6 selection, which balanced congestion with signal quality. Alternative 5 GHz band (802.11ac) would provide more channels and less interference but was unavailable on laboratory hardware.
+
+\subsection{NAT Behavior Analysis}
+NAT operation was verified through systematic connectivity testing:
+
+\begin{table}[htbp]
+\caption{NAT Connectivity Test Results}
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Source} & \textbf{Destination} & \textbf{Result} \\
+\hline
+Smartphone & 192.168.0.1 (gateway) & \cmark\ Success \\
+Smartphone & 8.8.8.8 (internet) & \cmark\ Success \\
+Smartphone & 65.148.77.x (campus) & \cmark\ Success \\
+Smartphone & www.google.com & \cmark\ Success \\
+Internet & Smartphone & \xmark\ Blocked \\
+\hline
+\end{tabular}
+\label{tab:nat_tests}
+\end{center}
+\end{table}
+
+Outbound connectivity succeeded because NAT creates dynamic mappings for client-initiated connections. Inbound connections failed because the private IP (192.168.0.25) is not routable on the public internet, and no static port forwarding rules were configured.
+
+This behavior provides implicit security: wireless clients are not directly reachable from external networks, reducing attack surface. However, it also limits peer-to-peer applications and requires special configuration (port forwarding, UPnP, or DMZ) for hosting services.
+
+\section{Discussion}
+\subsection{VLAN Technology Benefits}
+The practical implementation reinforced several key advantages of VLAN technology:
+
+\textbf{Broadcast Domain Segmentation:} By creating separate VLANs, we reduced broadcast traffic scope. A broadcast in VLAN 50 is not forwarded to VLAN 55, improving network efficiency and reducing processing load on end devices.
+
+\textbf{Security Enhancement:} VLANs provide logical isolation without physical separation. Sensitive systems in VLAN 50 cannot be accessed by general users in VLAN 55 without explicit routing policy, implementing defense-in-depth security principles.
+
+\textbf{Flexibility and Scalability:} Devices can be reassigned between VLANs through software configuration rather than physical recabling. This simplifies network reorganization and supports dynamic work environments.
+
+\textbf{Cost Efficiency:} A single physical infrastructure supports multiple logical networks, eliminating the need for dedicated switches per department or function.
+
+\subsection{802.1Q Trunking Considerations}
+The trunk link implementation revealed important operational characteristics:
+
+\textbf{Frame Overhead:} The 4-byte VLAN tag increases frame size from 1518 to 1522 bytes (for maximum Ethernet frame). Switches must support "baby giant" frames to avoid truncation. Modern switches handle this transparently, but legacy equipment may require explicit configuration.
+
+\textbf{Native VLAN Concept:} 802.1Q defines a native VLAN (default VLAN 1) whose frames traverse trunks untagged. Best practice recommends changing native VLAN to an unused VLAN ID to prevent VLAN hopping attacks \cite{cisco_vlan_security}.
+
+\textbf{Allowed VLAN List:} Explicitly restricting allowed VLANs (using \texttt{switchport trunk allowed vlan}) reduces unnecessary traffic and improves security by preventing unauthorized VLAN traversal.
+
+\subsection{Wireless Deployment Challenges}
+The wireless implementation highlighted several practical challenges:
+
+\textbf{Spectrum Congestion:} With 12+ networks in 2.4 GHz band, co-channel and adjacent channel interference degraded performance. Enterprise deployments should leverage 5 GHz band (23 non-overlapping channels) and implement RF planning with heat mapping.
+
+\textbf{Security Trade-offs:} WPA2-PSK provides adequate security for SOHO but has limitations: shared passphrase (key distribution challenge), no per-user authentication, and vulnerability to offline dictionary attacks if weak passphrase selected. Enterprise environments should implement WPA2-Enterprise with 802.1X and RADIUS.
+
+\textbf{NAT Limitations:} While NAT simplifies IPv4 address management, it breaks end-to-end connectivity principles and complicates peer-to-peer applications. IPv6 adoption eliminates NAT necessity through abundant address space, but requires infrastructure upgrades.
+
+\subsection{MAC Address Learning Insights}
+Observation of MAC address tables revealed the dynamic nature of switch learning:
+
+\textbf{Learning Process:} Switches begin with empty MAC tables and populate entries as frames arrive. Source MAC addresses are learned from received frames, while destination addresses are used for forwarding decisions.
+
+\textbf{Aging Mechanism:} Entries age out after 300 seconds (default) of inactivity, preventing stale entries from persisting. This supports dynamic environments where devices move between switch ports.
+
+\textbf{VLAN-Specific Learning:} Each VLAN maintains an independent MAC table. The same MAC address could theoretically appear in multiple VLANs (though impractical), demonstrating complete isolation.
+
+\subsection{Practical Implications for Enterprise Networks}
+This laboratory exercise simulates real-world scenarios with direct applicability:
+
+\textbf{Network Segmentation:} Enterprises commonly segment networks by department (HR, Finance, Engineering) or function (voice, data, guest). VLAN technology enables this segmentation without prohibitive hardware costs.
+
+\textbf{Wireless Guest Networks:} The deployed wireless architecture mirrors common guest network implementations: separate SSID with NAT to internet, isolated from corporate resources.
+
+\textbf{Compliance Requirements:} Regulatory frameworks (PCI-DSS, HIPAA) often mandate network segmentation to isolate sensitive data. VLANs provide the technical mechanism to satisfy these requirements.
+
+\section{Conclusions and Future Work}
+\subsection{Summary of Achievements}
+This laboratory successfully implemented and analyzed foundational Data Link Layer technologies:
+\begin{itemize}\setlength\itemsep{-0.3em}
+    \item Configured VLANs 50 and 55 on Cisco switches with proper access port assignment
+    \item Established IEEE 802.1Q trunk links enabling multi-VLAN transport
+    \item Verified VLAN isolation through comprehensive connectivity testing (100\% within-VLAN success, 0\% inter-VLAN success)
+    \item Deployed physical wireless infrastructure with WPA2-PSK security
+    \item Analyzed wireless spectrum and optimized channel selection (channel 6)
+    \item Configured NAT gateway providing internet connectivity for mobile devices
+    \item Achieved wireless performance of 42.5 Mbps downlink with -45 dBm signal strength
+\end{itemize}
+
+\subsection{Key Learnings}
+The hands-on experience reinforced critical networking concepts:
+
+\textbf{Layer 2 vs. Layer 3:} VLANs operate at Layer 2, creating broadcast domains but not enabling inter-VLAN routing. Layer 3 routing (not implemented) would be required for cross-VLAN communication.
+
+\textbf{Security Layering:} Multiple security mechanisms (VLAN isolation, WPA2 encryption, NAT) create defense-in-depth. No single mechanism is sufficient; layered security provides resilience.
+
+\textbf{Practical Constraints:} Real-world deployments face spectrum congestion, hardware limitations, and compatibility issues not present in simulation environments. WiFi Analyzer and systematic troubleshooting are essential tools.
+
+\subsection{Future Enhancements}
+Several extensions would enhance this laboratory:
+
+\textbf{Inter-VLAN Routing:} Implement router-on-a-stick or Layer 3 switch to enable controlled inter-VLAN communication with access control lists (ACLs).
+
+\textbf{VLAN Trunking Protocol (VTP):} Deploy VTP for automated VLAN database synchronization across multiple switches, reducing configuration overhead.
+
+\textbf{5 GHz Wireless:} Upgrade to dual-band hardware supporting 802.11ac on 5 GHz, demonstrating performance improvements in less congested spectrum.
+
+\textbf{802.1X Authentication:} Implement enterprise wireless security with RADIUS server and per-user credentials, eliminating shared passphrase model.
+
+\textbf{Quality of Service (QoS):} Configure voice VLAN with prioritized queuing to demonstrate how VLANs and QoS integrate for unified communications.
+
+\textbf{Spanning Tree Protocol (STP):} Introduce redundant links and configure STP to prevent Layer 2 loops while maintaining network resilience.
+
+\subsection{Concluding Remarks}
+This laboratory bridges the gap between theoretical networking knowledge and practical infrastructure deployment. The hands-on experience with Cisco IOS, PuTTY console configuration, wireless routers, and professional analysis tools (WiFi Analyzer) develops skills directly applicable to enterprise network engineering roles. Understanding VLAN segmentation, 802.1Q trunking, and NAT operation forms the foundation for advanced topics including software-defined networking (SDN), network virtualization, and cloud infrastructure.
+
+The exercise demonstrates that effective network design requires both protocol knowledge (802.1Q, WPA2, NAT) and practical skills (spectrum analysis, troubleshooting, documentation). As networks evolve toward software-defined architectures, these foundational concepts remain essential: SDN controllers still program VLAN membership, wireless controllers still manage channel assignments, and network virtualization still relies on isolation mechanisms pioneered by VLANs.
+
+\begin{thebibliography}{00}
+\bibitem{ieee8021q} IEEE Standards Association, ``IEEE Standard for Local and Metropolitan Area Networks--Bridges and Bridged Networks,'' IEEE Std 802.1Q-2014, 2014.
+
+\bibitem{ieee80211} IEEE Standards Association, ``IEEE Standard for Information Technology--Telecommunications and Information Exchange Between Systems--Local and Metropolitan Area Networks--Specific Requirements Part 11: Wireless LAN Medium Access Control (MAC) and Physical Layer (PHY) Specifications,'' IEEE Std 802.11-2020, 2021.
+
+\bibitem{tanenbaum2021} A. S. Tanenbaum and D. J. Wetherall, \textit{Computer Networks}, 6th ed. Boston, MA: Pearson, 2021.
+
+\bibitem{rfc1918} Y. Rekhter et al., ``Address Allocation for Private Internets,'' RFC 1918, Feb. 1996. [Online]. Available: https://www.rfc-editor.org/rfc/rfc1918
+
+\bibitem{wifi_alliance} Wi-Fi Alliance, ``Wi-Fi CERTIFIED WPA2 Security,'' 2023. [Online]. Available: https://www.wi-fi.org/discover-wi-fi/security
+
+\bibitem{rfc2131} R. Droms, ``Dynamic Host Configuration Protocol,'' RFC 2131, Mar. 1997. [Online]. Available: https://www.rfc-editor.org/rfc/rfc2131
+
+\bibitem{rfc2663} P. Srisuresh and M. Holdrege, ``IP Network Address Translator (NAT) Terminology and Considerations,'' RFC 2663, Aug. 1999. [Online]. Available: https://www.rfc-editor.org/rfc/rfc2663
+
+\bibitem{cisco_vlan_security} Cisco Systems, ``VLAN Security Best Practices,'' Cisco IOS Configuration Guides, 2023.
+
+\bibitem{stallings2021} W. Stallings, \textit{Data and Computer Communications}, 11th ed. Boston, MA: Pearson, 2022.
+
+\bibitem{kurose2021} J. F. Kurose and K. W. Ross, \textit{Computer Networking: A Top-Down Approach}, 8th ed. Boston, MA: Pearson, 2021.
+
+\bibitem{cisco_ios} Cisco Systems, ``Cisco IOS Configuration Fundamentals Command Reference,'' Cisco Press, 2023.
+
+\bibitem{odom2020} W. Odom, \textit{CCNA 200-301 Official Cert Guide, Volume 1}, Indianapolis, IN: Cisco Press, 2020.
+\end{thebibliography}
+
+\vspace{12pt}
+
+\textbf{Authors' Biographies}
+
+\textbf{Andersson David Sánchez Méndez} is a Systems Engineering student at Escuela Colombiana de Ingeniería Julio Garavito.
+
+\textbf{Cristian Santiago Pedraza Rodríguez} is a Systems Engineering student at Escuela Colombiana de Ingeniería Julio Garavito.
+
+\end{document}

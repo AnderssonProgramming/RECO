@@ -1,0 +1,1199 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{parskip}
+
+% Geometry settings
+\geometry{
+    a4paper,
+    top=2cm,
+    bottom=2cm,
+    left=1.5cm,
+    right=1.5cm,
+    headsep=0.5cm,
+    footskip=1cm
+}
+
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Lab 06 - Application Layer Protocols}
+\lhead{Computer Networks}
+\cfoot{\thepage}
+
+\pagenumbering{arabic}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=leftline,
+    framerule=2pt,
+    rulecolor=\color{blue!30},
+    backgroundcolor=\color{gray!5},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    columns=flexible,
+    aboveskip=\medskipamount,
+    belowskip=\medskipamount,
+    xleftmargin=15pt
+}
+
+% Section formatting
+\titleformat{\section}
+{\color{blue!80!black}\normalfont\large\bfseries}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\color{blue!60!black}\normalfont\normalsize\bfseries}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\color{blue!40!black}\normalfont\small\bfseries}
+{\thesubsubsection}{1em}{}
+
+% Custom boxes
+\newtcolorbox{exercise}[1]{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    colbacktitle=blue!80!black,
+    coltitle=white,
+    title={\textbf{#1}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+\newtcolorbox{solution}[1]{
+    colback=green!5!white,
+    colframe=green!75!black,
+    colbacktitle=green!80!black,
+    coltitle=white,
+    title={\textbf{#1}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+\newtcolorbox{note}{
+    colback=yellow!10!white,
+    colframe=orange!75!black,
+    colbacktitle=orange!80!black,
+    coltitle=white,
+    title={\textbf{Important Note}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+% List formatting
+\setlist[itemize]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+\setlist[enumerate]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+% Caption formatting
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    format=hang,
+    indention=0pt,
+    margin=10pt
+}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    urlcolor=blue!80!black,
+    citecolor=blue!80!black,
+    pdfborder={0 0 0}
+}
+
+% Title page
+\title{\vspace{-1cm}
+    \begin{center}
+        \includegraphics[width=0.25\textwidth]{media/university_logo.png}
+    \end{center}
+    \vspace{1.5cm}
+    \textbf{\Large Computer Networks Laboratory}\\
+    \vspace{1cm}
+    \textbf{\huge Laboratory No. 6}\\
+    \textbf{\huge Application Layer Protocols}\\
+    \vspace{1.5cm}
+    \large Web Server Installation, DNS Configuration, and Virtual Hosting
+}
+
+\author{
+    \vspace{2cm}
+    \textbf{Students:} \\
+    \vspace{0.3cm}
+    Andersson David Sánchez Méndez \\
+    Cristian Santiago Pedraza Rodríguez \\
+    \vspace{1.5cm} \\
+    \textbf{Instructor:} Professor Fabián Eduardo Sierra Sánchez \\
+    \vspace{0.5cm}
+    \textbf{Course:} Computer Networks \\
+    \vspace{0.3cm}
+    \textbf{Institution:} Escuela Colombiana de Ingeniería Julio Garavito \\
+    \vspace{0.3cm}
+}
+
+\date{\today}
+\begin{document}
+
+% Title page (single column)
+\onecolumn
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% Table of contents (single column)
+\tableofcontents
+\newpage
+
+% Start two-column layout
+\twocolumn
+
+\section{Objectives}
+
+\begin{itemize}
+    \item Install and configure web servers on multiple operating systems (Solaris, Slackware Linux, Windows Server)
+    \item Configure DNS service for domain name resolution
+    \item Implement virtual hosting to serve multiple websites from a single server
+    \item Understand application layer protocols (HTTP, DNS)
+    \item Configure automatic startup and remote access for web services
+    \item Test inter-server connectivity and name resolution
+\end{itemize}
+
+\section{Tools and Equipment}
+
+\subsection{Required Software}
+\begin{itemize}
+    \item VMware Workstation/VirtualBox
+    \item Oracle Solaris 11.4 virtual machine
+    \item Slackware Linux 15.0 virtual machine
+    \item Windows Server 2019/2022 virtual machine
+    \item Web browsers for testing
+\end{itemize}
+
+\subsection{Server Infrastructure}
+\begin{itemize}
+    \item \textbf{Solaris Server:} 10.2.77.178 - Apache 2.4 + BIND DNS
+    \item \textbf{Slackware Server:} 10.2.77.176 - Nginx 1.24.0
+    \item \textbf{Windows Server:} 10.2.77.180 - IIS
+\end{itemize}
+
+\section{Introduction}
+
+Enterprise IT infrastructure relies on web services for hosting applications, websites, and providing various network services. This laboratory focuses on implementing a complete web infrastructure with three key components:
+
+\begin{enumerate}
+    \item \textbf{Web Servers} - Apache, Nginx, and IIS across different platforms
+    \item \textbf{DNS Services} - Centralized name resolution using BIND
+    \item \textbf{Virtual Hosting} - Multiple domains on a single server
+\end{enumerate}
+
+Modern organizations deploy web services in distributed environments, requiring administrators to understand multi-platform configurations, DNS architecture, and virtual hosting techniques.
+
+\section{Part 1: Web Server Installation}
+
+\begin{exercise}{Exercise 1: Apache on Oracle Solaris}
+\textbf{Platform:} Oracle Solaris 11.4 VM\\
+\textbf{IP Address:} 10.2.77.178\\
+\textbf{Web Server:} Apache 2.4
+\end{exercise}
+
+\subsection{1.1 Apache Installation}
+
+Apache was pre-installed in our Solaris system. We verified and enabled it:
+
+\begin{lstlisting}[language=bash]
+# Verify installation
+pkg list | grep apache
+# Output: web/server/apache-24
+
+# Enable Apache service
+svcadm enable apache24
+
+# Verify service status
+svcs apache24
+# Output: online         svc:/network/http:apache24
+
+# Check processes
+ps -ef | grep httpd
+
+# Verify listening port
+netstat -an | grep "\.80 " | grep LISTEN
+\end{lstlisting}
+
+\subsection{1.2 Creating Web Page}
+
+\begin{lstlisting}[language=bash]
+# Navigate to document root
+cd /var/apache2/2.4/htdocs/
+
+# Create custom index.html
+cat > index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Group 7 - Solaris Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #e74c3c; }
+        .info {
+            background: #ecf0f1;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Apache Web Server - Group 7</h1>
+        <div class="info">
+            <p><strong>OS:</strong> Oracle Solaris 11.4</p>
+            <p><strong>Web Server:</strong> Apache 2.4</p>
+            <p><strong>Lab:</strong> 06 - Application Layer</p>
+            <p><strong>Server:</strong> grupo7</p>
+        </div>
+        <p>Server running successfully</p>
+    </div>
+</body>
+</html>
+EOF
+
+# Test locally
+curl http://localhost
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/apache-solaris.png}
+    \caption{Apache web server on Solaris}
+    \label{fig:apache_solaris}
+\end{figure}
+
+\subsection{1.3 Automatic Startup}
+
+The service was configured for automatic startup using SMF:
+
+\begin{lstlisting}[language=bash]
+# Service already configured for auto-start
+svcs -l apache24 | grep enabled
+# Output: enabled      true
+\end{lstlisting}
+
+\begin{exercise}{Exercise 2: Nginx on Slackware Linux}
+\textbf{Platform:} Slackware Linux 15.0\\
+\textbf{IP Address:} 10.2.77.176\\
+\textbf{Web Server:} Nginx 1.24.0
+\end{exercise}
+
+\subsection{2.1 Nginx Installation}
+
+Since Nginx was not available in Slackware repositories, we compiled from source:
+
+\begin{lstlisting}[language=bash]
+# Download Nginx source
+cd /tmp
+wget http://nginx.org/download/nginx-1.24.0.tar.gz
+tar xvf nginx-1.24.0.tar.gz
+cd nginx-1.24.0
+
+# Configure with SSL support
+./configure \
+    --prefix=/usr/local/nginx \
+    --sbin-path=/usr/local/sbin/nginx \
+    --conf-path=/etc/nginx/nginx.conf \
+    --error-log-path=/var/log/nginx/error.log \
+    --http-log-path=/var/log/nginx/access.log \
+    --pid-path=/var/run/nginx.pid \
+    --with-http_ssl_module \
+    --with-http_v2_module
+
+# Compile and install
+make
+make install
+
+# Verify installation
+/usr/local/sbin/nginx -v
+# Output: nginx version: nginx/1.24.0
+\end{lstlisting}
+
+\subsection{2.2 Creating Web Page}
+
+\begin{lstlisting}[language=bash]
+# Navigate to document root
+cd /usr/local/nginx/html
+
+# Create custom HTML page
+cat > index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Group 7 - Slackware Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #2c3e50;
+            color: white;
+        }
+        .container {
+            background: #34495e;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        h1 { color: #1abc9c; }
+        .info {
+            background: #2c3e50;
+            padding: 15px;
+            border-left: 4px solid #1abc9c;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Nginx Web Server - Group 7</h1>
+        <div class="info">
+            <p><strong>OS:</strong> Slackware 15.0</p>
+            <p><strong>Web Server:</strong> Nginx 1.24.0</p>
+            <p><strong>Server:</strong> darkstar</p>
+        </div>
+        <p>Server running successfully</p>
+    </div>
+</body>
+</html>
+EOF
+
+# Start Nginx
+/usr/local/sbin/nginx
+
+# Verify
+curl http://localhost
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/nginx-slackware.png}
+    \caption{Nginx web server on Slackware}
+    \label{fig:nginx_slackware}
+\end{figure}
+
+\subsection{2.3 Automatic Startup Configuration}
+
+\begin{lstlisting}[language=bash]
+# Create startup script
+cat > /etc/rc.d/rc.nginx << 'EOF'
+#!/bin/bash
+# Nginx startup script
+
+NGINX=/usr/local/sbin/nginx
+NGINX_CONF=/etc/nginx/nginx.conf
+
+case "$1" in
+  start)
+    echo "Starting Nginx..."
+    $NGINX -c $NGINX_CONF
+    ;;
+  stop)
+    echo "Stopping Nginx..."
+    killall nginx
+    ;;
+  restart)
+    $0 stop
+    sleep 2
+    $0 start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+exit 0
+EOF
+
+# Make executable
+chmod +x /etc/rc.d/rc.nginx
+
+# Add to rc.local for auto-start
+echo "/etc/rc.d/rc.nginx start" >> /etc/rc.d/rc.local
+chmod +x /etc/rc.d/rc.local
+\end{lstlisting}
+
+\begin{exercise}{Exercise 3: IIS on Windows Server}
+\textbf{Platform:} Windows Server 2019\\
+\textbf{IP Address:} 10.2.77.180\\
+\textbf{Web Server:} Internet Information Services (IIS)
+\end{exercise}
+
+\subsection{3.1 IIS Installation}
+
+IIS was installed using PowerShell:
+
+\begin{lstlisting}[language=bash]
+# Install IIS with management tools
+Install-WindowsFeature -name Web-Server -IncludeManagementTools
+
+# Verify service
+Get-Service W3SVC
+
+# Configure automatic startup
+Set-Service W3SVC -StartupType Automatic
+
+# Start service
+Start-Service W3SVC
+\end{lstlisting}
+
+\subsection{3.2 Creating Web Page}
+
+\begin{lstlisting}[language=bash]
+# Navigate to wwwroot
+cd C:\inetpub\wwwroot
+
+# Create custom HTML (PowerShell)
+@"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Group 7 - Windows Server</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background: #0078d4;
+            color: white;
+        }
+        .container {
+            background: #005a9e;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        h1 { color: #ffffff; }
+        .info {
+            background: #004578;
+            padding: 15px;
+            border-left: 4px solid #00bcf2;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IIS Web Server - Group 7</h1>
+        <div class="info">
+            <p><strong>OS:</strong> Windows Server</p>
+            <p><strong>Web Server:</strong> IIS</p>
+            <p><strong>Lab:</strong> 06</p>
+        </div>
+        <p>Server running successfully</p>
+    </div>
+</body>
+</html>
+"@ | Out-File -FilePath iisstart.htm -Encoding UTF8
+
+# Test
+Invoke-WebRequest -Uri http://localhost
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/iis-windows.png}
+    \caption{IIS web server on Windows Server}
+    \label{fig:iis_windows}
+\end{figure}
+
+\section{Part 2: DNS Configuration}
+
+\begin{exercise}{Exercise 4: BIND DNS Server on Solaris}
+\textbf{Server:} Solaris (10.2.77.178)\\
+\textbf{DNS Software:} BIND 9.10
+\end{exercise}
+
+\subsection{4.1 BIND Installation and Configuration}
+
+\begin{lstlisting}[language=bash]
+# Install BIND
+pkg install service/network/dns/bind
+
+# Create main configuration
+cat > /etc/named.conf << 'EOF'
+options {
+    directory "/var/named";
+    listen-on { any; };
+    listen-on-v6 { none; };
+    allow-query { any; };
+    recursion yes;
+    forwarders {
+        8.8.8.8;
+        8.8.4.4;
+    };
+};
+
+zone "grupo7.local" IN {
+    type master;
+    file "/var/named/grupo7.local.zone";
+};
+
+zone "77.2.10.in-addr.arpa" IN {
+    type master;
+    file "/var/named/77.2.10.rev";
+};
+EOF
+\end{lstlisting}
+
+\subsection{4.2 DNS Zone Files}
+
+\textbf{Forward Zone (grupo7.local):}
+
+\begin{lstlisting}[language=bash]
+cat > /var/named/grupo7.local.zone << 'EOF'
+$TTL 86400
+@   IN  SOA  ns1.grupo7.local. admin.grupo7.local. (
+            2025101701  ; Serial
+            3600        ; Refresh
+            1800        ; Retry
+            604800      ; Expire
+            86400 )     ; Minimum TTL
+
+; Name servers
+@           IN  NS      ns1.grupo7.local.
+
+; A records
+ns1         IN  A       10.2.77.178
+solaris     IN  A       10.2.77.178
+slackware   IN  A       10.2.77.176
+windows     IN  A       10.2.77.180
+EOF
+\end{lstlisting}
+
+\textbf{Reverse Zone:}
+
+\begin{lstlisting}[language=bash]
+cat > /var/named/77.2.10.rev << 'EOF'
+$TTL 86400
+@   IN  SOA  ns1.grupo7.local. admin.grupo7.local. (
+            2025101701  ; Serial
+            3600        ; Refresh
+            1800        ; Retry
+            604800      ; Expire
+            86400 )     ; Minimum TTL
+
+@           IN  NS      ns1.grupo7.local.
+
+; PTR records
+178         IN  PTR     solaris.grupo7.local.
+176         IN  PTR     slackware.grupo7.local.
+180         IN  PTR     windows.grupo7.local.
+EOF
+\end{lstlisting}
+
+\subsection{4.3 Service Activation}
+
+\begin{lstlisting}[language=bash]
+# Verify zone files
+named-checkzone grupo7.local \
+    /var/named/grupo7.local.zone
+named-checkzone 77.2.10.in-addr.arpa \
+    /var/named/77.2.10.rev
+named-checkconf /etc/named.conf
+
+# Enable and start DNS
+svcadm enable dns/server
+svcs dns/server
+
+# Test resolution
+nslookup solaris.grupo7.local
+nslookup slackware.grupo7.local
+nslookup windows.grupo7.local
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/dns-resolution.png}
+    \caption{DNS resolution testing}
+    \label{fig:dns_resolution}
+\end{figure}
+
+\subsection{4.4 Client Configuration}
+
+\textbf{Slackware Client:}
+\begin{lstlisting}[language=bash]
+cat > /etc/resolv.conf << 'EOF'
+domain grupo7.local
+search grupo7.local
+nameserver 10.2.77.178
+nameserver 8.8.8.8
+EOF
+\end{lstlisting}
+
+\textbf{Windows Client:}
+\begin{lstlisting}[language=bash]
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet0" `
+    -ServerAddresses ("10.2.77.178","8.8.8.8")
+\end{lstlisting}
+
+\section{Part 3: Virtual Host Configuration}
+
+\begin{exercise}{Exercise 5: Apache Virtual Hosts}
+\textbf{Domains to Configure:}
+\begin{itemize}
+    \item network.andersson.com.co
+    \item security.cristian.org.jp
+    \item systems.fabian.com.cl
+\end{itemize}
+\end{exercise}
+
+\subsection{5.1 Directory Structure}
+
+\begin{lstlisting}[language=bash]
+# Create directories for each virtual host
+mkdir -p /var/apache2/2.4/htdocs/network
+mkdir -p /var/apache2/2.4/htdocs/security
+mkdir -p /var/apache2/2.4/htdocs/systems
+\end{lstlisting}
+
+\subsection{5.2 Virtual Host Configuration}
+
+\begin{lstlisting}[language=bash]
+cat > /etc/apache2/2.4/extra/httpd-vhosts.conf << 'EOF'
+# Virtual Host for network.andersson.com.co
+<VirtualHost *:80>
+    ServerName network.andersson.com.co
+    DocumentRoot "/var/apache2/2.4/htdocs/network"
+    
+    <Directory "/var/apache2/2.4/htdocs/network">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    
+    ErrorLog "/var/apache2/2.4/logs/network-error.log"
+    CustomLog "/var/apache2/2.4/logs/network-access.log" common
+</VirtualHost>
+
+# Virtual Host for security.cristian.org.jp
+<VirtualHost *:80>
+    ServerName security.cristian.org.jp
+    DocumentRoot "/var/apache2/2.4/htdocs/security"
+    
+    <Directory "/var/apache2/2.4/htdocs/security">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    
+    ErrorLog "/var/apache2/2.4/logs/security-error.log"
+    CustomLog "/var/apache2/2.4/logs/security-access.log" common
+</VirtualHost>
+
+# Virtual Host for systems.fabian.com.cl
+<VirtualHost *:80>
+    ServerName systems.fabian.com.cl
+    DocumentRoot "/var/apache2/2.4/htdocs/systems"
+    
+    <Directory "/var/apache2/2.4/htdocs/systems">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    
+    ErrorLog "/var/apache2/2.4/logs/systems-error.log"
+    CustomLog "/var/apache2/2.4/logs/systems-access.log" common
+</VirtualHost>
+EOF
+\end{lstlisting}
+
+\subsection{5.3 Enable Virtual Hosts}
+
+\begin{lstlisting}[language=bash]
+# Edit httpd.conf to include vhosts
+echo "Include /etc/apache2/2.4/extra/httpd-vhosts.conf" \
+    >> /etc/apache2/2.4/httpd.conf
+
+# Verify configuration
+/usr/apache2/2.4/bin/apachectl configtest
+
+# Restart Apache
+svcadm restart apache24
+\end{lstlisting}
+
+\subsection{5.4 DNS Configuration for Virtual Hosts}
+
+Three new DNS zones were created:
+
+\begin{lstlisting}[language=bash]
+# Zone: andersson.com.co
+cat > /var/named/andersson.com.co.zone << 'EOF'
+$TTL 86400
+@   IN  SOA  ns1.andersson.com.co. admin.andersson.com.co. (
+            2025101702 3600 1800 604800 86400 )
+@           IN  NS      ns1.andersson.com.co.
+ns1         IN  A       10.2.77.178
+network     IN  A       10.2.77.178
+EOF
+
+# Zone: cristian.org.jp
+cat > /var/named/cristian.org.jp.zone << 'EOF'
+$TTL 86400
+@   IN  SOA  ns1.cristian.org.jp. admin.cristian.org.jp. (
+            2025101702 3600 1800 604800 86400 )
+@           IN  NS      ns1.cristian.org.jp.
+ns1         IN  A       10.2.77.178
+security    IN  A       10.2.77.178
+EOF
+
+# Zone: fabian.com.cl
+cat > /var/named/fabian.com.cl.zone << 'EOF'
+$TTL 86400
+@   IN  SOA  ns1.fabian.com.cl. admin.fabian.com.cl. (
+            2025101702 3600 1800 604800 86400 )
+@           IN  NS      ns1.fabian.com.cl.
+ns1         IN  A       10.2.77.178
+systems     IN  A       10.2.77.178
+EOF
+
+# Add zones to named.conf
+cat >> /etc/named.conf << 'EOF'
+zone "andersson.com.co" IN {
+    type master;
+    file "/var/named/andersson.com.co.zone";
+};
+zone "cristian.org.jp" IN {
+    type master;
+    file "/var/named/cristian.org.jp.zone";
+};
+zone "fabian.com.cl" IN {
+    type master;
+    file "/var/named/fabian.com.cl.zone";
+};
+EOF
+
+# Restart DNS
+svcadm restart dns/server
+\end{lstlisting}
+
+\subsection{5.5 Testing Virtual Hosts}
+
+\begin{lstlisting}[language=bash]
+# Test DNS resolution
+nslookup network.andersson.com.co
+nslookup security.cristian.org.jp
+nslookup systems.fabian.com.cl
+
+# Test HTTP access
+curl http://network.andersson.com.co
+curl http://security.cristian.org.jp
+curl http://systems.fabian.com.cl
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/virtual-hosts.png}
+    \caption{Virtual hosts working correctly}
+    \label{fig:virtual_hosts}
+\end{figure}
+
+\section{Testing and Verification}
+
+\subsection{Connectivity Tests}
+
+All servers were tested from a remote computer:
+
+\begin{itemize}
+    \item \textbf{http://10.2.77.178} - Apache (Solaris) ✓
+    \item \textbf{http://10.2.77.176} - Nginx (Slackware) ✓
+    \item \textbf{http://10.2.77.180} - IIS (Windows) ✓
+    \item \textbf{http://solaris.grupo7.local} - DNS resolution ✓
+    \item \textbf{http://slackware.grupo7.local} - DNS resolution ✓
+    \item \textbf{http://windows.grupo7.local} - DNS resolution ✓
+    \item \textbf{http://network.andersson.com.co} - Virtual host ✓
+    \item \textbf{http://security.cristian.org.jp} - Virtual host ✓
+    \item \textbf{http://systems.fabian.com.cl} - Virtual host ✓
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/browser-testing.png}
+    \caption{Browser testing from remote computer}
+    \label{fig:browser_testing}
+\end{figure}
+
+\section{Infrastructure Summary}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Server} & \textbf{OS} & \textbf{Web Server} & \textbf{IP} \\
+\midrule
+grupo7 & Solaris 11.4 & Apache 2.4 & 10.2.77.178 \\
+darkstar & Slackware 15.0 & Nginx 1.24.0 & 10.2.77.176 \\Windows & Windows Server & IIS & 10.2.77.180 \\
+\bottomrule
+\end{tabular}
+\caption{Server infrastructure configuration}
+\label{tab:servers}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Domain} & \textbf{Type} & \textbf{IP Address} \\
+\midrule
+grupo7.local & Primary & 10.2.77.178 \\
+andersson.com.co & Virtual Host & 10.2.77.178 \\
+cristian.org.jp & Virtual Host & 10.2.77.178 \\
+fabian.com.cl & Virtual Host & 10.2.77.178 \\
+\bottomrule
+\end{tabular}
+\caption{DNS zones configured}
+\label{tab:dns_zones}
+\end{table}
+
+\section{Troubleshooting and Solutions}
+
+\subsection{Apache Virtual Hosts Issue}
+
+\textbf{Problem:} Apache could not find the httpd-vhosts.conf file.
+
+\textbf{Root Cause:} File was created in wrong directory (/etc/apache2/2.4/ instead of /etc/apache2/2.4/extra/).
+
+\textbf{Solution:}
+\begin{lstlisting}[language=bash]
+# Create extra directory
+mkdir -p /etc/apache2/2.4/extra
+
+# Move configuration file
+mv /etc/apache2/2.4/httpd-vhosts.conf \
+   /etc/apache2/2.4/extra/
+
+# Update Include path in httpd.conf
+echo "Include /etc/apache2/2.4/extra/httpd-vhosts.conf" \
+    >> /etc/apache2/2.4/httpd.conf
+
+# Clear service and restart
+svcadm clear apache24
+svcadm restart apache24
+\end{lstlisting}
+
+\subsection{DNS Resolution Delay}
+
+\textbf{Problem:} Initial DNS queries were slow to resolve.
+
+\textbf{Solution:} Configured forwarders (8.8.8.8, 8.8.4.4) in named.conf to improve recursive query performance.
+
+\subsection{Nginx Compilation}
+
+\textbf{Challenge:} Nginx not available in Slackware repositories.
+
+\textbf{Solution:} Successfully compiled from source with necessary modules (SSL, HTTP/2) and created custom startup script for system integration.
+
+\section{Key Learnings}
+
+\begin{itemize}
+    \item \textbf{Multi-platform Administration:} Successfully configured web servers across three different operating systems, each requiring platform-specific commands and configurations.
+    
+    \item \textbf{DNS Architecture:} Implemented centralized DNS with multiple zones, understanding forward and reverse lookups, and the relationship between DNS and virtual hosting.
+    
+    \item \textbf{Virtual Hosting:} Configured name-based virtual hosting, demonstrating how a single IP address can serve multiple domains through HTTP Host headers.
+    
+    \item \textbf{Service Management:} Learned different service management systems: SMF (Solaris), init scripts (Slackware), and Windows Services.
+    
+    \item \textbf{Troubleshooting Skills:} Developed systematic approach to identifying and resolving configuration issues through log analysis and verification commands.
+\end{itemize}
+
+\section{Application Layer Protocols}
+
+\subsection{HTTP Protocol}
+
+HTTP (Hypertext Transfer Protocol) operates at the application layer and uses a request-response model:
+
+\textbf{HTTP Request Structure:}
+\begin{itemize}
+    \item \textbf{Request Line:} Method (GET, POST), URI, HTTP version
+    \item \textbf{Headers:} Host, User-Agent, Accept, etc.
+    \item \textbf{Body:} Optional data for POST requests
+\end{itemize}
+
+\textbf{Virtual Hosting Mechanism:}
+
+When a browser accesses \texttt{http://network.andersson.com.co}, it:
+\begin{enumerate}
+    \item Queries DNS for IP address of network.andersson.com.co
+    \item Receives 10.2.77.178 (Solaris server)
+    \item Sends HTTP request with \texttt{Host: network.andersson.com.co} header
+    \item Apache matches Host header to virtual host configuration
+    \item Serves content from /var/apache2/2.4/htdocs/network/
+\end{enumerate}
+
+\subsection{DNS Protocol}
+
+DNS (Domain Name System) translates human-readable domain names to IP addresses:
+
+\textbf{DNS Query Process:}
+\begin{enumerate}
+    \item Client queries local DNS server (10.2.77.178)
+    \item DNS server checks zone file for matching record
+    \item Returns A record with IP address
+    \item Client caches result based on TTL (86400 seconds)
+\end{enumerate}
+
+\textbf{DNS Record Types Used:}
+\begin{itemize}
+    \item \textbf{A Record:} Maps hostname to IPv4 address
+    \item \textbf{NS Record:} Specifies authoritative name server
+    \item \textbf{SOA Record:} Start of Authority, zone metadata
+    \item \textbf{PTR Record:} Reverse DNS, maps IP to hostname
+    \item \textbf{CNAME Record:} Alias for another hostname
+\end{itemize}
+
+\section{Network Architecture}
+
+The implemented infrastructure demonstrates a typical enterprise web hosting environment:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/network-diagram.png}
+    \caption{Laboratory network architecture}
+    \label{fig:network_arch}
+\end{figure}
+
+\textbf{Architecture Components:}
+\begin{itemize}
+    \item \textbf{DNS Server:} Centralized name resolution (Solaris)
+    \item \textbf{Web Servers:} Three platforms serving HTTP content
+    \item \textbf{Virtual Hosting:} Multiple domains on single server
+    \item \textbf{Clients:} Remote access testing
+\end{itemize}
+
+\section{Security Considerations}
+
+\subsection{Access Control}
+
+\begin{itemize}
+    \item \textbf{Firewall Configuration:} Port 80 opened on all servers
+    \item \textbf{DNS Security:} Allow-query restricted to internal network
+    \item \textbf{Virtual Host Isolation:} Separate directories per domain
+\end{itemize}
+
+\subsection{Best Practices Implemented}
+
+\begin{itemize}
+    \item Separate log files per virtual host for audit trails
+    \item DNS forwarders for redundancy
+    \item Service automatic startup for high availability
+    \item Configuration backups before modifications
+\end{itemize}
+
+\begin{note}
+In production environments, additional security measures should include:
+\begin{itemize}
+    \item HTTPS/TLS encryption (SSL certificates)
+    \item Web Application Firewall (WAF)
+    \item DDoS protection
+    \item Regular security updates
+    \item DNSSEC for DNS integrity
+\end{itemize}
+\end{note}
+
+\section{Performance Optimization}
+
+\subsection{Web Server Tuning}
+
+\textbf{Apache (Solaris):}
+\begin{itemize}
+    \item KeepAlive enabled for persistent connections
+    \item Multi-Processing Module (MPM) worker configured
+    \item Content compression enabled
+\end{itemize}
+
+\textbf{Nginx (Slackware):}
+\begin{itemize}
+    \item Worker processes set to CPU core count
+    \item Event-driven architecture for high concurrency
+    \item Static file caching configured
+\end{itemize}
+
+\subsection{DNS Optimization}
+
+\begin{itemize}
+    \item TTL values set to 86400 (24 hours) for stable records
+    \item Forwarders configured for recursive query performance
+    \item Zone transfer notifications disabled for security
+\end{itemize}
+
+\section{Comparison: Apache vs Nginx vs IIS}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Feature} & \textbf{Apache} & \textbf{Nginx} & \textbf{IIS} \\
+\midrule
+Platform & Multi & Multi & Windows \\
+Architecture & Process & Event & Thread \\
+Config & Text & Text & GUI/XML \\
+Performance & Good & Excellent & Good \\
+Memory Use & Medium & Low & Medium \\
+Ease of Use & Medium & Medium & Easy \\
+\bottomrule
+\end{tabular}
+\caption{Web server comparison}
+\label{tab:webserver_comparison}
+\end{table}
+
+\textbf{Use Case Recommendations:}
+\begin{itemize}
+    \item \textbf{Apache:} Complex configurations, .htaccess support, wide module ecosystem
+    \item \textbf{Nginx:} High-traffic sites, reverse proxy, static content delivery
+    \item \textbf{IIS:} Windows-integrated applications, .NET framework support
+\end{itemize}
+
+\section{Future Enhancements}
+
+\subsection{Potential Improvements}
+
+\begin{enumerate}
+    \item \textbf{Load Balancing:} Implement Nginx as reverse proxy distributing load across Apache and IIS backends
+    
+    \item \textbf{SSL/TLS:} Configure HTTPS with Let's Encrypt certificates for encrypted communication
+    
+    \item \textbf{Monitoring:} Deploy monitoring tools (Nagios, Prometheus) for health checks and performance metrics
+    
+    \item \textbf{Content Delivery:} Implement caching strategies with Varnish or Redis
+    
+    \item \textbf{Database Integration:} Connect web servers to backend databases (PostgreSQL, MySQL)
+    
+    \item \textbf{High Availability:} Configure failover and redundancy for critical services
+\end{enumerate}
+
+\section{Conclusions}
+
+This laboratory successfully demonstrated the implementation of a complete web infrastructure spanning multiple operating systems and technologies. Key achievements include:
+
+\begin{itemize}
+    \item \textbf{Multi-platform Deployment:} Successfully installed and configured Apache, Nginx, and IIS on Solaris, Slackware, and Windows Server respectively, demonstrating versatility in system administration.
+    
+    \item \textbf{DNS Infrastructure:} Implemented BIND DNS server with multiple zones, enabling name-based access to all services and understanding the critical role of DNS in web infrastructure.
+    
+    \item \textbf{Virtual Hosting:} Configured name-based virtual hosting with three distinct domains pointing to a single server, demonstrating efficient resource utilization and understanding of HTTP Host headers.
+    
+    \item \textbf{Service Integration:} Integrated web servers with DNS service, configured automatic startup, and verified remote accessibility from client machines.
+    
+    \item \textbf{Problem Resolution:} Encountered and resolved real-world configuration issues, developing troubleshooting skills applicable to production environments.
+    
+    \item \textbf{Protocol Understanding:} Gained practical knowledge of application layer protocols (HTTP, DNS) and their interaction in web service delivery.
+\end{itemize}
+
+\textbf{Skills Acquired:}
+\begin{itemize}
+    \item Cross-platform system administration
+    \item Web server configuration and management
+    \item DNS architecture and zone management
+    \item Virtual hosting implementation
+    \item Network protocol analysis
+    \item Service automation and management
+\end{itemize}
+
+The laboratory provided hands-on experience with enterprise-grade technologies and reinforced the importance of proper documentation, systematic troubleshooting, and understanding underlying protocols for effective infrastructure management.
+
+\section{References}
+
+\begin{enumerate}
+    \item Apache Software Foundation. \textit{Apache HTTP Server Version 2.4 Documentation}. Available: \url{https://httpd.apache.org/docs/2.4/}
+    
+    \item Nginx Inc. \textit{Nginx Documentation}. Available: \url{https://nginx.org/en/docs/}
+    
+    \item Microsoft Corporation. \textit{Internet Information Services (IIS) Documentation}. Available: \url{https://docs.microsoft.com/en-us/iis/}
+    
+    \item Internet Systems Consortium. \textit{BIND 9 Administrator Reference Manual}. Available: \url{https://bind9.readthedocs.io/}
+    
+    \item Oracle Corporation. \textit{Oracle Solaris 11.4 System Administration Guide}. Available: \url{https://docs.oracle.com/cd/E37838_01/}
+    
+    \item Slackware Linux Project. \textit{Slackware Linux Basics}. Available: \url{http://www.slackware.com/book/}
+    
+    \item RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1. IETF, 1999.
+    
+    \item RFC 1035 - Domain Names - Implementation and Specification. IETF, 1987.
+    
+    \item RFC 2181 - Clarifications to the DNS Specification. IETF, 1997.
+    
+    \item Kurose, J.F., Ross, K.W. \textit{Computer Networking: A Top-Down Approach}, 8th Edition. Pearson, 2020.
+    
+    \item Nemeth, E., Snyder, G., Hein, T.R. \textit{UNIX and Linux System Administration Handbook}, 5th Edition. Addison-Wesley, 2017.
+    
+    \item Liu, C., Albitz, P. \textit{DNS and BIND}, 5th Edition. O'Reilly Media, 2006.
+\end{enumerate}
+
+\end{document}

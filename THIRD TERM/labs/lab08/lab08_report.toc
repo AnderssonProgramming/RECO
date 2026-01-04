@@ -1,0 +1,72 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Objectives}{4}{section.1}%
+\contentsline {section}{\numberline {2}Tools and Equipment}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Required Software}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Hardware Infrastructure}{4}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Introduction}{4}{section.3}%
+\contentsline {section}{\numberline {4}Part 1: Basic Switch Configuration}{4}{section.4}%
+\contentsline {subsection}{\numberline {4.1}1.1 Network Topology}{4}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}1.2 Console Connection}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}1.3 Switch Configuration Commands}{5}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}1.4 Configuration Verification}{5}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}1.5 Connectivity Testing}{5}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}1.6 Wireshark Ethernet Frame Analysis}{6}{subsection.4.6}%
+\contentsline {section}{\numberline {5}Part 2: Larger Switch Networks}{6}{section.5}%
+\contentsline {subsection}{\numberline {5.1}2.1 Network Design}{6}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}2.2 Switch Learning Process - Simulation Analysis}{6}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Scenario A: PC1 to PC7}{6}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Scenario B: PC0 to PC9}{7}{subsubsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.3}Scenario C: Server0 to Server1}{7}{subsubsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.4}Scenario D: Laptop0 to Laptop1}{7}{subsubsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.3}2.3 MAC Address Table Convergence}{7}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}2.4 Spanning Tree Protocol (STP)}{8}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Part 3: VLAN Configuration}{8}{section.6}%
+\contentsline {subsection}{\numberline {6.1}3.1 VLAN Topology}{8}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}3.2 VLAN Configuration Commands}{8}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}3.3 Trunk Link Configuration}{8}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}3.4 VLAN Connectivity Testing}{9}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}3.5 VLAN Verification Commands}{9}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}3.6 Running Configuration Export}{9}{subsection.6.6}%
+\contentsline {section}{\numberline {7}Part 4: Wireless Network Configuration}{10}{section.7}%
+\contentsline {subsection}{\numberline {7.1}4.1 Laboratory WiFi Topology}{10}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}4.2 Wireless Router Web Configuration}{10}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}4.3 Access Point Configuration}{11}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}4.4 Wireless Client Connection}{11}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}4.8 ARP Table Analysis}{11}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}4.9 WiFi Analyzer - Laboratory Networks}{12}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}4.10 SSID Broadcast Test - Beacon Frames}{14}{subsection.7.7}%
+\contentsline {section}{\numberline {8}Part 5: Advanced Wireless and VLAN Integration}{16}{section.8}%
+\contentsline {subsection}{\numberline {8.1}5.1 Integrated Network Design}{16}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}5.2 VLAN and Wireless Mapping}{16}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}5.3 Connectivity Matrix}{16}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}5.4 Specific Ping Test Results}{16}{subsection.8.4}%
+\contentsline {section}{\numberline {9}Part 6: Network Monitoring Scripts}{17}{section.9}%
+\contentsline {subsection}{\numberline {9.1}6.1 Slackware Monitoring Script}{17}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}6.2 Vnstat Installation and Configuration}{17}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}6.3 Windows PowerShell Script}{18}{subsection.9.3}%
+\contentsline {section}{\numberline {10}Part 7: Dynamic Web Application}{18}{section.10}%
+\contentsline {subsection}{\numberline {10.1}7.1 Application Architecture}{18}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}7.2 Azure SQL Database Creation}{18}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}7.3 Networking Configuration}{18}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}7.4 Database Schema Design}{19}{subsection.10.4}%
+\contentsline {subsection}{\numberline {10.5}7.5 Data Population}{19}{subsection.10.5}%
+\contentsline {subsection}{\numberline {10.6}7.6 Azure Query Editor - Grade Calculator}{19}{subsection.10.6}%
+\contentsline {subsection}{\numberline {10.7}7.7 Remote Connection with DBeaver}{20}{subsection.10.7}%
+\contentsline {subsection}{\numberline {10.8}7.8 Performance Monitoring}{20}{subsection.10.8}%
+\contentsline {section}{\numberline {11}Part 8: Home WiFi Network Analysis}{21}{section.11}%
+\contentsline {subsection}{\numberline {11.1}9.1 Home WiFi Environment Analysis}{21}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}9.2 2.4 GHz Band Analysis}{21}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}9.3 5 GHz Band Analysis}{22}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}9.4 Band Comparison}{23}{subsection.11.4}%
+\contentsline {section}{\numberline {12}Part 10: MAC Address Filtering}{24}{section.12}%
+\contentsline {subsection}{\numberline {12.1}10.1 MAC Filtering Configuration}{24}{subsection.12.1}%
+\contentsline {subsection}{\numberline {12.2}10.2 MAC Filtering Modes}{24}{subsection.12.2}%
+\contentsline {subsection}{\numberline {12.3}10.3 Adding MAC Addresses to Block List}{25}{subsection.12.3}%
+\contentsline {subsection}{\numberline {12.4}10.4 Verification and Testing}{25}{subsection.12.4}%
+\contentsline {subsection}{\numberline {12.5}10.5 Security Considerations}{25}{subsection.12.5}%
+\contentsline {subsection}{\numberline {12.6}10.6 Real-World Application}{25}{subsection.12.6}%
+\contentsline {section}{\numberline {13}Theoretical Questions Analysis}{25}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Question 1: Switch Frame Forwarding Behavior}{25}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}Question 2: Trunk Link Purpose}{26}{subsection.13.2}%
+\contentsline {section}{\numberline {14}Conclusions}{26}{section.14}%
+\contentsline {section}{\numberline {15}References}{28}{section.15}%

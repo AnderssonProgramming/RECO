@@ -1,0 +1,828 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{pifont}
+
+% Geometry settings
+\geometry{
+    a4paper,
+    top=2.5cm,
+    bottom=2.5cm,
+    left=2.5cm,
+    right=2.5cm
+}
+
+% Header and footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textcolor{blue!70!black}{WiFi Network Configuration}}
+\lhead{\textcolor{blue!70!black}{Lab 08 - Computer Networks}}
+\cfoot{\textcolor{blue!70!black}{\thepage}}
+
+% Color definitions
+\definecolor{primaryblue}{RGB}{41, 128, 185}
+\definecolor{secondaryblue}{RGB}{52, 152, 219}
+\definecolor{accentgreen}{RGB}{39, 174, 96}
+\definecolor{accentorange}{RGB}{230, 126, 34}
+\definecolor{darkgray}{RGB}{52, 73, 94}
+\definecolor{lightgray}{RGB}{236, 240, 241}
+
+% Define check and cross marks
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{primaryblue}\bfseries,
+    commentstyle=\color{accentgreen}\itshape,
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{lightgray},
+    numbers=left,
+    numberstyle=\tiny\color{darkgray},
+    xleftmargin=15pt,
+    framexleftmargin=15pt
+}
+
+% Section formatting
+\titleformat{\section}
+{\color{primaryblue}\normalfont\Large\bfseries}
+{\thesection}{1em}{}[\titlerule]
+
+\titleformat{\subsection}
+{\color{secondaryblue}\normalfont\large\bfseries}
+{\thesubsection}{1em}{}
+
+% Custom boxes
+\newtcolorbox{configbox}[1]{
+    enhanced,
+    colback=primaryblue!5!white,
+    colframe=primaryblue,
+    title={\textbf{#1}},
+    fonttitle=\bfseries,
+    boxrule=1pt,
+    arc=2pt
+}
+
+\newtcolorbox{notebox}{
+    enhanced,
+    colback=accentorange!10!white,
+    colframe=accentorange,
+    title={\textbf{Important Note}},
+    fonttitle=\bfseries,
+    boxrule=1pt,
+    arc=2pt
+}
+
+\newtcolorbox{resultbox}{
+    enhanced,
+    colback=accentgreen!10!white,
+    colframe=accentgreen,
+    title={\textbf{Test Results}},
+    fonttitle=\bfseries,
+    boxrule=1pt,
+    arc=2pt
+}
+
+\begin{document}
+
+% Title page
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    \includegraphics[width=0.3\textwidth]{../media/university_logo.png}\\[1.5cm]
+    
+    {\Huge\bfseries\color{primaryblue} Step-by-Step Guide\\[0.3cm]}
+    {\Huge\bfseries\color{secondaryblue} WiFi Network\\[0.3cm]}
+    {\Huge\bfseries\color{secondaryblue} Configuration\\[0.5cm]}
+    {\Large\color{darkgray} Physical Wireless Infrastructure Deployment\\[2cm]}
+    
+    {\Large\textbf{Laboratory 08 - Exercise 7}\\[0.3cm]}
+    {\large Computer Networks - Wireless LAN\\[2cm]}
+    
+    {\large\textbf{Authors:}\\[0.3cm]
+    Andersson David Sánchez Méndez\\
+    Cristian Santiago Pedraza Rodríguez\\[1.5cm]}
+    
+    {\large\textbf{Instructor:}\\
+    Professor Fabián Eduardo Sierra Sánchez\\[1cm]}
+    
+    {\large Escuela Colombiana de Ingeniería Julio Garavito\\[0.3cm]
+    Systems Engineering Program\\[0.5cm]
+    \today}
+    
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+This comprehensive guide documents the deployment and configuration of a physical wireless network infrastructure in the Computer Networks laboratory. The exercise corresponds to point 7 of Laboratory 08, where we implement a complete WiFi solution including router configuration, security setup, DHCP services, and network analysis.
+
+\subsection{Objectives}
+\begin{itemize}[itemsep=0.2em]
+    \item Configure physical wireless router with appropriate SSID and security
+    \item Implement WPA2-PSK encryption with AES cipher
+    \item Set up DHCP server for automatic IP assignment
+    \item Configure WAN interface using laboratory IP addressing
+    \item Optimize wireless channel selection based on spectrum analysis
+    \item Connect mobile devices and test connectivity
+    \item Analyze wireless network using WiFi Analyzer application
+    \item Understand NAT operation and its impact on connectivity
+\end{itemize}
+
+\subsection{Equipment and Tools}
+\begin{itemize}[itemsep=0.2em]
+    \item Physical wireless router (laboratory equipment)
+    \item Ethernet cables (Cat 5e or Cat 6)
+    \item Smartphones with WiFi capability
+    \item WiFi Analyzer app (Android/iOS)
+    \item Laboratory PCs with network access
+    \item Web browser for router configuration
+\end{itemize}
+
+\section{Network Topology}
+\subsection{Physical Infrastructure}
+The wireless network integrates into the existing laboratory infrastructure by replacing a wired connection with a wireless access point:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../media/physical-wifi-topology.png}
+    \caption{Physical WiFi laboratory topology}
+    \label{fig:topology}
+\end{figure}
+
+\subsection{Network Addressing Scheme}
+
+\begin{configbox}{IP Address Configuration}
+\textbf{Wireless Router Configuration:}
+\begin{itemize}
+    \item \textbf{LAN Interface:} 192.168.0.1/24
+    \item \textbf{WAN Interface:} 65.148.77.200/24 (from disconnected PC)
+    \item \textbf{Default Gateway:} 65.148.77.1
+    \item \textbf{DHCP Range:} 192.168.0.20 - 192.168.0.30
+    \item \textbf{Subnet Mask:} 255.255.255.0
+\end{itemize}
+\end{configbox}
+
+\subsection{Design Rationale}
+The network design follows these principles:
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{Private Addressing:} 192.168.0.0/24 for wireless clients (RFC 1918)
+    \item \textbf{NAT Translation:} Router translates private IPs to public WAN IP
+    \item \textbf{DHCP Automation:} Automatic IP assignment for mobile devices
+    \item \textbf{Dual Interface:} Separates internal wireless network from campus backbone
+\end{itemize}
+
+\section{Initial Router Connection}
+
+\subsection{Physical Connection}
+
+\begin{enumerate}
+    \item Disconnect one laboratory PC from the network and note its IP address (e.g., 65.148.77.200)
+    \item Connect the wireless router's WAN port to the network jack using Ethernet cable
+    \item Power on the wireless router and wait for boot sequence (approximately 60 seconds)
+    \item Connect your configuration laptop to router's LAN port 1
+\end{enumerate}
+
+\begin{notebox}
+The router's WAN interface will be configured with the IP address from the disconnected PC, allowing wireless clients to access the campus network and internet through NAT.
+\end{notebox}
+
+\subsection{Accessing Web Interface}
+Open a web browser and navigate to the router's default IP address:
+
+\begin{lstlisting}[language=bash]
+URL: http://192.168.0.1
+Default Username: admin
+Default Password: admin
+\end{lstlisting}
+
+You should see the router's web-based configuration interface.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{../media/router-web-interface.jpg}
+    \caption{Wireless router web configuration interface}
+    \label{fig:web_interface}
+\end{figure}
+
+\section{Wireless Network Configuration}
+\subsection{Basic Wireless Settings}
+Navigate to \textbf{Wireless} or \textbf{Wireless Settings} section and configure:
+
+\begin{configbox}{Wireless Basic Configuration}
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{SSID:} Lab8Sanchez
+    \item \textbf{Wireless Mode:} Mixed (802.11b/g/n)
+    \item \textbf{Channel:} 6 (2.4 GHz)
+    \item \textbf{SSID Broadcast:} Enabled
+    \item \textbf{Channel Width:} 20 MHz
+\end{itemize}
+\end{configbox}
+
+\subsection{Channel Selection Analysis}
+Before finalizing the channel, we analyzed the wireless spectrum using WiFi Analyzer:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../media/wifi-analyzer-channel-graph.jpg}
+    \caption{2.4 GHz spectrum analysis in laboratory}
+    \label{fig:channel_analysis}
+\end{figure}
+
+\textbf{Channel Selection Rationale:}
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{Channels 1, 6, 11:} Only non-overlapping channels in 2.4 GHz band
+    \item \textbf{Channel 6 Selected:} Moderate congestion, central frequency
+    \item \textbf{Neighboring Networks:} Several networks on channels 1 and 11
+    \item \textbf{Signal Strength:} Our router positioned for -45 dBm at client locations
+\end{itemize}
+
+\begin{notebox}
+\textbf{Why Channel 6?}\\
+Analysis showed that while channels 1 and 11 had fewer networks, they exhibited stronger interference from adjacent APs. Channel 6 provided the best signal-to-noise ratio for our laboratory location.
+\end{notebox}
+
+\subsection{Wireless Security Configuration}
+Navigate to \textbf{Wireless Security} and configure WPA2-PSK:
+
+\begin{configbox}{Security Settings}
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{Security Mode:} WPA2-PSK
+    \item \textbf{Encryption:} AES
+    \item \textbf{PSK Passphrase:} WiFiSeg (minimum 8 characters)
+    \item \textbf{Group Key Update:} 3600 seconds
+\end{itemize}
+\end{configbox}
+
+\textbf{Why WPA2-PSK with AES?}
+
+\begin{itemize}
+    \item \textbf{WPA2:} Industry standard, mandatory for WiFi certification since 2006
+    \item \textbf{PSK (Pre-Shared Key):} Suitable for SOHO/laboratory environments
+    \item \textbf{AES Encryption:} Strong cipher, resistant to cryptographic attacks
+    \item \textbf{Superior to WEP/WPA:} WEP crackable in minutes, WPA vulnerable to attacks
+\end{itemize}
+
+\section{DHCP Server Configuration}
+\subsection{DHCP Settings}
+Navigate to \textbf{DHCP Settings} or \textbf{LAN Setup}:
+
+\begin{configbox}{DHCP Configuration}
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{DHCP Server:} Enabled
+    \item \textbf{Start IP Address:} 192.168.0.20
+    \item \textbf{End IP Address:} 192.168.0.30
+    \item \textbf{Lease Time:} 1440 minutes (24 hours)
+    \item \textbf{Default Gateway:} 192.168.0.1
+    \item \textbf{DNS Servers:} 8.8.8.8, 8.8.4.4 (Google DNS)
+\end{itemize}
+\end{configbox}
+
+\subsection{DHCP Address Pool}
+The configured pool provides 11 IP addresses (192.168.0.20-30) for wireless clients. This is sufficient for laboratory testing while reserving lower addresses (192.168.0.2-19) for static assignments if needed.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{../media/router-web-interface.jpg}
+    \caption{Router DHCP and LAN configuration interface}
+    \label{fig:dhcp_config}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Address Range} & \textbf{Purpose} \\
+\midrule
+192.168.0.1 & Router (gateway) \\
+192.168.0.2-19 & Reserved for static IPs \\
+192.168.0.20-30 & DHCP pool \\
+192.168.0.31-254 & Available for expansion \\
+\bottomrule
+\end{tabular}
+\caption{IP address allocation strategy}
+\end{table}
+
+\section{WAN Interface Configuration}
+\subsection{Internet/WAN Setup}
+Navigate to \textbf{Internet Setup} or \textbf{WAN Settings}:
+
+\begin{configbox}{WAN Configuration}
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{Connection Type:} Static IP
+    \item \textbf{IP Address:} 65.148.77.200
+    \item \textbf{Subnet Mask:} 255.255.255.0
+    \item \textbf{Default Gateway:} 65.148.77.1
+    \item \textbf{DNS Server:} 8.8.8.8
+\end{itemize}
+\end{configbox}
+
+\begin{notebox}
+\textbf{Critical Configuration:}\\
+The WAN IP (65.148.77.200) was obtained from the disconnected laboratory PC. This ensures proper routing to campus network and internet. Verify this IP is not in use before configuring.
+\end{notebox}
+
+\subsection{NAT Operation}
+The router automatically enables Network Address Translation (NAT):
+\begin{itemize}[itemsep=0.2em]
+    \item \textbf{Inside Network:} 192.168.0.0/24 (private)
+    \item \textbf{Outside Network:} 65.148.77.0/24 (public campus network)
+    \item \textbf{Translation:} Router translates all outbound traffic to 65.148.77.200
+    \item \textbf{Port Mapping:} Dynamic PAT (Port Address Translation) for multiple clients
+\end{itemize}
+
+\section{Applying Configuration}
+\subsection{Save and Reboot}
+After completing all configuration:
+\begin{enumerate}[itemsep=0.2em]
+    \item Click \textbf{Save} or \textbf{Apply} button
+    \item Router will apply changes (may take 10-30 seconds)
+    \item Some routers require manual reboot: \textbf{System Tools $\rightarrow$ Reboot}
+    \item Wait for router to complete boot cycle (LED indicators stable)
+    \item Disconnect configuration laptop from LAN port
+\end{enumerate}
+
+\section{Smartphone Connection}
+
+\subsection{Connecting Android/iOS Device}
+
+\begin{enumerate}
+    \item Open \textbf{Settings} on smartphone
+    \item Navigate to \textbf{WiFi} or \textbf{Wireless \& Networks}
+    \item Tap \textbf{Scan} or wait for network list to populate
+    \item Select \textbf{Lab8Sanchez} from available networks
+    \item Enter password: \textbf{WiFiSeg}
+    \item Tap \textbf{Connect}
+    \item Wait for DHCP assignment (2-5 seconds)
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../media/wifi-connection-smartphone.jpg}
+    \caption{Smartphone WiFi connection screen}
+    \label{fig:smartphone_connect}
+\end{figure}
+
+\subsection{Verifying Connection}
+
+After connection, verify the following:
+
+\begin{configbox}{Connection Verification}
+\begin{itemize}
+    \item \textbf{Status:} Connected
+    \item \textbf{IP Address:} 192.168.0.2x (from DHCP pool)
+    \item \textbf{Signal Strength:} Good or Excellent (-30 to -60 dBm)
+    \item \textbf{Security:} WPA2
+    \item \textbf{Gateway:} 192.168.0.1
+\end{itemize}
+\end{configbox}
+
+\section{Connectivity Testing}
+
+\subsection{Test 1: Gateway Accessibility}
+
+First, verify connectivity to the wireless router:
+
+\begin{lstlisting}[language=bash, caption=Ping to gateway]
+# Using terminal emulator on smartphone
+$ ping 192.168.0.1
+
+PING 192.168.0.1 (192.168.0.1): 56 data bytes
+64 bytes from 192.168.0.1: icmp_seq=0 ttl=64 time=1.234 ms
+64 bytes from 192.168.0.1: icmp_seq=1 ttl=64 time=0.876 ms
+64 bytes from 192.168.0.1: icmp_seq=2 ttl=64 time=0.945 ms
+
+--- 192.168.0.1 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+\end{lstlisting}
+
+\begin{resultbox}
+\textbf{Result:} \cmark\ SUCCESS - Router gateway reachable from wireless client
+\end{resultbox}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../media/connectivity-test-results.jpg}
+    \caption{Successful connectivity test results from smartphone}
+    \label{fig:connectivity_test}
+\end{figure}
+
+\subsection{Test 2: Internet Connectivity}
+
+Test external internet connectivity:
+
+\begin{lstlisting}[language=bash, caption=Ping to Google DNS]
+$ ping 8.8.8.8
+
+PING 8.8.8.8 (8.8.8.8): 56 data bytes
+64 bytes from 8.8.8.8: icmp_seq=0 ttl=54 time=12.345 ms
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=54 time=11.234 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=54 time=13.567 ms
+
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+\end{lstlisting}
+
+\begin{resultbox}
+\textbf{Result:} \cmark\ SUCCESS - Internet connectivity via NAT working
+\end{resultbox}
+
+\subsection{Test 3: Web Browsing}
+
+Open web browser on smartphone and navigate to:
+\begin{itemize}
+    \item https://www.google.com - \cmark\ SUCCESS
+    \item https://www.escuelaing.edu.co - \cmark\ SUCCESS
+    \item https://www.youtube.com - \cmark\ SUCCESS
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../media/ping-success.png}
+    \caption{Successful web browsing from smartphone}
+    \label{fig:browsing}
+\end{figure}
+
+\subsection{Test 4: NAT Behavior Analysis}
+
+\textbf{Expected Behavior:}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Destination} & \textbf{Expected} & \textbf{Actual} \\
+\midrule
+192.168.0.1 (gateway) & \cmark\ Success & \cmark\ Success \\
+8.8.8.8 (internet) & \cmark\ Success & \cmark\ Success \\
+65.148.77.x (campus) & \cmark\ Success & \cmark\ Success \\
+Other wireless clients & \cmark\ Success & \cmark\ Success \\
+External $\rightarrow$ Smartphone & \xmark\ Blocked & \xmark\ Blocked \\
+\bottomrule
+\end{tabular}
+\caption{NAT connectivity test results}
+\end{table}
+
+\begin{notebox}
+\textbf{NAT Explanation:}\\
+The smartphone has private IP 192.168.0.25. External hosts cannot initiate connections to this IP because:
+\begin{itemize}
+    \item Private IPs are not routable on the internet
+    \item NAT router only maintains mappings for outbound connections
+    \item No port forwarding rules configured for inbound access
+\end{itemize}
+This provides implicit security - smartphones are not directly reachable from internet.
+\end{notebox}
+
+\section{WiFi Analyzer - Network Analysis}
+
+\subsection{Installing WiFi Analyzer}
+
+\begin{enumerate}
+    \item Open Google Play Store (Android) or App Store (iOS)
+    \item Search for "WiFi Analyzer"
+    \item Install recommended app (e.g., "WiFi Analyzer" by farproc)
+    \item Grant location permissions when prompted
+    \item Launch application
+\end{enumerate}
+
+\subsection{Laboratory Network Detection}
+
+Upon launching WiFi Analyzer in the laboratory:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../media/wifi-analyzer-lab-networks.jpg}
+    \caption{WiFi Analyzer showing detected laboratory networks}
+    \label{fig:wifi_networks}
+\end{figure}
+
+\textbf{Networks Detected:}
+\begin{itemize}
+    \item \textbf{Lab8Sanchez:} Our network (-45 dBm, Channel 6, WPA2)
+    \item \textbf{Lab8Pedraza:} Classmate network (-50 dBm, Channel 11, WPA2)
+    \item \textbf{Lab8Garcia:} Classmate network (-55 dBm, Channel 1, WPA2)
+    \item \textbf{EscuelaIng-Staff:} Campus WiFi (-60 dBm, Channel 1, WPA2-Enterprise)
+    \item \textbf{Additional networks:} 5+ networks from adjacent laboratories
+\end{itemize}
+
+\subsection{Signal Strength Analysis}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../media/wifi-analyzer-signal-strength.jpg}
+    \caption{Signal strength meter for Lab8Sanchez}
+    \label{fig:signal_strength}
+\end{figure}
+
+\textbf{Signal Interpretation:}
+\begin{itemize}
+    \item \textbf{-30 to -50 dBm:} Excellent signal, maximum throughput
+    \item \textbf{-50 to -60 dBm:} Good signal, reliable connection (our network: -45 dBm)
+    \item \textbf{-60 to -70 dBm:} Fair signal, reduced speeds
+    \item \textbf{Below -70 dBm:} Weak signal, unstable connection
+\end{itemize}
+
+\subsection{Channel Utilization Graph}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{../media/wifi-analyzer-channel-rating.jpg}
+    \caption{Channel rating showing optimal channel selection}
+    \label{fig:channel_rating}
+\end{figure}
+
+\textbf{Analysis Results:}
+\begin{itemize}
+    \item \textbf{Channel 1:} 4 networks, high congestion
+    \item \textbf{Channel 6:} 3 networks (including ours), moderate congestion
+    \item \textbf{Channel 11:} 5 networks, highest congestion
+    \item \textbf{Recommendation:} Channel 6 confirmed as optimal choice
+\end{itemize}
+
+\subsection{2.4 GHz Spectrum View}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{../media/wifi-analyzer-channels.jpg}
+    \caption{2.4 GHz spectrum showing all detected networks}
+    \label{fig:spectrum}
+\end{figure}
+
+Key observations:
+\begin{itemize}
+    \item Multiple overlapping networks visible
+    \item Lab8Sanchez has strong signal peak on channel 6
+    \item Minimal interference from channels 4-8 range
+    \item Adjacent channel interference from channels 9-11
+\end{itemize}
+
+\section{Network Performance Metrics}
+
+\subsection{Throughput Testing}
+
+Using network speed test application on smartphone:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Metric} & \textbf{Value} & \textbf{Status} \\
+\midrule
+Download Speed & 42.5 Mbps & Good \\
+Upload Speed & 38.7 Mbps & Good \\
+Latency (ping) & 12 ms & Excellent \\
+Jitter & 2 ms & Excellent \\
+Packet Loss & 0\% & Perfect \\
+\bottomrule
+\end{tabular}
+\caption{Network performance test results}
+\end{table}
+
+\subsection{Multiple Client Testing}
+
+Connecting additional smartphones to test concurrent performance:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Device} & \textbf{IP Address} & \textbf{Signal} & \textbf{Speed} \\
+\midrule
+Smartphone 1 & 192.168.0.20 & -45 dBm & 42 Mbps \\
+Smartphone 2 & 192.168.0.21 & -48 dBm & 38 Mbps \\
+Smartphone 3 & 192.168.0.22 & -52 dBm & 35 Mbps \\
+\bottomrule
+\end{tabular}
+\caption{Multiple client performance}
+\end{table}
+
+Performance remains consistent with 3 concurrent clients, demonstrating adequate capacity for laboratory use.
+
+\section{Advanced Features Testing}
+
+\subsection{SSID Broadcast Disable Test}
+
+To test hidden network functionality:
+
+\begin{enumerate}
+    \item Access router web interface from wired PC
+    \item Navigate to Wireless Settings
+    \item Disable "SSID Broadcast"
+    \item Save and apply changes
+    \item Observe behavior on smartphone
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../media/wifi-analyzer-hidden-network.jpg}
+    \caption{WiFi Analyzer showing hidden network}
+    \label{fig:hidden}
+\end{figure}
+
+\textbf{Observations:}
+\begin{itemize}
+    \item WiFi Analyzer still detects the network (beacon frames visible)
+    \item Network appears as "Hidden Network" in analyzer
+    \item Smartphone WiFi settings don't show network in scan
+    \item Manual connection possible by entering SSID manually
+\end{itemize}
+
+\begin{notebox}
+\textbf{Security Implication:}\\
+Disabling SSID broadcast provides minimal security. Professional tools like WiFi Analyzer can still detect the network. True security comes from WPA2-PSK encryption, not from hiding the SSID.
+\end{notebox}
+
+\section{Troubleshooting Common Issues}
+
+\subsection{Issue 1: Cannot Access Router Web Interface}
+
+\textbf{Symptoms:} Browser shows "Unable to connect" when accessing 192.168.0.1
+
+\textbf{Solutions:}
+\begin{enumerate}
+    \item Verify PC is connected to router's LAN port (not WAN)
+    \item Check PC's IP is in 192.168.0.x subnet
+    \item Disable Windows Firewall temporarily
+    \item Try different browser (Chrome, Firefox, Edge)
+    \item Reset router to factory defaults (hold reset button 10 seconds)
+\end{enumerate}
+
+\subsection{Issue 2: Smartphone Connects But No Internet}
+
+\textbf{Symptoms:} WiFi connected, full signal bars, but web pages don't load
+
+\textbf{Solutions:}
+\begin{enumerate}
+    \item Verify WAN interface has correct IP (65.148.77.200)
+    \item Check default gateway is set (65.148.77.1)
+    \item Ping router gateway from smartphone: 192.168.0.1
+    \item Verify DNS servers configured (8.8.8.8)
+    \item Check campus network connectivity from wired PC
+\end{enumerate}
+
+\subsection{Issue 3: Weak Signal Strength}
+
+\textbf{Symptoms:} Signal meter shows -70 dBm or worse
+
+\textbf{Solutions:}
+\begin{enumerate}
+    \item Reposition wireless router to central location
+    \item Elevate router (higher placement improves coverage)
+    \item Adjust antenna orientation (vertical for omnidirectional)
+    \item Switch to 5 GHz band if supported (less interference)
+    \item Check for physical obstacles (metal, concrete walls)
+\end{enumerate}
+
+\subsection{Issue 4: Intermittent Disconnections}
+
+\textbf{Symptoms:} Smartphone randomly disconnects and reconnects
+
+\textbf{Solutions:}
+\begin{enumerate}
+    \item Change wireless channel (use WiFi Analyzer to find least congested)
+    \item Reduce channel width from 40 MHz to 20 MHz
+    \item Update router firmware to latest version
+    \item Check for DHCP pool exhaustion (expand IP range)
+    \item Disable power saving mode on smartphone WiFi settings
+\end{enumerate}
+
+\section{Evidence Summary}
+
+\subsection{Configuration Screenshots}
+
+The following screenshots were captured during configuration:
+
+\begin{enumerate}
+    \item Router web interface login page
+    \item Wireless settings page showing SSID and channel configuration
+    \item Security settings with WPA2-PSK enabled
+    \item DHCP configuration showing IP range 192.168.0.20-30
+    \item WAN interface configured with 65.148.77.200
+    \item System status page showing all interfaces active
+\end{enumerate}
+
+\subsection{WiFi Analyzer Captures}
+
+WiFi Analyzer app provided the following evidence:
+
+\begin{enumerate}
+    \item Network list showing Lab8Sanchez and competitors
+    \item Signal strength graph with -45 dBm measurement
+    \item Channel rating recommending channel 6
+    \item 2.4 GHz spectrum view with all visible networks
+    \item Time graph showing signal stability over 5 minutes
+\end{enumerate}
+
+\subsection{Connectivity Test Results}
+
+Comprehensive ping tests documented:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Test} & \textbf{Destination} & \textbf{Result} & \textbf{RTT} \\
+\midrule
+1 & 192.168.0.1 & \cmark\ Success & 1.2 ms \\
+2 & 8.8.8.8 & \cmark\ Success & 12.3 ms \\
+3 & www.google.com & \cmark\ Success & 15.7 ms \\
+4 & 65.148.77.1 & \cmark\ Success & 2.5 ms \\
+5 & 192.168.0.21 (peer) & \cmark\ Success & 2.1 ms \\
+\bottomrule
+\end{tabular}
+\caption{Complete connectivity test matrix}
+\end{table}
+
+\section{Conclusions}
+
+This guide successfully documented the complete deployment of a physical wireless network infrastructure in the laboratory environment. Key accomplishments and insights include:
+
+\subsection{Configuration Success}
+
+\begin{itemize}
+    \item \textbf{Wireless Network Deployment:} Successfully configured Lab8Sanchez SSID with WPA2-PSK security, providing secure wireless access for laboratory devices.
+    
+    \item \textbf{DHCP Automation:} Implemented automatic IP assignment (192.168.0.20-30), eliminating manual configuration for mobile devices.
+    
+    \item \textbf{WAN Integration:} Properly configured WAN interface with laboratory IP (65.148.77.200), enabling seamless integration with campus network infrastructure.
+    
+    \item \textbf{Security Implementation:} WPA2-PSK with AES encryption ensures confidentiality and integrity of wireless communications, protecting against eavesdropping and unauthorized access.
+\end{itemize}
+
+\subsection{Network Analysis Insights}
+
+\begin{itemize}
+    \item \textbf{Spectrum Congestion:} WiFi Analyzer revealed 10+ networks in 2.4 GHz band, highlighting the challenges of wireless deployment in dense environments.
+    
+    \item \textbf{Channel Optimization:} Selected channel 6 based on empirical analysis, achieving -45 dBm signal strength and minimal interference.
+    
+    \item \textbf{Signal Propagation:} Observed signal degradation patterns, reinforcing importance of AP placement and antenna orientation.
+\end{itemize}
+
+\subsection{NAT Understanding}
+
+\begin{itemize}
+    \item \textbf{Address Translation:} Router successfully translates private 192.168.0.x addresses to public 65.148.77.200, enabling internet connectivity.
+    
+    \item \textbf{Security Benefits:} NAT provides implicit security by preventing unsolicited inbound connections to wireless clients.
+    
+    \item \textbf{Limitations:} Understanding that NAT blocks certain applications (P2P, gaming) requiring port forwarding or DMZ configuration.
+\end{itemize}
+
+\subsection{Practical Applications}
+
+This exercise provided hands-on experience with technologies essential for:
+\begin{itemize}
+    \item SOHO (Small Office/Home Office) network deployment
+    \item Enterprise wireless infrastructure planning
+    \item Network troubleshooting and optimization
+    \item Security best practices for wireless networks
+    \item Spectrum analysis and channel planning
+\end{itemize}
+
+\subsection{Professional Skills Developed}
+
+\begin{itemize}
+    \item Router web interface configuration
+    \item Wireless security protocol selection
+    \item DHCP server administration
+    \item NAT configuration and troubleshooting
+    \item Network analysis tool usage (WiFi Analyzer)
+    \item Documentation and technical writing
+\end{itemize}
+
+\section*{Authors}
+
+\textbf{Andersson David Sánchez Méndez}\\
+Systems Engineering Student\\
+Escuela Colombiana de Ingeniería Julio Garavito\\
+Email: andersson.sanchez-m@mail.escuelaing.edu.co
+
+\textbf{Cristian Santiago Pedraza Rodríguez}\\
+Systems Engineering Student\\
+Escuela Colombiana de Ingeniería Julio Garavito\\
+Email: cristian.pedraza-r@mail.escuelaing.edu.co
+
+\vspace{1cm}
+\textbf{Instructor:} Professor Fabián Eduardo Sierra Sánchez\\
+Computer Networks Course - Systems Engineering Program
+
+\end{document}

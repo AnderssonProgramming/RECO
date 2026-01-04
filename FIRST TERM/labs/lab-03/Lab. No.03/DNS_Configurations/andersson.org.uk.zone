@@ -1,0 +1,34 @@
+;
+; Zone file for andersson.org.uk
+; Lab 03 - Computer Networks
+; Primary DNS Server: Slackware (10.2.77.176)
+;
+
+$TTL 86400
+
+; SOA Record
+@       IN      SOA     dns.andersson.org.uk. admin.andersson.org.uk. (
+                        2024120301      ; Serial (YYYYMMDDXX)
+                        3600            ; Refresh (1 hour)
+                        1800            ; Retry (30 minutes)
+                        604800          ; Expire (1 week)
+                        86400           ; Minimum TTL (1 day)
+)
+
+; Name Server Records
+@               IN      NS      dns.andersson.org.uk.
+
+; IPv4 Address Records (A records)
+dns             IN      A       10.2.77.176
+server1         IN      A       10.2.77.177
+server2         IN      A       10.2.77.178
+server3         IN      A       10.2.77.179
+
+; IPv6 Address Records (AAAA records)
+server1         IN      AAAA    2001:db8::1
+server2         IN      AAAA    2001:db8::2
+
+; Alias Records (CNAME records)
+www             IN      CNAME   server1.andersson.org.uk.
+mail            IN      CNAME   server2.andersson.org.uk.
+web             IN      CNAME   server1.andersson.org.uk.

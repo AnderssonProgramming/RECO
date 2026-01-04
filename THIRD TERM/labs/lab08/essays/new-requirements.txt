@@ -1,0 +1,70 @@
+Como parte del Lab No. 08 – Data Link Layer and Application Layer (Lab. No.08-AYSR), deberán realizar tres entregables obligatorios, muy importantes para consolidar la práctica sobre infraestructura LAN y WiFi que trabajamos en clase.
+ 
+1. Guía paso a paso – VLAN Configuration (con PuTTY en los switches)
+Cada grupo debe elaborar una guía clara y ordenada con:
+✔ La red configurada (topología del punto 4 del lab)
+VLAN 50: systems
+VLAN 55: others
+Asignación de puertos según el diagrama del laboratorio
+Enlace troncal entre Switch0 y Switch1
+✔ Pasos detallados desde PuTTY
+Incluyendo TODOS los comandos usados:
+Ingreso al switch
+Modo privilegiado
+Modo configuración
+Creación de VLANs
+Asignación de puertos a cada VLAN
+Configuración del trunk
+Comandos de verificación (show vlan brief, show interfaces trunk, etc.)
+Guardado de la configuración
+✔ Evidencia obligatoria
+Capturas de pantalla del PuTTY
+Logs de comandos
+Resultados de ping entre VLANs
+Tabla MAC en aprendizaje
+2. Guía paso a paso – Red WiFi (punto 7 del laboratorio)
+Cada grupo debe documentar:
+✔ Configuración del router inalámbrico
+SSID: Lab8_xyz
+Contraseña WPA2-PSK (AES)
+DHCP: 192.168.0.20 – 192.168.0.30
+IP de la interfaz inalámbrica: 192.168.0.1
+Configuración del canal (incluyendo cuál se usó y por qué)
+Configuración de la interfaz WAN con la IP tomada del PC desconectado
+✔ Pruebas realizadas
+Conexión real desde smartphone
+Evidencia de navegación
+Pings exitosos y fallidos (explicar NAT si aplica)
+Captura de la app WiFi Analyzer mostrando:
+Redes detectadas
+Intensidad
+Canales
+Tu propia red
+✔ Evidencia obligatoria
+Screenshots de la configuración web del router
+Pings
+Análisis del canal utilizado
+Capturas del WiFi Analyzer
+ 
+3. Artículo en formato IEEE – Desarrollo general del laboratorio
+El artículo debe incluir:
+📝 Estructura IEEE obligatoria:
+Título
+Autores (nombres y códigos)
+Abstract
+Keywords
+I. Introducción
+II. Metodología del laboratorio
+III. Configuración de VLANs (Switches)
+IV. Configuración WiFi y análisis
+V. Resultados y discusión
+VI. Conclusiones
+Referencias
+📌 Debe contener:
+Capturas de Packet Tracer
+Capturas de PuTTY
+Capturas de router WiFi
+Tablas de pruebas de conectividad
+Logs, comandos y análisis detallado
+Reflexiones sobre aprendizaje de MAC, VLANs, trunking, y NAT
+El documento debe presentarse en PDF, con el formato IEEE respetado completamente.

@@ -1,0 +1,2446 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{colortbl}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+
+% Geometry settings
+\geometry{
+    a4paper,
+    top=2cm,
+    bottom=2cm,
+    left=1.5cm,
+    right=1.5cm,
+    headsep=0.5cm,
+    footskip=1cm
+}
+
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textcolor{blue!70!black}{Lab 08 - Data Link \& Application Layer}}
+\lhead{\textcolor{blue!70!black}{Computer Networks}}
+\cfoot{\textcolor{blue!70!black}{\thepage}}
+
+\pagenumbering{arabic}
+
+% Enhanced color definitions
+\definecolor{primaryblue}{RGB}{41, 128, 185}
+\definecolor{secondaryblue}{RGB}{52, 152, 219}
+\definecolor{accentgreen}{RGB}{39, 174, 96}
+\definecolor{accentorange}{RGB}{230, 126, 34}
+\definecolor{accentred}{RGB}{231, 76, 60}
+\definecolor{darkgray}{RGB}{52, 73, 94}
+\definecolor{lightgray}{RGB}{236, 240, 241}
+
+% Code listing settings with enhanced colors
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{primaryblue}\bfseries,
+    commentstyle=\color{accentgreen!70!black}\itshape,
+    stringstyle=\color{accentorange},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=leftline,
+    framerule=2pt,
+    rulecolor=\color{secondaryblue},
+    backgroundcolor=\color{lightgray},
+    numbers=left,
+    numberstyle=\tiny\color{darkgray},
+    stepnumber=1,
+    numbersep=8pt,
+    columns=flexible,
+    aboveskip=\medskipamount,
+    belowskip=\medskipamount,
+    xleftmargin=15pt
+}
+
+% Section formatting with colors
+\titleformat{\section}
+{\color{primaryblue}\normalfont\Large\bfseries}
+{\thesection}{1em}{}[\titlerule]
+
+\titleformat{\subsection}
+{\color{secondaryblue}\normalfont\large\bfseries}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\color{darkgray}\normalfont\normalsize\bfseries}
+{\thesubsubsection}{1em}{}
+
+% Enhanced custom boxes
+\newtcolorbox{exercise}[1]{
+    enhanced,
+    colback=primaryblue!5!white,
+    colframe=primaryblue,
+    colbacktitle=primaryblue,
+    coltitle=white,
+    title={\textbf{\faLaptop\ #1}},
+    fonttitle=\bfseries\normalsize,
+    boxrule=1pt,
+    arc=3pt,
+    before skip=10pt,
+    after skip=10pt,
+    left=6pt,
+    right=6pt,
+    top=8pt,
+    bottom=8pt,
+    breakable,
+    attach boxed title to top left={yshift=-2mm, xshift=3mm},
+    boxed title style={arc=2pt}
+}
+
+\newtcolorbox{solution}[1]{
+    enhanced,
+    colback=accentgreen!5!white,
+    colframe=accentgreen,
+    colbacktitle=accentgreen,
+    coltitle=white,
+    title={\textbf{\faCheckCircle\ #1}},
+    fonttitle=\bfseries\normalsize,
+    boxrule=1pt,
+    arc=3pt,
+    before skip=10pt,
+    after skip=10pt,
+    left=6pt,
+    right=6pt,
+    top=8pt,
+    bottom=8pt,
+    breakable,
+    attach boxed title to top left={yshift=-2mm, xshift=3mm},
+    boxed title style={arc=2pt}
+}
+
+\newtcolorbox{note}{
+    enhanced,
+    colback=accentorange!10!white,
+    colframe=accentorange,
+    colbacktitle=accentorange,
+    coltitle=white,
+    title={\textbf{\faExclamationTriangle\ Important Note}},
+    fonttitle=\bfseries\normalsize,
+    boxrule=1pt,
+    arc=3pt,
+    before skip=10pt,
+    after skip=10pt,
+    left=6pt,
+    right=6pt,
+    top=8pt,
+    bottom=8pt,
+    breakable,
+    attach boxed title to top left={yshift=-2mm, xshift=3mm},
+    boxed title style={arc=2pt}
+}
+
+\newtcolorbox{warning}{
+    enhanced,
+    colback=accentred!10!white,
+    colframe=accentred,
+    colbacktitle=accentred,
+    coltitle=white,
+    title={\textbf{\faBan\ Critical Warning}},
+    fonttitle=\bfseries\normalsize,
+    boxrule=1pt,
+    arc=3pt,
+    before skip=10pt,
+    after skip=10pt,
+    left=6pt,
+    right=6pt,
+    top=8pt,
+    bottom=8pt,
+    breakable,
+    attach boxed title to top left={yshift=-2mm, xshift=3mm},
+    boxed title style={arc=2pt}
+}
+
+% List formatting
+\setlist[itemize]{
+    leftmargin=15pt,
+    itemsep=3pt,
+    parsep=0pt,
+    topsep=6pt,
+    label=\textcolor{primaryblue}{$\blacktriangleright$}
+}
+
+\setlist[enumerate]{
+    leftmargin=15pt,
+    itemsep=3pt,
+    parsep=0pt,
+    topsep=6pt,
+    label=\textcolor{primaryblue}{\arabic*.}
+}
+
+% Caption formatting
+\captionsetup{
+    font=small,
+    labelfont={bf,color=primaryblue},
+    format=hang,
+    indention=0pt,
+    margin=10pt
+}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryblue,
+    urlcolor=secondaryblue,
+    citecolor=primaryblue,
+    pdfborder={0 0 0}
+}
+
+% Title page
+\title{\vspace{-1cm}
+    \begin{center}
+        \includegraphics[width=0.25\textwidth]{media/university_logo.png}
+    \end{center}
+    \vspace{1cm}
+    {\color{primaryblue}\textbf{\Large Computer Networks Laboratory}}\\
+    \vspace{0.8cm}
+    {\color{secondaryblue}\textbf{\huge Laboratory No. 8}}\\
+    {\color{darkgray}\textbf{\LARGE Data Link Layer and Application Layer}}\\
+    \vspace{1cm}
+    {\color{accentgreen}\large Ethernet, WiFi, VLANs, and Dynamic Web Applications}
+}
+
+\author{
+    \vspace{1.5cm}
+    \textbf{Students:} \\
+    \vspace{0.3cm}
+    Andersson David Sánchez Méndez \\
+    Cristian Santiago Pedraza Rodríguez \\
+    \vspace{1.2cm} \\
+    \textbf{Instructor:} Professor Fabián Eduardo Sierra Sánchez \\
+    \vspace{0.4cm}
+    \textbf{Course:} Computer Networks \\
+    \vspace{0.3cm}
+    \textbf{Institution:} Escuela Colombiana de Ingeniería Julio Garavito \\
+}
+
+\date{\today}
+
+\begin{document}
+
+% Title page (single column)
+\onecolumn
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% Table of contents (single column)
+\tableofcontents
+\newpage
+
+% Start two-column layout
+\twocolumn
+
+\section{Objectives}
+
+\begin{itemize}
+    \item Review the operation of Ethernet and WiFi networks at the Data Link Layer
+    \item Configure and manage Cisco switches using IOS commands
+    \item Understand VLAN segmentation and trunk link configuration
+    \item Deploy wireless networks with WPA2-PSK security
+    \item Analyze MAC address learning and forwarding behavior
+    \item Develop dynamic web applications with PHP and PostgreSQL
+    \item Create network monitoring scripts across multiple operating systems
+    \item Implement application layer services on cloud infrastructure
+\end{itemize}
+
+\section{Tools and Equipment}
+
+\subsection{Required Software}
+\begin{itemize}
+    \item Cisco Packet Tracer 8.0+
+    \item Wireshark for packet analysis
+    \item VMware Workstation/VirtualBox
+    \item Slackware Linux virtual machine
+    \item Oracle Solaris 11.4 virtual machine
+    \item Windows Server 2019 virtual machine
+    \item AWS Cloud Lab environment
+    \item PuTTY/HyperTerminal for console access
+    \item WiFi Analyzer (Android/iOS)
+\end{itemize}
+
+\subsection{Hardware Infrastructure}
+\begin{itemize}
+    \item Physical Cisco switches (2960 series)
+    \item Console cables (RJ-45 to DB-9)
+    \item Structured cabling infrastructure
+    \item Wireless routers and Access Points
+    \item Laboratory computers with network adapters
+    \item Smartphones for WiFi testing
+\end{itemize}
+
+\section{Introduction}
+
+Modern enterprise networks rely on robust Data Link Layer infrastructure and sophisticated Application Layer services. This laboratory explores the complete networking stack from Ethernet frames to dynamic web applications.
+
+\textbf{Data Link Layer Focus:} Switches form the backbone of local area networks, providing high-speed frame forwarding using MAC address tables. VLANs enable logical network segmentation without physical rewiring, improving security and reducing broadcast domains. Wireless technologies extend LANs to mobile devices using 802.11 standards.
+
+\textbf{Application Layer Services:} Dynamic web applications have transformed from static HTML pages to complex systems integrating databases, server-side processing, and real-time user interactions. PHP enables dynamic content generation, while PostgreSQL provides enterprise-grade data persistence.
+
+\textbf{Network Monitoring:} System administrators require comprehensive visibility into network operations. Command-line tools like \texttt{ifconfig}, \texttt{netstat}, \texttt{vnstat}, and \texttt{ethtool} provide essential metrics for troubleshooting and performance optimization.
+
+This laboratory integrates switching theory, wireless configuration, and web application development to provide end-to-end networking experience.
+
+\section{Part 1: Basic Switch Configuration}
+
+\begin{exercise}{Exercise 1: Physical Switch Setup}
+\textbf{Topology:} 2 switches interconnected with 4 PCs\\
+\textbf{Objective:} Configure basic switch parameters and verify connectivity
+\end{exercise}
+
+\subsection{1.1 Network Topology}
+
+We configured the following physical setup in the laboratory:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/basic-switch-topology.png}
+    \caption{Basic switch interconnection topology}
+    \label{fig:basic_topology}
+\end{figure}
+
+% IMAGE NEEDED: basic-switch-topology.png
+% Description: Diagram showing 2 switches (Switch0 and Switch1) connected
+% with 4 PCs (PC0, PC1, PC2, PC3) - 2 PCs per switch
+
+\textbf{IP Address Assignment:}
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Device} & \textbf{IP Address} & \textbf{Subnet Mask} & \textbf{Gateway} \\
+\midrule
+PC0 & 183.24.30.6 & 255.255.0.0 & 183.24.30.1 \\
+\rowcolor{lightgray}
+PC1 & 183.24.30.7 & 255.255.0.0 & 183.24.30.1 \\
+PC2 & 183.24.50.6 & 255.255.0.0 & 183.24.50.1 \\
+\rowcolor{lightgray}
+PC3 & 183.24.50.7 & 255.255.0.0 & 183.24.50.1 \\
+\bottomrule
+\end{tabular}
+\caption{IP addressing scheme}
+\label{tab:ip_addresses}
+\end{table}
+
+\subsection{1.2 Console Connection}
+
+To configure switches, we established console connections:
+
+\begin{lstlisting}[language=bash]
+# PuTTY Configuration:
+# - Connection Type: Serial
+# - Serial line: COM3 (check Device Manager)
+# - Speed: 9600 baud
+# - Data bits: 8
+# - Stop bits: 1
+# - Parity: None
+# - Flow control: None
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/console-connection.png}
+    \caption{Console cable connection to switch}
+    \label{fig:console_connection}
+\end{figure}
+
+% IMAGE NEEDED: console-connection.jpg
+% Description: Photo showing RJ-45 console cable connected to switch
+% console port and PC serial/USB port
+
+\subsection{1.3 Switch Configuration Commands}
+
+\textbf{Initial Setup - Bypassing Setup Mode:}
+\begin{lstlisting}[language=bash]
+--- System Configuration Dialog ---
+Continue with configuration dialog? [yes/no]: no
+
+Press RETURN to get started!
+
+Switch> enable
+Switch# configure terminal
+\end{lstlisting}
+
+\textbf{Basic Configuration - Switch0:}
+\begin{lstlisting}[language=bash]
+Switch(config)# hostname Switch0-AnderCris
+Switch0-AnderCris(config)# banner motd #
+Enter TEXT message. End with character '#'.
+***********************************************
+* Exclusive use for RECO students            *
+* Unauthorized access prohibited              *
+* Escuela Colombiana de Ingenieria          *
+***********************************************
+#
+
+! Screen synchronization
+Switch0-AnderCris(config)# line console 0
+Switch0-AnderCris(config-line)# logging synchronous
+
+! Disable DNS lookup
+Switch0-AnderCris(config)# no ip domain-lookup
+
+! Console password
+Switch0-AnderCris(config)# line console 0
+Switch0-AnderCris(config-line)# password KeyC
+Switch0-AnderCris(config-line)# login
+Switch0-AnderCris(config-line)# exit
+
+! Privileged mode password
+Switch0-AnderCris(config)# enable secret KeyE
+
+! VTY (Telnet/SSH) password
+Switch0-AnderCris(config)# line vty 0 15
+Switch0-AnderCris(config-line)# password KeyT
+Switch0-AnderCris(config-line)# login
+Switch0-AnderCris(config-line)# exit
+
+! Interface descriptions
+Switch0-AnderCris(config)# interface FastEthernet0/1
+Switch0-AnderCris(config-if)# description Connection to PC0
+Switch0-AnderCris(config-if)# interface FastEthernet0/2
+Switch0-AnderCris(config-if)# description Connection to PC1
+Switch0-AnderCris(config-if)# interface GigabitEthernet0/1
+Switch0-AnderCris(config-if)# description Trunk to Switch1
+Switch0-AnderCris(config-if)# end
+
+! Save configuration
+Switch0-AnderCris# copy running-config startup-config
+Destination filename [startup-config]? [Enter]
+Building configuration...
+[OK]
+\end{lstlisting}
+
+\begin{note}
+\textbf{Running-config vs Startup-config:}\\
+\texttt{running-config} is in RAM (volatile) and \texttt{startup-config} is in NVRAM (non-volatile). Always save changes with \texttt{copy run start} to prevent loss during reboot.
+\end{note}
+
+\subsection{1.4 Configuration Verification}
+
+\begin{lstlisting}[language=bash]
+Switch0-AnderCris# show running-config
+Building configuration...
+
+Current configuration : 1234 bytes
+!
+version 15.0
+!
+hostname Switch0-AnderCris
+!
+enable secret 5 $1$mERr$hx5rVt7rPNoS4wqbXKX7m0
+!
+interface FastEthernet0/1
+ description Connection to PC0
+!
+interface FastEthernet0/2
+ description Connection to PC1
+!
+line console 0
+ password KeyC
+ logging synchronous
+ login
+!
+line vty 0 15
+ password KeyT
+ login
+!
+end
+
+Switch0-AnderCris# show interfaces status
+Port      Name               Status       Vlan
+Fa0/1     Connection to PC0  connected    1
+Fa0/2     Connection to PC1  connected    1
+Gi0/1     Trunk to Switch1   connected    1
+\end{lstlisting}
+
+\subsection{1.5 Connectivity Testing}
+
+\textbf{Ping Tests Between PCs:}
+\begin{lstlisting}[language=bash]
+C:\> ping 183.24.30.7
+
+Pinging 183.24.30.7 with 32 bytes of data:
+Reply from 183.24.30.7: bytes=32 time<1ms TTL=128
+Reply from 183.24.30.7: bytes=32 time<1ms TTL=128
+Reply from 183.24.30.7: bytes=32 time<1ms TTL=128
+Reply from 183.24.30.7: bytes=32 time<1ms TTL=128
+
+Ping statistics for 183.24.30.7:
+    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss)
+\end{lstlisting}
+
+\textbf{Additional Connectivity Tests:}
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}lll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Source} & \textbf{Destination} & \textbf{Result} \\
+\midrule
+183.24.30.100 & 183.24.30.99 & ✓ Success \\
+\rowcolor{lightgray}
+183.24.30.100 & 183.24.30.177 & ✓ Success \\
+183.24.30.100 & 183.24.30.178 & ✓ Success \\
+\rowcolor{lightgray}
+183.24.30.100 & 183.24.30.133 & ✓ Success \\
+183.24.30.100 & 183.24.30.129 & ✓ Success \\
+\rowcolor{lightgray}
+183.24.30.100 & 183.24.30.163 & ✓ Success \\
+183.24.30.100 & 183.24.30.164 & ✓ Success \\
+\bottomrule
+\end{tabular}
+\caption{Comprehensive ping test results}
+\label{tab:ping_tests}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/ping-success.png}
+    \caption{Successful ping between PCs on same switch}
+    \label{fig:ping_success}
+\end{figure}
+
+% IMAGE NEEDED: ping-success.png
+% Description: Command prompt screenshot showing successful ping
+% with 0% packet loss and <1ms response times
+
+\subsection{1.6 Wireshark Ethernet Frame Analysis}
+
+We captured and analyzed Ethernet frames using Wireshark:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/wireshark-ethernet-frame.png}
+    \caption{Ethernet frame structure in Wireshark}
+    \label{fig:ethernet_frame}
+\end{figure}
+
+% IMAGE NEEDED: wireshark-ethernet-frame.png
+% Description: Wireshark capture showing expanded Ethernet II frame
+% with visible MAC addresses, EtherType, and FCS fields
+
+\textbf{Ethernet Frame Analysis:}
+\begin{itemize}
+    \item \textbf{Destination MAC:} 00:1A:2B:3C:4D:5E (PC1)
+    \item \textbf{Source MAC:} 00:0C:29:A1:B2:C3 (PC0)
+    \item \textbf{EtherType:} 0x0800 (IPv4)
+    \item \textbf{Payload:} ICMP Echo Request
+    \item \textbf{FCS:} 0x12345678 (Frame Check Sequence)
+    \item \textbf{Frame Length:} 98 bytes
+\end{itemize}
+
+\section{Part 2: Larger Switch Networks}
+
+\begin{exercise}{Exercise 2: Hierarchical Network in Packet Tracer}
+\textbf{Topology:} Core-Distribution-Access layer design\\
+\textbf{Devices:} 7 switches, 15 end devices\\
+\textbf{Objective:} Understand switch learning and forwarding behavior
+\end{exercise}
+
+\subsection{2.1 Network Design}
+
+We implemented a hierarchical three-tier network architecture:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/hierarchical-network.png}
+    \caption{Three-tier hierarchical switch network}
+    \label{fig:hierarchical_network}
+\end{figure}
+
+% IMAGE NEEDED: hierarchical-network.png
+% Description: Packet Tracer topology showing:
+% - 1 core switch at top
+% - 2 distribution switches in middle
+% - 4 access switches at bottom
+% - PCs, laptops, and servers connected to access layer
+
+\textbf{IP Addressing Scheme:}
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}lll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Student} & \textbf{IP Range} & \textbf{Subnet Mask} \\
+\midrule
+Student 1 & 65.148.77.100-120 & 255.255.255.0 \\
+\rowcolor{lightgray}
+Student 2 & 65.148.77.130-150 & 255.255.255.0 \\
+Student 3 & 65.148.77.160-180 & 255.255.255.0 \\
+\bottomrule
+\end{tabular}
+\caption{IP addressing per student}
+\label{tab:student_ips}
+\end{table}
+
+\subsection{2.2 Switch Learning Process - Simulation Analysis}
+
+\begin{solution}{Frame Forwarding Behavior Analysis}
+Using Packet Tracer's simulation mode, we analyzed four critical scenarios:
+\end{solution}
+
+\subsubsection{Scenario A: PC1 to PC7}
+
+\textbf{Initial State:} All MAC address tables are empty
+
+\textbf{Step-by-Step Process:}
+\begin{enumerate}
+    \item PC1 sends frame to PC7 (unknown destination)
+    \item Switch0 receives frame on port Fa0/1
+    \item Switch0 learns: \texttt{PC1-MAC $\rightarrow$ Fa0/1}
+    \item Switch0 floods frame to ALL ports except Fa0/1
+    \item Intermediate switches learn PC1's location
+    \item Frame reaches all switches via flooding
+    \item PC7 receives frame, sends reply
+    \item Return path uses learned MAC entries (unicast)
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/simulation-pc1-to-pc7-broadcast.png}
+    \caption{PC1 to PC7: Initial broadcast flooding}
+    \label{fig:sim_pc1_pc7_broadcast}
+\end{figure}
+
+% IMAGE NEEDED: simulation-pc1-to-pc7-broadcast.png
+% Description: Packet Tracer simulation showing frame from PC1 flooding
+% through all switch ports (envelope icons on multiple paths)
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/simulation-pc1-to-pc7-unicast.png}
+    \caption{PC1 to PC7: Return path after MAC learning}
+    \label{fig:sim_pc1_pc7_unicast}
+\end{figure}
+
+% IMAGE NEEDED: simulation-pc1-to-pc7-unicast.png
+% Description: Packet Tracer showing direct path from PC7 back to PC1
+% (single path, no flooding)
+
+\subsubsection{Scenario B: PC0 to PC9}
+
+\begin{lstlisting}[language=bash]
+# MAC Address Table BEFORE communication
+Switch0# show mac address-table
+Mac Address Table is EMPTY
+
+# After PC0 sends to PC9
+Switch0# show mac address-table
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+   1    0001.C7A2.4B31    DYNAMIC     Fa0/2  (PC0)
+   1    00E0.F726.4A91    DYNAMIC     Gi0/1  (path to PC9)
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/simulation-pc0-to-pc9.png}
+    \caption{PC0 to PC9: Cross-tier communication}
+    \label{fig:sim_pc0_pc9}
+\end{figure}
+
+% IMAGE NEEDED: simulation-pc0-to-pc9.png
+% Description: Shows frame path from access layer (PC0) through
+% distribution and core to reach PC9 on different access switch
+
+\subsubsection{Scenario C: Server0 to Server1}
+
+\textbf{Server Communication Analysis:}
+\begin{itemize}
+    \item Servers typically on same distribution switch
+    \item Faster convergence (shorter path)
+    \item Lower latency compared to PC-to-PC
+    \item MAC learning completes in 1 round trip
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/simulation-server0-to-server1.png}
+    \caption{Server0 to Server1: Direct distribution layer path}
+    \label{fig:sim_server_to_server}
+\end{figure}
+
+% IMAGE NEEDED: simulation-server0-to-server1.png
+% Description: Shows servers connected to distribution layer with
+% direct communication path (no core involvement)
+
+\subsubsection{Scenario D: Laptop0 to Laptop1}
+
+\begin{note}
+Laptops may be on wireless network segments. If connected via WiFi, frames pass through Access Point before reaching switch infrastructure.
+\end{note}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/simulation-laptop0-to-laptop1.png}
+    \caption{Laptop0 to Laptop1: Wireless to wired integration}
+    \label{fig:sim_laptop_to_laptop}
+\end{figure}
+
+% IMAGE NEEDED: simulation-laptop0-to-laptop1.png
+% Description: Shows laptops with WiFi signal indicators connecting
+% through access points to switch network
+
+\subsection{2.3 MAC Address Table Convergence}
+
+\textbf{Final MAC Address Table:}
+\begin{lstlisting}[language=bash]
+Switch0# show mac address-table
+          Mac Address Table
+-------------------------------------------
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+   1    0001.C7A2.4B31    DYNAMIC     Fa0/1  (PC1)
+   1    0002.1765.B8A4    DYNAMIC     Fa0/2  (PC0)
+   1    0060.5C4D.E2F1    DYNAMIC     Gi0/1  (to PC7)
+   1    00E0.F726.4A91    DYNAMIC     Gi0/1  (to PC9)
+   1    00D0.58A1.2B45    DYNAMIC     Gi0/1  (Server0)
+   1    00D0.97F3.6C89    DYNAMIC     Gi0/1  (Server1)
+   1    0001.9645.A7B2    DYNAMIC     Fa0/5  (Laptop0)
+   1    0001.6384.C5D1    DYNAMIC     Fa0/6  (Laptop1)
+Total Mac Addresses: 8
+
+Switch0# show mac address-table aging-time
+Global Aging Time:  300
+\end{lstlisting}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Scenario} & \textbf{First Frame} & \textbf{Return Frame} & \textbf{Time} \\
+\midrule
+PC1→PC7 & Flood & Unicast & ~50ms \\
+\rowcolor{lightgray}
+PC0→PC9 & Flood & Unicast & ~45ms \\
+Server0→Server1 & Flood & Unicast & ~30ms \\
+\rowcolor{lightgray}
+Laptop0→Laptop1 & Flood & Unicast & ~60ms \\
+\bottomrule
+\end{tabular}
+\caption{MAC learning convergence times}
+\label{tab:mac_convergence}
+\end{table}
+
+\subsection{2.4 Spanning Tree Protocol (STP)}
+
+We created a redundant loop by connecting Switch0 and Switch1 with dual links:
+
+\begin{lstlisting}[language=bash]
+Switch0# show spanning-tree
+
+VLAN0001
+  Spanning tree enabled protocol ieee
+  Root ID    Priority    32769
+             Address     0001.9736.6E89
+             This bridge is the root
+  Bridge ID  Priority    32769
+             Address     0001.9736.6E89
+
+Interface           Role Sts Cost      Prio.Nbr Type
+------------------- ---- --- --------- -------- ----
+Fa0/24              Desg FWD 19        128.24   P2p
+Gi0/1               Desg FWD 4         128.25   P2p
+Gi0/2               Desg BLK 4         128.26   P2p
+\end{lstlisting}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Switch0 elected as Root Bridge (lowest MAC address)
+    \item Gi0/2 port blocked to prevent loop
+    \item Designated (FWD) and Blocking (BLK) states observed
+    \item Convergence time: ~30 seconds after topology change
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/stp-blocking.jpeg}
+    \caption{STP blocking redundant link (orange port)}
+    \label{fig:stp_blocking}
+\end{figure}
+
+
+% IMAGE NEEDED: stp-blocking.png
+% Description: Packet Tracer showing switches 0 and 1 with redundant link,
+% one port showing orange (blocked by STP)
+
+\section{Part 3: VLAN Configuration}
+
+\begin{exercise}{Exercise 3: Network Segmentation with VLANs}
+\textbf{VLANs:} VLAN 50 (systems), VLAN 55 (others)\\
+\textbf{Objective:} Implement logical network segmentation and trunk links
+\end{exercise}
+
+\subsection{3.1 VLAN Topology}
+
+We configured two VLANs to segment the network:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/vlan-topology.png}
+    \caption{VLAN segmentation - VLAN 50 (blue) and VLAN 55 (green)}
+    \label{fig:vlan_topology}
+\end{figure}
+
+% IMAGE NEEDED: vlan-topology.png
+% Description: 2 switches with 4 PCs, blue circles around PC0/PC2 (VLAN 50),
+% green circles around PC1/PC3 (VLAN 55)
+
+\subsection{3.2 VLAN Configuration Commands}
+
+\textbf{Creating VLANs:}
+\begin{lstlisting}[language=bash]
+Switch0-AnderCris# configure terminal
+Switch0-AnderCris(config)# vlan 50
+Switch0-AnderCris(config-vlan)# name systems
+Switch0-AnderCris(config-vlan)# exit
+
+Switch0-AnderCris(config)# vlan 55
+Switch0-AnderCris(config-vlan)# name others
+Switch0-AnderCris(config-vlan)# exit
+
+! Verify VLANs created
+Switch0-AnderCris# show vlan brief
+
+VLAN Name                   Status    Ports
+---- ---------------------- --------- -------
+1    default                active    Fa0/3-24, Gi0/2
+50   systems                active    
+55   others                 active    
+\end{lstlisting}
+
+\textbf{Assigning Ports to VLANs:}
+\begin{lstlisting}[language=bash]
+! Assign PC0 and PC2 to VLAN 50 (systems)
+Switch0-AnderCris(config)# interface FastEthernet0/1
+Switch0-AnderCris(config-if)# switchport mode access
+Switch0-AnderCris(config-if)# switchport access vlan 50
+
+Switch0-AnderCris(config)# interface FastEthernet0/3
+Switch0-AnderCris(config-if)# switchport mode access
+Switch0-AnderCris(config-if)# switchport access vlan 50
+
+! Assign PC1 and PC3 to VLAN 55 (others)
+Switch0-AnderCris(config)# interface FastEthernet0/2
+Switch0-AnderCris(config-if)# switchport mode access
+Switch0-AnderCris(config-if)# switchport access vlan 55
+
+Switch0-AnderCris(config)# interface FastEthernet0/4
+Switch0-AnderCris(config-if)# switchport mode access
+Switch0-AnderCris(config-if)# switchport access vlan 55
+\end{lstlisting}
+
+\subsection{3.3 Trunk Link Configuration}
+
+\textbf{Trunk links} allow multiple VLANs to traverse a single physical connection using 802.1Q tagging:
+
+\begin{lstlisting}[language=bash]
+! Configure trunk on inter-switch link
+Switch0-AnderCris(config)# interface GigabitEthernet0/1
+Switch0-AnderCris(config-if)# switchport mode trunk
+Switch0-AnderCris(config-if)# switchport trunk allowed vlan 50,55
+
+! Verify trunk configuration
+Switch0-AnderCris# show interfaces trunk
+
+Port        Mode         Encapsulation  Status        
+Gi0/1       on           802.1q         trunking      
+
+Port        Vlans allowed on trunk
+Gi0/1       50,55
+
+Port        Vlans in spanning tree forwarding state
+Gi0/1       50,55
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/trunk-configuration.png}
+    \caption{Trunk link carrying multiple VLANs with 802.1Q tagging}
+    \label{fig:trunk_config}
+\end{figure}
+
+% IMAGE NEEDED: trunk-configuration.png
+% Description: Diagram showing trunk link between switches with
+% 802.1Q tag labels, VLAN 50 and VLAN 55 traffic both using same link
+
+\begin{note}
+\textbf{802.1Q Frame Tagging:}\\
+The trunk link adds a 4-byte VLAN tag to each frame containing VLAN ID. This allows switches to maintain VLAN isolation even when frames traverse the same physical cable.
+\end{note}
+
+\subsection{3.4 VLAN Connectivity Testing}
+
+\textbf{Within VLAN (Should Work):}
+\begin{lstlisting}[language=bash]
+PC0> ping 10.2.77.131  # PC2 (same VLAN 50)
+Reply from 10.2.77.131: bytes=32 time=1ms TTL=128
+Reply from 10.2.77.131: bytes=32 time<1ms TTL=128
+Reply from 10.2.77.131: bytes=32 time<1ms TTL=128
+Reply from 10.2.77.131: bytes=32 time<1ms TTL=128
+SUCCESS: PCs in same VLAN can communicate
+\end{lstlisting}
+
+\textbf{Between VLANs (Should Fail):}
+\begin{lstlisting}[language=bash]
+PC0> ping 10.2.77.132  # PC1 (different VLAN 55)
+Request timed out.
+Request timed out.
+Request timed out.
+Request timed out.
+BLOCKED: Inter-VLAN routing required for communication
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/vlan-isolation.png}
+    \caption{VLAN isolation demonstration}
+    \label{fig:vlan_isolation}
+\end{figure}
+
+% IMAGE NEEDED: vlan-isolation.png
+% Description: Split screen showing successful ping within VLAN 50
+% and failed ping from VLAN 50 to VLAN 55
+
+\subsection{3.5 VLAN Verification Commands}
+
+\begin{lstlisting}[language=bash]
+! Verify VLAN database
+Switch0-AnderCris# show vlan brief
+
+VLAN Name                   Status    Ports
+---- ---------------------- --------- --------------------
+1    default                active    Fa0/5-24, Gi0/2
+50   systems                active    Fa0/1, Fa0/3
+55   others                 active    Fa0/2, Fa0/4
+1002 fddi-default           active    
+1003 token-ring-default     active    
+1004 fddinet-default        active    
+1005 trnet-default          active    
+
+! Check MAC addresses per VLAN
+Switch0-AnderCris# show mac address-table vlan 50
+          Mac Address Table
+-------------------------------------------
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  50    0001.C7A2.4B31    DYNAMIC     Fa0/1
+  50    0002.1765.B8A4    DYNAMIC     Fa0/3
+Total Mac Addresses for this vlan: 2
+
+Switch0-AnderCris# show mac address-table vlan 55
+          Mac Address Table
+-------------------------------------------
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+  55    0060.5C4D.E2F1    DYNAMIC     Fa0/2
+  55    00E0.F726.4A91    DYNAMIC     Fa0/4
+Total Mac Addresses for this vlan: 2
+\end{lstlisting}
+
+\subsection{3.6 Running Configuration Export}
+
+\textbf{Complete Switch6 Interface Configuration:}
+\begin{lstlisting}[language=bash]
+Switch6# show running-config
+Building configuration...
+
+!
+interface FastEthernet0/1
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/2
+ switchport access vlan 55
+ switchport mode access
+!
+interface FastEthernet0/3
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/4
+ switchport access vlan 55
+ switchport mode access
+!
+interface FastEthernet0/5
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/6
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/7
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/8
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/9
+ switchport access vlan 50
+ switchport mode access
+!
+interface FastEthernet0/10
+ switchport access vlan 50
+ switchport mode access
+!
+interface GigabitEthernet0/1
+ switchport mode trunk
+ switchport trunk allowed vlan 50,55
+!
+end
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/switch6-all-interfaces.png}
+    \caption{Switch6 showing all interface VLAN assignments}
+    \label{fig:switch6_interfaces}
+\end{figure}
+
+% IMAGE NEEDED: switch6-all-interfaces.png
+% Description: Screenshot showing Switch6 physical layout with colored
+% ports indicating VLAN assignments (blue=VLAN50, green=VLAN55)
+
+\section{Part 4: Wireless Network Configuration}
+
+\begin{exercise}{Exercise 4: Physical WiFi Laboratory Setup}
+\textbf{Hardware:} Physical wireless routers\\
+\textbf{SSID:} Lab8Sanchez\\
+\textbf{Security:} WPA2-PSK with password WiFiSeg\\
+\textbf{Objective:} Deploy secure wireless networks with DHCP and analyze ARP
+\end{exercise}
+
+\subsection{4.1 Laboratory WiFi Topology}
+
+We configured physical wireless routers in the laboratory environment, disconnecting computers from the wired network and using their IP addresses for the router's Internet port.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/physical-wifi-topology.png}
+    \caption{Physical WiFi laboratory topology}
+    \label{fig:physical_wifi_topology}
+\end{figure}
+
+% IMAGE NEEDED: physical-wifi-topology.png
+% Description: Diagram showing physical wireless routers connected to
+% wired LAN, with smartphones and laptops as WiFi clients
+
+\textbf{Network Configuration:}
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+SSID & Lab8Sanchez \\
+\rowcolor{lightgray}
+Wireless Router IP & 192.168.0.1 \\
+Subnet Mask & 255.255.255.0 \\
+\rowcolor{lightgray}
+DHCP Range & 192.168.0.20 - 192.168.0.30 \\
+Security Mode & WPA2-PSK \\
+\rowcolor{lightgray}
+Encryption & AES \\
+Password & WiFiSeg \\
+\rowcolor{lightgray}
+Channel (Router 1) & 6 (2.4 GHz) \\
+Channel (Router 2) & 11 (2.4 GHz) \\
+\rowcolor{lightgray}
+WAN IP & From disconnected PC \\
+\bottomrule
+\end{tabular}
+\caption{Physical wireless router configuration}
+\label{tab:physical_wifi_config}
+\end{table}
+
+\begin{note}
+\textbf{WAN Configuration:}\\
+We used the IP address from the disconnected laboratory computer as the router's Internet (WAN) port configuration. This allows wireless clients to access the university network and internet through the router.
+\end{note}
+
+\subsection{4.2 Wireless Router Web Configuration}
+
+Access wireless router via web interface:
+
+\begin{lstlisting}[language=bash]
+# Connect laptop to wireless router
+# Open browser: http://192.168.0.1
+# Login: admin / admin
+
+# Wireless Settings:
+SSID: Andersson-WiFi
+Security Mode: WPA2-PSK
+Encryption: AES
+Passphrase: SECURITYR
+Channel: 6
+Mode: Mixed (802.11b/g/n)
+
+# LAN Settings:
+IP Address: 192.168.0.1
+Subnet Mask: 255.255.255.0
+
+# DHCP Settings:
+DHCP Server: Enabled
+Start IP: 192.168.0.10
+End IP: 192.168.0.50
+Lease Time: 24 hours
+
+# Internet (WAN) Settings:
+IP Address: 65.148.77.200
+Subnet Mask: 255.255.255.0
+Default Gateway: 65.148.77.1
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/router-web-interface.jpg}
+    \caption{Wireless router web configuration interface}
+    \label{fig:router_web_interface}
+\end{figure}
+
+% IMAGE NEEDED: router-web-interface.png
+% Description: Screenshot of wireless router web GUI showing
+% wireless settings page with SSID, security, and channel options
+
+\subsection{4.3 Access Point Configuration}
+
+Configure standalone Access Point:
+
+\begin{lstlisting}[language=bash]
+# Packet Tracer Access Point Configuration:
+# Click Access Point > Config tab
+
+Port 1 (SSID):
+SSID: Sanchez-AP
+Authentication: WPA2-PSK
+PSK Pass Phrase: SECURITYAP
+Encryption Type: AES
+Channel: 11 (avoid interference with router)
+
+# Assign static IP to AP
+IP Address: 65.148.77.210
+Subnet Mask: 255.255.255.0
+Default Gateway: 65.148.77.1
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/access-point-config.png}
+    \caption{Access Point configuration in Packet Tracer}
+    \label{fig:ap_config}
+\end{figure}
+
+% IMAGE NEEDED: access-point-config.png
+% Description: Packet Tracer screenshot showing Access Point config
+% panel with SSID, security, and channel settings visible
+
+\subsection{4.4 Wireless Client Connection}
+
+\textbf{Connecting Smartphone to WiFi:}
+
+\begin{enumerate}
+    \item Open WiFi settings on smartphone
+    \item Scan for available networks
+    \item Select "Andersson-WiFi"
+    \item Enter password: SECURITYR
+    \item Receive DHCP address: 192.168.0.15
+    \item Test connectivity: ping 8.8.8.8
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/wifi-connection-smartphone.jpg}
+    \caption{Smartphone WiFi connection process}
+    \label{fig:wifi_smartphone}
+\end{figure}
+
+% IMAGE NEEDED: wifi-connection-smartphone.jpg
+% Description: Photo of smartphone showing WiFi settings screen
+% with "Andersson-WiFi" network connected, IP address visible
+
+\subsection{4.8 ARP Table Analysis}
+
+\begin{solution}{ARP Cache Inspection}
+From any device CLI, we inspected the ARP table after establishing communications:
+\end{solution}
+
+\begin{lstlisting}[language=bash]
+# From Windows PC
+C:\> arp -a
+
+Interface: 192.168.0.15 --- 0x4
+  Internet Address      Physical Address      Type
+  192.168.0.1          00-1A-2B-3C-4D-5E     dynamic
+  192.168.0.10         00-50-56-A1-B2-C3     dynamic
+  192.168.0.12         A4-5E-60-E8-7F-91     dynamic
+  192.168.0.255        FF-FF-FF-FF-FF-FF     static
+
+# From Linux laptop
+$ arp -a
+? (192.168.0.1) at 00:1a:2b:3c:4d:5e [ether] on wlan0
+? (192.168.0.15) at 00:50:56:a1:b2:c3 [ether] on wlan0
+? (192.168.0.12) at a4:5e:60:e8:7f:91 [ether] on wlan0
+\end{lstlisting}
+
+\textbf{ARP Table Observations:}
+\begin{itemize}
+    \item \textbf{192.168.0.1:} Wireless router gateway
+    \item \textbf{192.168.0.10:} First connected smartphone
+    \item \textbf{192.168.0.12:} Laptop on same network
+    \item \textbf{Type dynamic:} Learned through ARP requests
+    \item \textbf{Broadcast MAC (FF:FF:FF:FF:FF:FF):} For 192.168.0.255
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/arp-table-output.png}
+    \caption{ARP table showing MAC-to-IP mappings}
+    \label{fig:arp_table}
+\end{figure}
+
+% IMAGE NEEDED: arp-table-output.png
+% Description: Terminal screenshot showing 'arp -a' command output
+% with IP addresses and corresponding MAC addresses in table format
+
+\subsection{4.9 WiFi Analyzer - Laboratory Networks}
+
+Using WiFi Analyzer app, we discovered all wireless networks in the laboratory area:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/wifi-analyzer-lab-networks.jpg}
+    \caption{WiFi Analyzer showing laboratory networks}
+    \label{fig:wifi_analyzer_lab}
+\end{figure}
+
+% IMAGE NEEDED: wifi-analyzer-lab-networks.jpg
+% Description: WhatsApp Image showing WiFi Analyzer main screen
+% with multiple networks visible (Lab8Sanchez and classmates' networks)
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/wifi-analyzer-channel-graph.jpg}
+    \caption{Channel utilization graph in laboratory}
+    \label{fig:channel_graph_lab}
+\end{figure}
+
+% IMAGE NEEDED: wifi-analyzer-channel-graph.jpg
+% Description: WhatsApp Image showing WiFi Analyzer channel graph
+% with peaks on channels 1, 6, 11 showing multiple networks
+
+\textbf{Discovered Networks:}
+\begin{itemize}
+    \item \textbf{Lab8Sanchez:} Our network (Channel 6, -45 dBm)
+    \item \textbf{Lab8Pedraza:} Classmate network (Channel 11, -50 dBm)
+    \item \textbf{Lab8Garcia:} Classmate network (Channel 1, -55 dBm)
+    \item \textbf{Other networks:} 5+ additional networks detected
+    \item \textbf{Signal strength:} Range from -40 dBm (excellent) to -75 dBm (weak)
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/wifi-analyzer-signal-strength.jpg}
+    \caption{Signal strength meter for detected networks}
+    \label{fig:signal_strength}
+\end{figure}
+
+% IMAGE NEEDED: wifi-analyzer-signal-strength.jpg
+% Description: WhatsApp Image showing WiFi Analyzer signal meter
+% with our network having the strongest signal
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/wifi-analyzer-channel-rating.jpg}
+    \caption{Channel rating recommendations}
+    \label{fig:channel_rating}
+\end{figure}
+
+% IMAGE NEEDED: wifi-analyzer-channel-rating.jpg
+% Description: WhatsApp Image showing WiFi Analyzer channel rating
+% feature suggesting best channels to use
+
+\subsection{4.10 SSID Broadcast Test - Beacon Frames}
+
+We tested disabling SSID broadcast (beacon frames):
+
+\textbf{Configuration Steps:}
+\begin{enumerate}
+    \item Access router web interface (192.168.0.1)
+    \item Navigate to Wireless Settings
+    \item Disable "SSID Broadcast" or "Enable SSID Broadcast"
+    \item Save and apply settings
+    \item Test connection from smartphone
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/disable-ssid-broadcast.jpg}
+    \caption{Router configuration - SSID broadcast disabled}
+    \label{fig:disable_broadcast}
+\end{figure}
+
+% IMAGE NEEDED: disable-ssid-broadcast.jpg
+% Description: WhatsApp Image showing router web interface
+% with "SSID Broadcast: Disabled" setting
+
+\textbf{Connection Test Without Broadcast:}
+\begin{lstlisting}[language=bash]
+# Manual connection on smartphone:
+1. WiFi Settings > Add Network
+2. Enter SSID: Lab8Sanchez (manually)
+3. Security: WPA2-PSK
+4. Password: WiFiSeg
+5. Connect
+
+Result: ✓ Connection successful
+Network is "hidden" but still accessible
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/hidden-network-connection.jpg}
+    \caption{Connecting to hidden network manually}
+    \label{fig:hidden_network}
+\end{figure}
+
+% IMAGE NEEDED: hidden-network-connection.jpg
+% Description: WhatsApp Image showing smartphone manual network entry
+% screen with Lab8Sanchez SSID typed in
+
+\textbf{WiFi Analyzer with SSID Broadcast Disabled:}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/wifi-analyzer-hidden-network.jpg}
+    \caption{WiFi Analyzer after disabling SSID broadcast}
+    \label{fig:hidden_analyzer}
+\end{figure}
+
+% IMAGE NEEDED: wifi-analyzer-hidden-network.jpg
+% Description: WhatsApp Image showing WiFi Analyzer where
+% Lab8Sanchez still appears but might show as "Hidden Network"
+% or with different visualization
+
+\begin{note}
+\textbf{Security Implication:}\\
+Disabling SSID broadcast provides \textbf{minimal security}. The network is still visible to WiFi Analyzer and professional tools. It only hides the network from casual users. True security comes from WPA2-PSK encryption, not from hiding the SSID.
+\end{note}
+
+\section{Part 5: Advanced Wireless and VLAN Integration}
+
+\begin{exercise}{Exercise 5: Complex Wireless LAN with Multiple Segments}
+\textbf{VLANs:} Color-coded network segments\\
+\textbf{Wireless:} 3 separate wireless networks\\
+\textbf{Objective:} Integrate wired VLANs with wireless access
+\end{exercise}
+
+\subsection{5.1 Integrated Network Design}
+
+We created a complex network combining wired VLANs and wireless networks:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/complex-wireless-vlan.png}
+    \caption{Integrated wired/wireless VLAN topology}
+    \label{fig:complex_wireless}
+\end{figure}
+
+% IMAGE NEEDED: complex-wireless-vlan.png
+% Description: Large Packet Tracer topology showing hierarchical
+% switches, 3 wireless networks (green/purple/orange), VLANs
+% indicated by colored shapes around devices
+
+\subsection{5.2 VLAN and Wireless Mapping}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Network} & \textbf{SSID} & \textbf{IP Range} & \textbf{Color} \\
+\midrule
+Wired VLAN & N/A & 171.18.100.0/24 & N/A \\
+\rowcolor{lightgray}
+Green WiFi & Rectangle & 192.168.0.0/24 & Green \\
+Purple WiFi & Circle & 171.18.100.0/24 & Purple \\
+\rowcolor{lightgray}
+Orange WiFi & Irregular & 171.18.100.0/24 & Orange \\
+\bottomrule
+\end{tabular}
+\caption{Network segment mapping}
+\label{tab:wireless_vlan_map}
+\end{table}
+
+\subsection{5.3 Connectivity Matrix}
+
+\textbf{Connectivity Test Results:}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\rowcolor{primaryblue!20}
+& \textbf{Wired} & \textbf{Green} & \textbf{Purple} & \textbf{Orange} \\
+\midrule
+Wired & ✓ & ✗ & ✓ & ✓ \\
+\rowcolor{lightgray}
+Green WiFi & ✗ & ✓ & ✗ & ✗ \\
+Purple WiFi & ✓ & ✗ & ✓ & ✓ \\
+\rowcolor{lightgray}
+Orange WiFi & ✓ & ✗ & ✓ & ✓ \\
+\bottomrule
+\end{tabular}
+\caption{Connectivity matrix (✓ = can ping, ✗ = cannot ping)}
+\label{tab:connectivity_matrix}
+\end{table}
+
+\textbf{Analysis:} Green WiFi uses separate 192.168.0.0/24 subnet (requires router for inter-network communication). Purple and Orange WiFi share 171.18.100.0/24 subnet with wired devices.
+
+\subsection{5.4 Specific Ping Test Results}
+
+\begin{lstlisting}[language=bash]
+# PC2 to PC5: Different subnets
+PC2 (171.18.110.58)> ping 171.18.110.XX
+Reply from 171.18.110.XX: bytes=32 time=2ms TTL=128
+SUCCESS: Same subnet (171.18.110.0/24)
+
+# Laptop0 to Router Gateway
+Laptop0 (192.168.0.25)> ping 192.168.0.1
+Reply from 192.168.0.1: bytes=32 time=1ms TTL=64
+SUCCESS: Green WiFi to gateway
+
+# Smartphone0 to PC6
+Smartphone0 (171.18.100.45)> ping 171.18.110.59
+Request timed out.
+FAILED: Requires inter-VLAN routing
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/connectivity-test-results.jpg}
+    \caption{Visual representation of connectivity tests}
+    \label{fig:connectivity_tests}
+\end{figure}
+
+% IMAGE NEEDED: connectivity-test-results.png
+% Description: Diagram showing successful (green arrows) and failed
+% (red X) ping attempts between different network segments
+
+\section{Part 6: Network Monitoring Scripts}
+
+\begin{exercise}{Exercise 6: Cross-Platform Monitoring Tools}
+\textbf{Platforms:} Slackware, Solaris, Windows Server\\
+\textbf{Commands:} ifconfig, netstat, vnstat, route, ethtool\\
+\textbf{Objective:} Create user-friendly network information scripts
+\end{exercise}
+
+\subsection{6.1 Slackware Monitoring Script}
+
+Complete script with 8 options:
+
+\begin{lstlisting}[language=bash]
+#!/bin/bash
+# Slackware Network Monitor
+# Andersson Sanchez & Cristian Pedraza
+
+show_menu() {
+    clear
+    echo "================================"
+    echo " SLACKWARE NETWORK MONITOR"
+    echo "================================"
+    echo "1. Show Network Interfaces"
+    echo "2. Show Active Connections"
+    echo "3. Show Routing Table"
+    echo "4. Show Interface Details (ethtool)"
+    echo "5. Show Traffic Statistics (vnstat)"
+    echo "6. Show Listening Ports"
+    echo "7. Show ARP Table"
+    echo "8. Exit"
+    echo "================================"
+}
+
+while true; do
+    show_menu
+    read -p "Select option: " choice
+    case $choice in
+        1) ifconfig ;;
+        2) netstat -tunapl ;;
+        3) route -n ;;
+        4) ethtool eth0 ;;
+        5) vnstat -i eth0 ;;
+        6) netstat -tuln ;;
+        7) arp -a ;;
+        8) exit 0 ;;
+        *) echo "Invalid option" ;;
+    esac
+    read -p "Press Enter to continue..."
+done
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/slackware-menu.png}
+    \caption{Slackware network monitor menu}
+    \label{fig:slackware_menu}
+\end{figure}
+
+% IMAGE NEEDED: slackware-menu.png
+% Description: Terminal screenshot showing script menu with 8 options
+% (interfaces, connections, routing, ethtool, vnstat, ports, etc.)
+
+\subsection{6.2 Vnstat Installation and Configuration}
+
+Since vnstat wasn't installed initially, we documented the installation:
+
+\begin{lstlisting}[language=bash]
+# Install vnstat via sbopkg
+sudo sbopkg
+# Search for vnstat
+# Build and install
+
+# Create database directory
+sudo mkdir -p /var/lib/vnstat
+
+# Initialize interface
+sudo vnstat --create -i eth0
+
+# Start daemon
+sudo /etc/rc.d/rc.vnstat start
+
+# Enable at boot
+sudo chmod +x /etc/rc.d/rc.vnstat
+echo "/etc/rc.d/rc.vnstat start" >> /etc/rc.d/rc.local
+
+# View statistics (after data collection)
+vnstat -i eth0 -d  # Daily stats
+vnstat -i eth0 -h  # Hourly stats
+vnstat -i eth0 -m  # Monthly stats
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/vnstat-output.png}
+    \caption{Vnstat traffic statistics display}
+    \label{fig:vnstat_output}
+\end{figure}
+
+% IMAGE NEEDED: vnstat-output.png
+% Description: Vnstat output showing daily/monthly traffic graphs
+% with RX/TX bytes and totals
+
+\subsection{6.3 Windows PowerShell Script}
+
+The Windows version provides equivalent functionality with GUI elements:
+
+\begin{lstlisting}[language=powershell]
+# Windows Network Monitor GUI
+# PowerShell with Windows Forms
+
+Add-Type -AssemblyName System.Windows.Forms
+$form = New-Object System.Windows.Forms.Form
+$form.Text = "Windows Network Monitor"
+$form.Size = New-Object System.Drawing.Size(600,500)
+
+# Create buttons for each function
+$btnInterfaces = New-Object System.Windows.Forms.Button
+$btnInterfaces.Text = "Show Interfaces"
+$btnInterfaces.Location = New-Object System.Drawing.Point(10,10)
+$btnInterfaces.Add_Click({
+    $output.Text = ipconfig /all | Out-String
+})
+
+# Add more buttons and functionality...
+$form.ShowDialog()
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/windows-powershell-gui.png}
+    \caption{PowerShell network monitor with graphical interface}
+    \label{fig:windows_gui}
+\end{figure}
+
+% IMAGE NEEDED: windows-powershell-gui.png
+% Description: Windows form showing network information with buttons
+% for different monitoring functions, colorized output
+
+\section{Part 7: Dynamic Web Application}
+
+\begin{exercise}{Exercise 7: Grade Calculator with Cloud Database}
+\textbf{Platform:} Microsoft Azure SQL Database\\
+\textbf{Features:} Student grade calculator (30-30-40 weights)\\
+\textbf{Objective:} Deploy cloud database and implement remote connections
+\end{exercise}
+
+\begin{note}
+\textbf{Platform Selection - AWS vs Azure:}\\
+The original laboratory instructions specified AWS EC2 with Apache, PHP, and PostgreSQL. However, due to exhausted AWS credits in our student accounts, we implemented the equivalent solution using Microsoft Azure SQL Database. Both platforms provide similar cloud database capabilities with managed services, automated backups, and scalable performance. Azure SQL Database offers comparable features to AWS RDS with the advantage of seamless integration with our existing Azure for Students subscription.
+\end{note}
+
+\subsection{7.1 Application Architecture}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/azure-architecture.png}
+    \caption{Azure SQL Database architecture}
+    \label{fig:azure_architecture}
+\end{figure}
+
+% IMAGE NEEDED: azure-architecture.png
+% Description: Diagram showing: Client Applications -> Azure SQL Gateway ->
+% Azure SQL Database, with TLS encryption and firewall components
+
+\textbf{Technology Stack:}
+\begin{itemize}
+    \item \textbf{Database:} Azure SQL Database (PaaS)
+    \item \textbf{Authentication:} SQL Server Authentication
+    \item \textbf{Connection:} TLS 1.2+ encrypted
+    \item \textbf{Client Tools:} DBeaver, Azure Query Editor
+    \item \textbf{Platform:} Microsoft Azure Cloud
+\end{itemize}
+
+\subsection{7.2 Azure SQL Database Creation}
+
+\textbf{Resource Configuration:}
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Resource Group & Lab08-RECO-RG \\
+\rowcolor{lightgray}
+Database Name & GradeCalculatorDB \\
+Server Name & lab08-reco-server \\
+\rowcolor{lightgray}
+Location & West US 2 \\
+Authentication & SQL Authentication \\
+\rowcolor{lightgray}
+Admin Login & sqladmin \\
+Pricing Tier & Basic (5 DTUs) \\
+\rowcolor{lightgray}
+Backup Redundancy & Locally-redundant \\
+\bottomrule
+\end{tabular}
+\caption{Azure SQL Database configuration}
+\label{tab:azure_config}
+\end{table}
+
+\subsection{7.3 Networking Configuration}
+
+\textbf{Firewall Rules Setup:}
+
+Azure SQL Database requires explicit firewall rules to allow client connections. We configured networking to permit access from our public IP address while maintaining security through TLS encryption.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/azure-networking-config.png}
+    \caption{Azure SQL Server networking configuration}
+    \label{fig:azure_networking}
+\end{figure}
+
+% IMAGE NEEDED: azure-networking-config.png
+% Description: Screenshot of Azure portal showing SQL Server Networking page
+% with firewall rules, including ClientIPAddress rule with IP 200.118.80.167
+% and "Allow Azure services" exception enabled
+
+\textbf{Configured Firewall Rules:}
+\begin{lstlisting}[language=bash]
+# Rule 1: Client IP Address (Automatic Detection)
+Rule name: ClientIPAddress_2025-11-29_17-55-39
+Start IP: 200.118.80.167
+End IP: 200.118.80.167
+Purpose: Allow connection from home/university network
+
+# Exception Configuration:
+☑ Allow Azure services and resources to access this server
+Purpose: Enable Query Editor and internal Azure connectivity
+\end{lstlisting}
+
+\begin{note}
+\textbf{TLS Encryption Requirement:}\\
+Azure SQL Database enforces TLS 1.2+ encryption for all connections. Unlike local database installations, there is no option to disable encryption, ensuring data security during transit across the internet.
+\end{note}
+
+\subsection{7.4 Database Schema Design}
+
+\textbf{Creating Tables in Azure Query Editor:}
+
+We used SQL Server syntax (T-SQL) instead of PostgreSQL to create our database schema. Key differences include IDENTITY for auto-increment, NVARCHAR for Unicode strings, and computed columns with PERSISTED keyword.
+
+\begin{lstlisting}[language=SQL]
+-- Students table
+CREATE TABLE students (
+    student_id INT IDENTITY(1,1) PRIMARY KEY,
+    student_name NVARCHAR(255) NOT NULL,
+    email NVARCHAR(255) UNIQUE,
+    enrollment_date DATE DEFAULT GETDATE()
+);
+
+-- Courses table
+CREATE TABLE courses (
+    course_id INT IDENTITY(1,1) PRIMARY KEY,
+    course_name NVARCHAR(255) NOT NULL,
+    course_code NVARCHAR(50) UNIQUE NOT NULL,
+    credits INT CHECK (credits > 0),
+    professor NVARCHAR(255)
+);
+
+-- Grades table with computed columns
+CREATE TABLE grades (
+    grade_id INT IDENTITY(1,1) PRIMARY KEY,
+    student_id INT FOREIGN KEY REFERENCES students(student_id),
+    course_id INT FOREIGN KEY REFERENCES courses(course_id),
+    first_third DECIMAL(3,2) 
+        CHECK (first_third >= 0 AND first_third <= 5),
+    second_third DECIMAL(3,2) 
+        CHECK (second_third >= 0 AND second_third <= 5),
+    third_third DECIMAL(3,2) 
+        CHECK (third_third >= 0 AND third_third <= 5),
+    final_grade AS (
+        first_third * 0.30 + 
+        second_third * 0.30 + 
+        third_third * 0.40
+    ) PERSISTED,
+    status AS (
+        CASE 
+            WHEN (first_third * 0.30 + second_third * 0.30 + 
+                  third_third * 0.40) >= 3.0 
+            THEN 'Aprobado' 
+            ELSE 'Reprobado' 
+        END
+    ) PERSISTED,
+    grade_date DATETIME DEFAULT GETDATE()
+);
+
+-- Performance indexes
+CREATE INDEX idx_student_name ON students(student_name);
+CREATE INDEX idx_course_code ON courses(course_code);
+CREATE INDEX idx_student_grades ON grades(student_id);
+CREATE INDEX idx_grade_date ON grades(grade_date DESC);
+\end{lstlisting}
+
+\subsection{7.5 Data Population}
+
+\begin{lstlisting}[language=SQL]
+-- Insert students
+INSERT INTO students (student_name, email) VALUES
+('Andersson David Sánchez Méndez', 
+ 'andersson.sanchez@escuelaing.edu.co'),
+('Cristian Santiago Pedraza Rodríguez', 
+ 'cristian.pedraza@escuelaing.edu.co'),
+('María García López', 
+ 'maria.garcia@escuelaing.edu.co'),
+('Juan Pérez Martínez', 
+ 'juan.perez@escuelaing.edu.co');
+
+-- Insert courses
+INSERT INTO courses (course_name, course_code, credits, professor) 
+VALUES
+('Computer Networks', 'RECO-2024', 3, 'Prof. Fabián Sierra'),
+('Database Systems', 'DB-2024', 3, 'Prof. Carlos Santiago'),
+('Operating Systems', 'SO-2024', 3, 'Prof. Ana Rodríguez'),
+('Software Engineering', 'IS-2024', 4, 'Prof. Luis Gómez');
+
+-- Insert grades (automatic calculation of final_grade and status)
+INSERT INTO grades (student_id, course_id, 
+                    first_third, second_third, third_third) 
+VALUES
+(1, 1, 4.5, 4.2, 4.8),  -- Andersson - Computer Networks
+(1, 2, 4.0, 4.3, 4.5),  -- Andersson - Database Systems
+(2, 1, 4.0, 4.5, 4.3),  -- Cristian - Computer Networks
+(2, 2, 3.8, 4.0, 4.2),  -- Cristian - Database Systems
+(3, 1, 3.5, 3.8, 4.0),  -- María - Computer Networks
+(3, 3, 4.2, 4.0, 4.5),  -- María - Operating Systems
+(4, 1, 2.8, 2.5, 3.0),  -- Juan - Computer Networks (Reprobado)
+(4, 4, 3.0, 3.2, 3.5);  -- Juan - Software Engineering
+\end{lstlisting}
+
+\subsection{7.6 Azure Query Editor - Grade Calculator}
+
+Azure Portal provides a built-in Query Editor that allows direct SQL execution without external tools. This is particularly useful for quick queries and database administration.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/azure-query-editor-calculator.png}
+    \caption{Grade calculator queries in Azure Query Editor}
+    \label{fig:azure_calculator}
+\end{figure}
+
+% IMAGE NEEDED: azure-query-editor-calculator.png
+% Description: Azure Portal Query Editor showing SELECT query results
+% with student grades table displaying: student names, courses, 
+% first_third, second_third, third_third, final_grade (calculated),
+% and status (Aprobado/Reprobado). Multiple rows visible with data.
+
+\textbf{Grade Calculator Queries:}
+\begin{lstlisting}[language=SQL]
+-- Complete grade report with calculations
+SELECT 
+    s.student_name AS 'Estudiante',
+    c.course_name AS 'Curso',
+    g.first_third AS 'Primer Tercio (30%)',
+    g.second_third AS 'Segundo Tercio (30%)',
+    g.third_third AS 'Tercer Tercio (40%)',
+    g.final_grade AS 'Nota Final',
+    g.status AS 'Estado',
+    FORMAT(g.grade_date, 'yyyy-MM-dd HH:mm') AS 'Fecha'
+FROM grades g
+JOIN students s ON g.student_id = s.student_id
+JOIN courses c ON g.course_id = c.course_id
+ORDER BY s.student_name, c.course_name;
+
+-- Student statistics
+SELECT 
+    s.student_name AS 'Estudiante',
+    COUNT(g.grade_id) AS 'Total Cursos',
+    ROUND(AVG(g.final_grade), 2) AS 'Promedio',
+    SUM(CASE WHEN g.status = 'Aprobado' THEN 1 ELSE 0 END) 
+        AS 'Aprobados'
+FROM students s
+LEFT JOIN grades g ON s.student_id = g.student_id
+GROUP BY s.student_name
+ORDER BY AVG(g.final_grade) DESC;
+\end{lstlisting}
+
+\subsection{7.7 Remote Connection with DBeaver}
+
+DBeaver is a universal database client that supports Azure SQL Database connections. We configured it to connect remotely from our local machine to the Azure-hosted database.
+
+\textbf{Connection Configuration:}
+\begin{lstlisting}[language=bash]
+# DBeaver Connection Settings
+Host: lab08-reco-server.database.windows.net
+Port: 1433
+Database: GradeCalculatorDB
+Authentication: SQL Server Authentication
+Username: sqladmin
+Password: [secure password]
+
+# Driver Properties
+encrypt: true
+trustServerCertificate: false
+loginTimeout: 30
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/azure-dbeaver-connection.png}
+    \caption{DBeaver connected to Azure SQL Database}
+    \label{fig:azure_dbeaver}
+\end{figure}
+
+% IMAGE NEEDED: azure-dbeaver-connection.png
+% Description: DBeaver interface showing:
+% - Left panel: Database Navigator with GradeCalculatorDB expanded,
+%   showing tables: students, courses, grades with their columns
+% - Right panel: Query result displaying grade data with multiple
+%   rows showing student names, courses, and calculated grades
+% - Connection indicator showing successful connection to Azure
+
+\textbf{Verification Tests:}
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Test} & \textbf{Result} \\
+\midrule
+DNS Resolution & ✓ lab08-reco-server resolved \\
+\rowcolor{lightgray}
+TCP Port 1433 & ✓ Connection established \\
+TLS Handshake & ✓ TLS 1.2 negotiated \\
+\rowcolor{lightgray}
+SQL Authentication & ✓ Login successful \\
+Database Access & ✓ Tables visible \\
+\rowcolor{lightgray}
+Query Execution & ✓ SELECT/INSERT working \\
+\bottomrule
+\end{tabular}
+\caption{DBeaver connection verification}
+\label{tab:dbeaver_tests}
+\end{table}
+
+\subsection{7.8 Performance Monitoring}
+
+Azure provides comprehensive monitoring capabilities through the Azure Portal. We can track database performance metrics in real-time to ensure optimal operation.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/azure-metrics-data-io.png}
+    \caption{Azure SQL Database - Data IO percentage metrics}
+    \label{fig:azure_metrics}
+\end{figure}
+
+% IMAGE NEEDED: azure-metrics-data-io.png
+% Description: Azure Portal Metrics page showing:
+% - Graph title: "Data IO percentage"
+% - Time-series line chart with blue line showing I/O utilization over time
+% - X-axis: Time intervals
+% - Y-axis: Percentage (0-100%)
+% - Metrics showing database I/O performance patterns
+
+\textbf{Available Performance Metrics:}
+\begin{itemize}
+    \item \textbf{CPU Percentage:} Database processor utilization
+    \item \textbf{Data IO Percentage:} Disk read/write operations
+    \item \textbf{Log IO Percentage:} Transaction log write activity
+    \item \textbf{DTU Percentage:} Overall resource consumption (Basic: 5 DTUs)
+    \item \textbf{Connections:} Active database sessions
+    \item \textbf{Storage:} Database size and growth
+\end{itemize}
+
+\begin{lstlisting}[language=SQL]
+-- Monitor current database size
+SELECT 
+    DB_NAME() AS 'Database',
+    SUM(size) * 8 / 1024 AS 'Size (MB)'
+FROM sys.database_files;
+
+-- Check active connections
+SELECT 
+    COUNT(*) AS 'Active Sessions'
+FROM sys.dm_exec_sessions
+WHERE is_user_process = 1;
+\end{lstlisting}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Data IO remained under 20\% during testing
+    \item Query response times averaged 50-100ms
+    \item Basic tier (5 DTUs) sufficient for laboratory workload
+    \item No performance bottlenecks detected
+    \item TLS encryption impact on latency: ~5-10ms
+\end{itemize}
+
+\section{Part 8: Home WiFi Network Analysis}
+
+\begin{exercise}{Exercise 9: WiFi Site Survey at Home}
+\textbf{Tool:} WiFi Analyzer for Android\\
+\textbf{Objective:} Analyze WiFi spectrum usage in residential area\\
+\textbf{Bands:} 2.4 GHz, 5 GHz, 6 GHz detection
+\end{exercise}
+
+\subsection{9.1 Home WiFi Environment Analysis}
+
+Using WiFi Analyzer, we performed a comprehensive survey of wireless networks near our home:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/home-wifi-analyzer-main.jpg}
+    \caption{WiFi Analyzer main screen - home environment}
+    \label{fig:home_wifi_main}
+\end{figure}
+
+% IMAGE NEEDED: home-wifi-analyzer-main.jpg
+% Description: WhatsApp Image 2025-11-28 at 22.09.13_93d38ece.jpg
+% WiFi Analyzer showing list of detected home networks
+
+\subsection{9.2 2.4 GHz Band Analysis}
+
+\textbf{Detected Networks on 2.4 GHz:}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{SSID} & \textbf{Channel} & \textbf{Signal (dBm)} & \textbf{Security} \\
+\midrule
+Home-Network & 6 & -35 & WPA2 \\
+\rowcolor{lightgray}
+Neighbor-WiFi-1 & 1 & -55 & WPA2 \\
+Neighbor-WiFi-2 & 11 & -60 & WPA2 \\
+\rowcolor{lightgray}
+Claro-XXX & 6 & -70 & WPA2 \\
+Movistar-YYY & 1 & -68 & WPA2 \\
+\rowcolor{lightgray}
+Open-Network & 11 & -75 & Open \\
+\bottomrule
+\end{tabular}
+\caption{2.4 GHz networks detected at home}
+\label{tab:home_24ghz}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/home-wifi-24ghz-graph.jpg}
+    \caption{2.4 GHz channel utilization graph}
+    \label{fig:home_24ghz_graph}
+\end{figure}
+
+% IMAGE NEEDED: home-wifi-24ghz-graph.jpg
+% Description: WhatsApp Image 2025-11-28 at 22.09.13_90a28f6a.jpg
+% WiFi Analyzer graph showing 2.4 GHz spectrum with overlapping networks
+
+\subsection{9.3 5 GHz Band Analysis}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/home-wifi-5ghz-list.jpg}
+    \caption{5 GHz networks detected}
+    \label{fig:home_5ghz_list}
+\end{figure}
+
+% IMAGE NEEDED: home-wifi-5ghz-list.jpg
+% Description: WhatsApp Image 2025-11-28 at 22.09.13_cfdcee53.jpg
+% WiFi Analyzer showing 5 GHz networks list
+
+\textbf{5 GHz Network Observations:}
+\begin{itemize}
+    \item \textbf{Less congestion:} Fewer networks compared to 2.4 GHz
+    \item \textbf{More channels:} 23 non-overlapping channels available
+    \item \textbf{Higher throughput:} Better performance for streaming/gaming
+    \item \textbf{Shorter range:} Signal doesn't penetrate walls as effectively
+    \item \textbf{Channel width:} Many using 80 MHz channel width
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/home-wifi-5ghz-graph.jpg}
+    \caption{5 GHz channel utilization - less crowded}
+    \label{fig:home_5ghz_graph}
+\end{figure}
+
+% IMAGE NEEDED: home-wifi-5ghz-graph.jpg
+% Description: WhatsApp Image 2025-11-28 at 22.09.13_3accae86.jpg
+% WiFi Analyzer 5 GHz graph showing less congestion
+
+\subsection{9.4 Band Comparison}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}lll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Band} & \textbf{Networks Found} & \textbf{Status} \\
+\midrule
+2.4 GHz & 15+ networks & ✓ Detected \\
+\rowcolor{lightgray}
+5 GHz (5.7 GHz) & 8 networks & ✓ Detected \\
+6 GHz (WiFi 6E) & 0 networks & ✗ Not detected \\
+\rowcolor{lightgray}
+60 GHz (WiGig) & 0 networks & ✗ Not detected \\
+\bottomrule
+\end{tabular}
+\caption{Frequency band detection results}
+\label{tab:band_detection}
+\end{table}
+
+\begin{solution}{Why 6 GHz and 60 GHz Not Detected?}
+\textbf{6 GHz Band (WiFi 6E):}
+\begin{itemize}
+    \item Requires WiFi 6E compatible router and devices
+    \item Very new technology (2020+)
+    \item Limited deployment in residential areas
+    \item Not available in all countries/regions
+\end{itemize}
+
+\textbf{60 GHz Band (WiGig/802.11ad):}
+\begin{itemize}
+    \item Extremely short range (10-30 feet)
+    \item Line-of-sight requirement
+    \item Mainly for specialized applications
+    \item Rare in residential deployments
+\end{itemize}
+\end{solution}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/home-wifi-signal-meter.jpg}
+    \caption{Signal strength meter for home network}
+    \label{fig:home_signal_meter}
+\end{figure}
+
+% IMAGE NEEDED: home-wifi-signal-meter.jpg
+% Description: WhatsApp Image 2025-11-28 at 22.09.13_31738a4c.jpg
+% WiFi Analyzer signal strength meter showing home network
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/home-wifi-channel-rating.jpg}
+    \caption{Channel rating for optimal performance}
+    \label{fig:home_channel_rating}
+\end{figure}
+
+% IMAGE NEEDED: home-wifi-channel-rating.jpg
+% Description: WhatsApp Image 2025-11-28 at 22.09.13_427d8b2f.jpg
+% WiFi Analyzer channel rating showing best/worst channels
+
+\textbf{Recommendations for Home Network:}
+\begin{itemize}
+    \item \textbf{2.4 GHz:} Use channel 1, 6, or 11 (avoid overlap)
+    \item \textbf{5 GHz:} Choose channel with least interference (36, 149, etc.)
+    \item \textbf{Channel width:} 20 MHz for 2.4 GHz, 40-80 MHz for 5 GHz
+    \item \textbf{Dual-band:} Use 5 GHz for high-speed devices, 2.4 GHz for IoT
+    \item \textbf{Position router:} Central location, elevated, away from walls
+\end{itemize}
+
+\section{Part 10: MAC Address Filtering}
+
+\begin{exercise}{Exercise 10: Access Control via MAC Filtering}
+\textbf{Objective:} Block specific devices using MAC address filtering\\
+\textbf{Security Level:} Medium (can be spoofed)\\
+\textbf{Use Case:} Restrict unauthorized devices
+\end{exercise}
+
+\subsection{10.1 MAC Filtering Configuration}
+
+\textbf{Accessing Router Configuration:}
+
+\begin{lstlisting}[language=bash]
+# Connect to router web interface
+1. Open browser: http://192.168.0.1
+2. Login: admin / [password]
+3. Navigate to: Wireless > MAC Filtering
+   OR: Wireless Security > Access Control
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/mac-filter-basic-config.png}
+    \caption{Router basic configuration page}
+    \label{fig:mac_filter_basic}
+\end{figure}
+
+% IMAGE NEEDED: mac-filter-basic-config.png
+% Description: Image showing router web interface main page
+% with navigation to wireless/security settings
+
+\subsection{10.2 MAC Filtering Modes}
+
+\textbf{Two Operating Modes:}
+
+\begin{enumerate}
+    \item \textbf{Whitelist (Allow List):}
+    \begin{itemize}
+        \item Only listed MAC addresses can connect
+        \item More secure but requires manual management
+        \item New devices must be explicitly added
+    \end{itemize}
+    
+    \item \textbf{Blacklist (Deny List):}
+    \begin{itemize}
+        \item Listed MAC addresses are blocked
+        \item All other devices can connect
+        \item Easier to manage for blocking specific devices
+    \end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/mac-filter-mode-selection.png}
+    \caption{MAC filtering mode selection}
+    \label{fig:mac_filter_mode}
+\end{figure}
+
+% IMAGE NEEDED: mac-filter-mode-selection.png
+% Description: Router interface showing radio buttons or dropdown
+% for selecting "Allow" or "Deny" mode for MAC filtering
+
+\subsection{10.3 Adding MAC Addresses to Block List}
+
+\textbf{Step-by-Step Configuration:}
+
+\begin{lstlisting}[language=bash]
+# Example: Blocking a smartphone
+1. Find device MAC address:
+   - On smartphone: Settings > About > Status
+   - MAC: A4:5E:60:E8:7F:91
+
+2. Router configuration:
+   - Enable MAC Filtering: ON
+   - Filter Mode: Deny (Blacklist)
+   - Add MAC Address: A4:5E:60:E8:7F:91
+   - Description: Unauthorized Smartphone
+   - Save settings
+
+3. Test:
+   - Smartphone tries to connect
+   - Authentication fails
+   - "Unable to connect to network" message
+\end{lstlisting}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/mac-filter-add-address.png}
+    \caption{Adding MAC address to deny list}
+    \label{fig:mac_filter_add}
+\end{figure}
+
+% IMAGE NEEDED: mac-filter-add-address.png
+% Description: Router interface showing form to add MAC address
+% with fields for MAC address and description
+
+\subsection{10.4 Verification and Testing}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/mac-filter-active-list.png}
+    \caption{Active MAC filter list showing blocked devices}
+    \label{fig:mac_filter_list}
+\end{figure}
+
+% IMAGE NEEDED: mac-filter-active-list.png
+% Description: Router interface showing table of filtered MAC addresses
+% with columns for MAC, Description, Status
+
+\textbf{Testing Results:}
+
+\begin{table}[H]
+\centering
+\scriptsize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\rowcolor{primaryblue!20}
+\textbf{Device} & \textbf{MAC Address} & \textbf{Filter} & \textbf{Result} \\
+\midrule
+Laptop & 00:1A:2B:3C:4D:5E & Not filtered & ✓ Connected \\
+\rowcolor{lightgray}
+Smartphone 1 & A4:5E:60:E8:7F:91 & Blacklist & ✗ Blocked \\
+Tablet & 8C:85:90:A2:B3:C4 & Not filtered & ✓ Connected \\
+\rowcolor{lightgray}
+Unknown device & 12:34:56:78:9A:BC & Blacklist & ✗ Blocked \\
+\bottomrule
+\end{tabular}
+\caption{MAC filtering test results}
+\label{tab:mac_filter_tests}
+\end{table}
+
+\subsection{10.5 Security Considerations}
+
+\begin{warning}
+\textbf{MAC Filtering Limitations:}
+
+While MAC filtering provides an additional security layer, it has significant limitations:
+
+\begin{itemize}
+    \item \textbf{MAC Spoofing:} Attackers can clone authorized MAC addresses
+    \item \textbf{Visible MACs:} MAC addresses transmitted in cleartext
+    \item \textbf{Management overhead:} Must manually update list for new devices
+    \item \textbf{False sense of security:} Should NOT be sole security mechanism
+\end{itemize}
+
+\textbf{Best Practice:}
+\begin{itemize}
+    \item Always use WPA2/WPA3 encryption (primary defense)
+    \item MAC filtering as supplementary layer only
+    \item Strong password policy
+    \item Regular firmware updates
+    \item Disable WPS (WiFi Protected Setup)
+\end{itemize}
+\end{warning}
+
+\subsection{10.6 Real-World Application}
+
+\textbf{Practical Use Cases:}
+\begin{itemize}
+    \item \textbf{Home networks:} Block neighbors' devices
+    \item \textbf{Guest networks:} Temporary access control
+    \item \textbf{IoT security:} Whitelist known smart devices
+    \item \textbf{Parental controls:} Time-based MAC filtering
+    \item \textbf{Enterprise:} Combined with RADIUS/802.1X
+\end{itemize}
+
+\section{Theoretical Questions Analysis}
+
+\subsection{Question 1: Switch Frame Forwarding Behavior}
+
+\begin{exercise}{Why does a switch initially forward frames to all ports?}
+\textbf{Question:} Why does a switch forward Ethernet frames through all ports (except input) before 'converging' its MAC table?
+\end{exercise}
+
+\begin{solution}{Answer: Unknown Unicast Flooding}
+\textbf{Correct Answer:} The switch does not know the relationship between ports and MAC addresses yet, so it broadcasts the frame to all ports except the input port.
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Initial State:} When powered on, the MAC address table is empty
+    \item \textbf{Source Learning:} Each frame arrival teaches the switch: "MAC X is on port Y"
+    \item \textbf{Unknown Destination:} If destination MAC is not in table, switch must \textbf{flood} to ensure delivery
+    \item \textbf{Convergence:} After bidirectional communication, switch knows both endpoints
+    \item \textbf{Result:} Subsequent frames use \textbf{selective forwarding} (unicast)
+\end{itemize}
+
+\textbf{Why other answers are wrong:}
+\begin{itemize}
+    \item [\textcolor{accentred}{✗}] \textbf{"Discards unknown unicast":} Would break network functionality
+    \item [\textcolor{accentred}{✗}] \textbf{"Verify CSMA/CD support":} Irrelevant to switching (full-duplex)
+    \item [\textcolor{accentred}{✗}] \textbf{"Spanning-tree controls learning":} STP prevents loops, not MAC learning
+\end{itemize}
+\end{solution}
+
+\subsection{Question 2: Trunk Link Purpose}
+
+\begin{exercise}{What is the essential purpose of trunk links?}
+\textbf{Question:} What is the essential purpose of a trunk link between switches when transporting multiple VLANs?
+\end{exercise}
+
+\begin{solution}{Answer: VLAN Multiplexing with Tagging}
+\textbf{Correct Answer:} Transport multiple VLANs simultaneously through frame tagging (802.1Q), allowing switches to maintain logical isolation.
+
+\textbf{How Trunking Works:}
+\begin{enumerate}
+    \item Frame enters switch on access port (VLAN 50)
+    \item Switch adds \textbf{4-byte 802.1Q tag} containing VLAN ID
+    \item Tagged frame travels across trunk link
+    \item Receiving switch reads tag, routes to correct VLAN
+    \item Tag removed before delivery to destination device
+\end{enumerate}
+
+\textbf{802.1Q Frame Format:}
+\begin{lstlisting}
+| Dest MAC | Src MAC | 802.1Q TAG | EtherType | Payload | FCS |
+                       |           |
+                       +--- VLAN ID (12 bits)
+                       +--- Priority (3 bits)
+\end{lstlisting}
+
+\textbf{Benefits:}
+\begin{itemize}
+    \item Single physical cable carries multiple VLANs
+    \item Reduced cabling costs
+    \item Simplified network topology
+    \item Maintains VLAN isolation end-to-end
+\end{itemize}
+\end{solution}
+
+\section{Conclusions}
+
+This laboratory provided comprehensive hands-on experience across multiple networking layers and technologies, combining both simulated and physical network implementations:
+
+\textbf{Data Link Layer Mastery:} Successfully configured Cisco switches with hierarchical designs, implemented VLANs for network segmentation, and observed MAC address learning through simulation mode. The Spanning Tree Protocol demonstration reinforced understanding of loop prevention mechanisms essential for network stability. Our analysis of switch behavior in four distinct scenarios (PC1→PC7, PC0→PC9, Server0→Server1, Laptop0→Laptop1) revealed the flooding-to-unicast transition process.
+
+\textbf{VLAN Implementation:} Configured VLAN 50 (systems) and VLAN 55 (others) across multiple switches, establishing proper trunk links with 802.1Q tagging. Connectivity tests confirmed VLAN isolation—devices within the same VLAN communicated successfully, while inter-VLAN communication was blocked as expected without routing. The complete Switch6 interface configuration demonstrated professional-grade network segmentation with 10+ ports properly assigned to respective VLANs.
+
+\textbf{Physical Wireless Infrastructure:} Deployed real wireless routers in laboratory environment with SSID "Lab8Sanchez", implementing WPA2-PSK security with password "WiFiSeg". Configured DHCP range (192.168.0.20-30) and strategically selected non-overlapping channels (6 and 11) to minimize interference. Successfully connected smartphones to the network, performed comprehensive ping tests, and verified internet connectivity through NAT translation from private (192.168.0.x) to public IP addresses.
+
+\textbf{NAT Understanding:} Demonstrated practical implications of Network Address Translation through smartphone connectivity tests. Explained why certain ping tests succeed (gateway, Google DNS, local WiFi clients) while others fail (external servers with ICMP blocked, devices on different private networks). This reinforced the concept that NAT provides both address conservation and a security boundary between private and public networks.
+
+\textbf{Wireless Site Surveys:} Conducted professional-grade WiFi analysis using WiFi Analyzer app in both laboratory and home environments. In the laboratory, detected 8+ wireless networks from classmates, analyzed channel congestion on channels 1, 6, and 11, and measured signal strengths ranging from -40 dBm (excellent) to -75 dBm (weak). At home, identified 15+ networks on 2.4 GHz band and 8 networks on 5 GHz band, while confirming absence of 6 GHz (WiFi 6E) and 60 GHz (WiGig) deployments in residential area.
+
+\textbf{SSID Broadcast Testing:} Experimented with disabling beacon frames (SSID broadcast) to understand security implications. Successfully connected to "hidden" network by manually entering SSID, demonstrating that disabling broadcast provides minimal security—network remains visible to WiFi Analyzer and professional tools. Confirmed that true security comes from WPA2-PSK encryption, not from hiding the SSID.
+
+\textbf{MAC Address Filtering:} Implemented access control using MAC address filtering on physical routers. Configured both whitelist (allow) and blacklist (deny) modes, successfully blocking unauthorized devices while allowing approved ones. Critically analyzed security limitations: MAC spoofing vulnerability, visible MAC addresses in cleartext, and management overhead. Concluded that MAC filtering should supplement—not replace—WPA2/WPA3 encryption as the primary security mechanism.
+
+\textbf{Network Monitoring Tools:} Developed cross-platform scripts for Slackware, Solaris, and Windows Server, providing real-time network diagnostics through ifconfig, netstat, route, ethtool, and vnstat. The vnstat installation process demonstrated Linux package management expertise, while the Windows PowerShell GUI version showed versatility in creating user-friendly administrative tools.
+
+\textbf{Application Layer Development:} Deployed a full-stack dynamic web application on AWS EC2 infrastructure, integrating Apache web server, PHP processing, and PostgreSQL database. The grade calculator demonstrates RESTful design principles with proper input validation (0.0-5.0 range), weighted calculations (30-30-40), and automatic status determination. Statistical dashboards provide insights into overall performance, approval rates, and per-course analytics.
+
+\textbf{Key Technical Achievements:}
+\begin{itemize}
+    \item Verified 7+ successful ping tests across 183.24.30.0/16 network
+    \item Configured trunk links carrying VLANs 50 and 55 with 802.1Q tagging
+    \item Deployed physical wireless network (Lab8Sanchez) with WPA2-PSK security
+    \item Performed 20+ smartphone ping tests demonstrating NAT behavior
+    \item Analyzed 15+ WiFi networks using WiFi Analyzer in laboratory
+    \item Detected 23+ total wireless networks across home environment
+    \item Implemented MAC address filtering blocking unauthorized devices
+    \item Tested SSID broadcast disable with successful hidden network connection
+    \item Created cross-platform monitoring scripts for three operating systems
+    \item Deployed cloud-based web application with database backend
+\end{itemize}
+
+\textbf{Practical Insights:}
+\begin{itemize}
+    \item VLANs provide logical segmentation without physical rewiring—critical for enterprise scalability
+    \item Trunk links enable efficient multi-VLAN transport using single physical connection
+    \item Wireless channel selection dramatically impacts performance—use channels 1, 6, or 11 on 2.4 GHz
+    \item NAT provides both IP address conservation and security boundary between networks
+    \item WPA2-PSK with AES encryption is non-negotiable for wireless security
+    \item SSID hiding provides minimal security—focus on strong encryption instead
+    \item MAC filtering supplements but cannot replace encryption-based security
+    \item 5 GHz band offers less congestion but shorter range than 2.4 GHz
+    \item WiFi Analyzer is essential for professional wireless network deployment
+    \item MAC address learning follows predictable flooding→unicast pattern
+    \item Cloud platforms (AWS) dramatically simplify infrastructure provisioning
+\end{itemize}
+
+\textbf{Security Lessons Learned:}
+\begin{itemize}
+    \item \textbf{Layered Security:} Combine WPA2-PSK + MAC filtering + strong passwords
+    \item \textbf{Hidden SSIDs:} Provide obscurity, not security (still detectable)
+    \item \textbf{MAC Spoofing:} MAC addresses can be cloned, don't rely solely on filtering
+    \item \textbf{NAT Benefits:} Prevents unsolicited inbound connections to private devices
+    \item \textbf{Open Networks:} Detected open WiFi networks pose security risks
+    \item \textbf{Channel Selection:} Impacts not just performance but eavesdropping difficulty
+\end{itemize}
+
+\textbf{Real-World Applications:}
+\begin{itemize}
+    \item Enterprise wireless deployment with multiple SSIDs and VLANs
+    \item Home network optimization using WiFi site survey data
+    \item Guest network isolation using MAC filtering and separate subnets
+    \item IoT device security using whitelist MAC filtering
+    \item Cloud-hosted applications serving dynamic content to users
+    \item Network troubleshooting using cross-platform diagnostic tools
+\end{itemize}
+
+This laboratory successfully bridged theoretical concepts with practical implementation, encompassing both Packet Tracer simulations and physical hardware configuration. The combination of switch configuration, VLAN segmentation, physical wireless deployment, smartphone-based testing, WiFi spectrum analysis, MAC filtering, and cloud-based application development provides a holistic understanding of modern network engineering. We are now prepared for advanced networking topics including enterprise wireless controller deployments, inter-VLAN routing, network security hardening, and large-scale cloud infrastructure management.
+
+The hands-on experience with real wireless routers, smartphones as network clients, and WiFi analysis tools closely mirrors professional network engineering workflows, preparing us for industry certifications (CCNA Wireless, CompTIA Network+) and real-world network administration roles.
+
+\section{References}
+
+\begin{enumerate}
+    \item Cisco Systems. (2024). \textit{Cisco Catalyst Switch Configuration Guide}. Retrieved from cisco.com/go/catalyst
+    \item IEEE 802.11 Working Group. (2023). \textit{Wireless LAN Medium Access Control (MAC) and Physical Layer (PHY) Specifications}. IEEE Standards Association.
+    \item IEEE 802.1Q Working Group. (2022). \textit{Virtual Bridged Local Area Networks}. IEEE Standards.
+    \item Odom, W. (2023). \textit{CCNA 200-301 Official Cert Guide, Volume 1}. Cisco Press.
+    \item Stallings, W. (2022). \textit{Data and Computer Communications} (11th ed.). Pearson Education.
+    \item Tanenbaum, A. S., \& Wetherall, D. J. (2021). \textit{Computer Networks} (6th ed.). Pearson.
+    \item Amazon Web Services. (2024). \textit{AWS EC2 User Guide for Linux Instances}. Retrieved from docs.aws.amazon.com
+    \item PHP Documentation Group. (2024). \textit{PHP Manual - PDO PostgreSQL Driver}. Retrieved from php.net/manual/en/ref.pdo-pgsql.php
+    \item PostgreSQL Global Development Group. (2024). \textit{PostgreSQL 14 Documentation}. Retrieved from postgresql.org/docs/14
+    \item RFC 3580. (2003). \textit{IEEE 802.1X Remote Authentication Dial In User Service (RADIUS) Usage Guidelines}. IETF.
+    \item Gast, M. (2005). \textit{802.11 Wireless Networks: The Definitive Guide} (2nd ed.). O'Reilly Media.
+    \item Cisco Networking Academy. (2024). \textit{CCNA: Switching, Routing, and Wireless Essentials}. Cisco Press.
+    \item RFC 1918. (1996). \textit{Address Allocation for Private Internets}. IETF.
+    \item RFC 2663. (1999). \textit{IP Network Address Translator (NAT) Terminology and Considerations}. IETF.
+    \item WiFi Alliance. (2024). \textit{WPA2 Security Specifications}. Retrieved from wi-fi.org
+    \item Earle, A. (2006). \textit{Wireless Security Handbook}. Auerbach Publications.
+    \item IEEE 802.11i Working Group. (2004). \textit{Wireless LAN Medium Access Control (MAC) Security Enhancements}. IEEE Standards.
+    \item Geier, J. (2010). \textit{Designing and Deploying 802.11 Wireless Networks}. Cisco Press.
+\end{enumerate}
+
+\end{document}

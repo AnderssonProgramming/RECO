@@ -1,0 +1,57 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Objectives}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Equipment and Tools}{3}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Network Topology}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Physical Infrastructure}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Network Addressing Scheme}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Design Rationale}{4}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Initial Router Connection}{4}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Physical Connection}{4}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Accessing Web Interface}{5}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Wireless Network Configuration}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Basic Wireless Settings}{5}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Channel Selection Analysis}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Wireless Security Configuration}{8}{subsection.4.3}%
+\contentsline {section}{\numberline {5}DHCP Server Configuration}{8}{section.5}%
+\contentsline {subsection}{\numberline {5.1}DHCP Settings}{8}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}DHCP Address Pool}{9}{subsection.5.2}%
+\contentsline {section}{\numberline {6}WAN Interface Configuration}{9}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Internet/WAN Setup}{9}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}NAT Operation}{10}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Applying Configuration}{10}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Save and Reboot}{10}{subsection.7.1}%
+\contentsline {section}{\numberline {8}Smartphone Connection}{10}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Connecting Android/iOS Device}{10}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Verifying Connection}{11}{subsection.8.2}%
+\contentsline {section}{\numberline {9}Connectivity Testing}{12}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Test 1: Gateway Accessibility}{12}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Test 2: Internet Connectivity}{13}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Test 3: Web Browsing}{14}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Test 4: NAT Behavior Analysis}{15}{subsection.9.4}%
+\contentsline {section}{\numberline {10}WiFi Analyzer - Network Analysis}{15}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Installing WiFi Analyzer}{15}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Laboratory Network Detection}{15}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Signal Strength Analysis}{18}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Channel Utilization Graph}{20}{subsection.10.4}%
+\contentsline {subsection}{\numberline {10.5}2.4 GHz Spectrum View}{22}{subsection.10.5}%
+\contentsline {section}{\numberline {11}Network Performance Metrics}{23}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Throughput Testing}{23}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Multiple Client Testing}{23}{subsection.11.2}%
+\contentsline {section}{\numberline {12}Advanced Features Testing}{23}{section.12}%
+\contentsline {subsection}{\numberline {12.1}SSID Broadcast Disable Test}{23}{subsection.12.1}%
+\contentsline {section}{\numberline {13}Troubleshooting Common Issues}{25}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Issue 1: Cannot Access Router Web Interface}{25}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}Issue 2: Smartphone Connects But No Internet}{25}{subsection.13.2}%
+\contentsline {subsection}{\numberline {13.3}Issue 3: Weak Signal Strength}{25}{subsection.13.3}%
+\contentsline {subsection}{\numberline {13.4}Issue 4: Intermittent Disconnections}{26}{subsection.13.4}%
+\contentsline {section}{\numberline {14}Evidence Summary}{26}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Configuration Screenshots}{26}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}WiFi Analyzer Captures}{26}{subsection.14.2}%
+\contentsline {subsection}{\numberline {14.3}Connectivity Test Results}{26}{subsection.14.3}%
+\contentsline {section}{\numberline {15}Conclusions}{27}{section.15}%
+\contentsline {subsection}{\numberline {15.1}Configuration Success}{27}{subsection.15.1}%
+\contentsline {subsection}{\numberline {15.2}Network Analysis Insights}{27}{subsection.15.2}%
+\contentsline {subsection}{\numberline {15.3}NAT Understanding}{27}{subsection.15.3}%
+\contentsline {subsection}{\numberline {15.4}Practical Applications}{27}{subsection.15.4}%
+\contentsline {subsection}{\numberline {15.5}Professional Skills Developed}{28}{subsection.15.5}%

@@ -1,0 +1,1100 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{parskip}
+
+% Geometry settings for better two-column layout
+\geometry{
+    a4paper,
+    top=2cm,
+    bottom=2cm,
+    left=1.5cm,
+    right=1.5cm,
+    headsep=0.5cm,
+    footskip=1cm
+}
+
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Lab 04 - Application and Physical Layer}
+\lhead{Computer Networks}
+\cfoot{\thepage}
+
+% Set page numbering
+\pagenumbering{arabic}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=leftline,
+    framerule=2pt,
+    rulecolor=\color{blue!30},
+    backgroundcolor=\color{gray!5},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    columns=flexible,
+    aboveskip=\medskipamount,
+    belowskip=\medskipamount,
+    xleftmargin=15pt
+}
+
+% Section formatting
+\titleformat{\section}
+{\color{blue!80!black}\normalfont\large\bfseries}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\color{blue!60!black}\normalfont\normalsize\bfseries}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\color{blue!40!black}\normalfont\small\bfseries}
+{\thesubsubsection}{1em}{}
+
+% Custom boxes for better visual appeal
+\newtcolorbox{exercise}[1]{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    colbacktitle=blue!80!black,
+    coltitle=white,
+    title={\textbf{#1}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+\newtcolorbox{solution}[1]{
+    colback=green!5!white,
+    colframe=green!75!black,
+    colbacktitle=green!80!black,
+    coltitle=white,
+    title={\textbf{#1}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+\newtcolorbox{note}{
+    colback=yellow!10!white,
+    colframe=orange!75!black,
+    colbacktitle=orange!80!black,
+    coltitle=white,
+    title={\textbf{Important Note}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+% List formatting
+\setlist[itemize]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+\setlist[enumerate]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+% Caption formatting
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    format=hang,
+    indention=0pt,
+    margin=10pt
+}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    urlcolor=blue!80!black,
+    citecolor=blue!80!black,
+    pdfborder={0 0 0}
+}
+
+% Title page
+\title{\vspace{-1cm}
+    \begin{center}
+        \includegraphics[width=0.25\textwidth]{media/university_logo.png} % Add your university logo
+    \end{center}
+    \vspace{1.5cm}
+    \textbf{\Large Computer Networks Laboratory}\\
+    \vspace{1cm}
+    \textbf{\huge Laboratory No. 4}\\
+    \textbf{\huge Application Layer and Physical Layer Protocols}\\
+    \vspace{1.5cm}
+    \large Network Protocol Analysis and Structured Cabling Implementation
+}
+
+\author{
+    \vspace{2cm}
+    \textbf{Students:} \\
+    \vspace{0.3cm}
+    Cristian Santiago Pedraza Rodríguez \\
+    Andersson David Sánchez Méndez \\
+    \vspace{1.5cm} \\
+    \textbf{Instructor:} Professor Fabian Eduardo Sierra Sánchez \\
+    \vspace{0.5cm}
+    \textbf{Course:} Computer Networks \\
+    \vspace{0.3cm}
+    \textbf{Institution:} Escuela Colombiana de Ingeniería Julio Garavito \\
+    \vspace{2cm}
+}
+
+\date{\today}
+\begin{document}
+
+% Title page (single column)
+\onecolumn
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% Table of contents (single column)
+\tableofcontents
+\newpage
+
+% Start two-column layout for content
+\twocolumn
+
+\section{Objectives}
+
+\begin{itemize}
+    \item Monitor the application layer protocols
+    \item Review the structured cabling standard and its application
+    \item Perform cable punching with RJ-45 connectors and patch panels
+\end{itemize}
+
+\section{Tools and Equipment}
+
+\subsection{University-Provided Items}
+\begin{itemize}
+    \item Computers with network access
+    \item Internet connectivity
+    \item Patch panels and faceplates
+    \item Professional punch tools (patch cords and impact punches)
+    \item Cable strippers and wire cutters
+    \item Network cable testers
+\end{itemize}
+
+\subsection{Student-Provided Materials}
+\begin{itemize}
+    \item 4-6 meters of UTP/FTP CAT5 or CAT6 cable
+    \item 8 RJ-45 connectors
+    \item \textbf{Optional (if available):}
+    \begin{itemize}
+        \item Personal cable stripper or utility knife
+        \item Personal wire cutters
+        \item Personal punch tool for patch cords
+        \item Personal cable tester
+    \end{itemize}
+\end{itemize}
+
+\section{Introduction}
+
+Modern enterprise IT infrastructure encompasses a complex ecosystem of interconnected components. This infrastructure typically includes both wired and wireless user stations, physical and virtualized servers, all interconnected through sophisticated networking equipment including Layer 2 and Layer 3 switches, wireless access points, and routers providing internet connectivity.
+
+Contemporary networks often integrate cloud infrastructure where resources are dynamically provisioned based on organizational requirements. Server infrastructure commonly hosts essential services including web servers, DNS, email systems, databases, storage solutions, and various business applications.
+
+This laboratory focuses on two critical aspects of network infrastructure:
+\begin{enumerate}
+    \item \textbf{Application Layer Protocol Analysis} - Understanding how data flows through network protocols
+    \item \textbf{Physical Layer Implementation} - Hands-on structured cabling and connector installation
+\end{enumerate}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/network-diagram.png}
+    \caption{Network Infrastructure Overview}
+    \label{fig:network_diagram}
+\end{figure}
+
+\section{Laboratory Experiments}
+
+Network message analysis and content examination are fundamental skills for network optimization and troubleshooting. This section covers application layer protocols and transport layer port analysis as covered in our coursework.
+
+\begin{exercise}{Exercise 1: Cisco Packet Tracer Configuration}
+\textbf{Target Group:} Teams of 1-3 students
+
+Using Cisco Packet Tracer, configure the network topology as specified and document the complete implementation process. Required services to be configured on designated servers:
+\begin{itemize}
+    \item DNS service configuration
+    \item HTTP web server setup
+    \item FTP file transfer service
+    \item Email server implementation (SMTP/POP3)
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{media/cisco-packet-tracer.png}
+    \caption{Cisco Packet Tracer Network Configuration}
+    \label{fig:cisco_pt}
+\end{figure}
+\end{exercise}
+
+\begin{exercise}{Exercise 2: Network Infrastructure Setup}
+\textbf{Target Group:} Teams of 1-3 students
+
+Complete network implementation tasks:
+\begin{enumerate}
+    \item Deploy all required servers and client devices
+    \item Establish physical and logical connections
+    \item Configure network parameters for each device:
+    \begin{itemize}
+        \item DNS server addresses
+        \item Default gateway configuration
+        \item IP address assignment
+        \item Subnet mask configuration
+    \end{itemize}
+    \item Verify end-to-end connectivity between all network devices
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.45\columnwidth]{media/servers-image.png}
+        \caption{Deployed Servers and Services Overview}
+        \label{fig:servers_image}
+    \end{figure}
+    \begin{figure}[H]
+        \centering
+    \includegraphics[width=0.45\columnwidth]{media/end-to-end-devices-image.png}
+        \caption{End-to-End Device Connectivity Diagram}
+        \label{fig:end_to_end_devices}
+    \end{figure}
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}{Exercise 3: Service Configuration and Testing}
+\textbf{Target Group:} Teams of 1-3 students
+
+Configure and test essential network services as detailed below.
+\end{exercise}
+
+% Images showing end-to-end test results for Exercise 3
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/end-test1-devices-image.png}
+    \caption{End-to-End Test 1: Device Connectivity Verification}
+    \label{fig:end_test1}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/end-test2-devices-image.png}
+    \caption{End-to-End Test 2: Service Response Verification}
+    \label{fig:end_test2}
+\end{figure}
+
+\subsubsection{3.1 DNS Service Configuration}
+
+\textbf{Primary DNS Server (IP: 27.1.0.2)}
+
+Configure the following DNS entries:
+
+\textbf{sistemas.com domain:}
+\begin{lstlisting}[language=bash]
+# Mail server record
+sistemas.com        A    [mail_server_ip]
+# Service aliases
+pop3.sistemas.com   CNAME sistemas.com
+smtp.sistemas.com   CNAME sistemas.com
+# Web server records
+http.sistemas.com   A    [web_server_ip]
+www.sistemas.com    CNAME http.sistemas.com
+\end{lstlisting}
+
+\textbf{civil.com domain:}
+\begin{lstlisting}[language=bash]
+# Mail server record
+civil.com           A    [mail_server_ip]
+# Service aliases
+pop3.civil.com      CNAME civil.com
+smtp.civil.com      CNAME civil.com
+# Web server records
+http.civil.com      A    [web_server_ip]
+www.civil.com       CNAME http.civil.com
+\end{lstlisting}
+
+\textbf{electrica.com domain:}
+\begin{lstlisting}[language=bash]
+# Mail server record
+electrica.com       A    [mail_server_ip]
+# Service aliases
+pop3.crear.com      CNAME electrica.com
+smtp.crear.com      CNAME electrica.com
+\end{lstlisting}
+
+\textbf{Verification Process:}
+\begin{enumerate}
+    \item Start the DNS service
+    \item From client machines in each faculty, execute ping commands using domain names
+    \item Verify successful name resolution
+\end{enumerate}
+
+% DNS evidence images
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{media/dns-service-image.png}
+    \caption{DNS service configuration on the primary DNS server (27.1.0.2)}
+    \label{fig:dns_service}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{media/dns-test-image.png}
+    \caption{DNS resolution test (ping by domain name) from a client host}
+    \label{fig:dns_test}
+\end{figure}
+
+\subsubsection{3.2 HTTP Web Service Configuration}
+
+\textbf{Web Server Setup:}
+\begin{enumerate}
+    \item Configure HTTP service on designated web servers
+    \item Customize web pages for each faculty with distinctive content
+    \item Ensure proper service startup and availability
+\end{enumerate}
+
+\textbf{Client Testing Procedures:}
+\begin{enumerate}
+    \item Access web servers using IP addresses directly
+    \item Access web servers using configured domain names (URLs)
+    \item \textbf{Packet Analysis:} Use simulation mode to examine PDU contents at the application layer
+\end{enumerate}
+
+% HTTP evidence images
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{media/http-service-image.png}
+    \caption{HTTP service configuration on the web server}
+    \label{fig:http_service}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/http-test-image.png}
+    \includegraphics[width=0.45\columnwidth]{media/pdu-test-image.png}
+    \caption{Left: Web page accessed by domain name. Right: Application-layer PDU inspection for HTTP traffic}
+    \label{fig:http_tests}
+\end{figure}
+
+\subsubsection{3.3 Email Service Implementation}
+
+\textbf{Mail Server Configuration:}
+\begin{enumerate}
+    \item Create user accounts for each faculty using client computer names as usernames
+    \item Configure SMTP and POP3 services
+    \item Start email services on all mail servers
+\end{enumerate}
+
+\textbf{Client Testing Protocol:}
+\begin{enumerate}
+    \item Configure email clients for respective domains
+    \item Test intra-domain email communication
+    \item Verify email reception and reply functionality
+    \item Test inter-domain email communication
+    \item Verify cross-domain email delivery and responses
+    \item \textbf{Protocol Analysis:} Use simulation tools to examine PDU content during:
+    \begin{itemize}
+        \item Client-to-SMTP server communication
+        \item Client-to-POP3 server communication
+    \end{itemize}
+\end{enumerate}
+
+% Email evidence images
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{media/email-service-image.png}
+    \caption{Mail server configuration and running services}
+    \label{fig:email_service}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/email-clients-image.png}
+    \includegraphics[width=0.45\columnwidth]{media/email-send-image.png}
+    \caption{Left: Email client configuration for domain accounts. Right: Sending an email (client-to-SMTP)}
+    \label{fig:email_clients_send}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{media/email-receipt-image.png}
+    \caption{Received email confirmation on the recipient client}
+    \label{fig:email_receipt}
+\end{figure}
+
+\subsubsection{3.4 FTP Service Configuration}
+
+\textbf{Server Setup (sistemas web server):}
+\begin{enumerate}
+    \item Configure FTP service
+    \item Create user account: Username = [your first name], Password = [your last name]
+    \item Start FTP service
+\end{enumerate}
+
+\textbf{Client Access Testing:}
+\begin{enumerate}
+    \item Command-line FTP access:
+    \begin{lstlisting}[language=bash]
+telnet [server_name_or_ip] 21
+# Login with created credentials
+# Download available files
+# Exit and verify file transfer
+# Document command sequence
+    \end{lstlisting}
+    
+    \item \textbf{Simulation Mode Analysis:}
+    \begin{itemize}
+        \item Re-access FTP server in simulation mode
+        \item Upload .TXT file from client
+        \item Examine application layer headers for:
+        \begin{itemize}
+            \item Connection establishment
+            \item Authentication (username/password)
+            \item Transfer confirmation messages
+            \item File upload process
+            \item Session termination
+        \end{itemize}
+    \end{itemize}
+\end{enumerate}
+
+% FTP evidence images
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{media/ftp-service-image.png}
+    \caption{FTP service configuration on the sistemas web server}
+    \label{fig:ftp_service}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/ftp-connection-image.png}
+    \includegraphics[width=0.45\columnwidth]{media/ftp-download-image.png}
+    \caption{Left: FTP client connecting to the server. Right: Downloading files via FTP}
+    \label{fig:ftp_connection_download}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\columnwidth]{media/ftp-transfer-pdu-image.png}
+    \caption{FTP transfer and application-layer PDU analysis (simulation mode)}
+    \label{fig:ftp_transfer_pdu}
+\end{figure}
+
+\section{Real Network Analysis}
+
+\begin{exercise}{Exercise 4: Wireshark Protocol Analysis}
+\textbf{Target Group:} Teams of 1-3 students
+
+Utilize Wireshark for comprehensive network traffic analysis and documentation.
+\end{exercise}
+
+\subsubsection{4.1 Web Traffic Analysis}
+\begin{enumerate}
+    \item Access the \href{http://laboratorio.is.escuelaing.edu.co}{Computer Lab} website
+    \item Identify active application layer protocols
+    \item Analyze captured packets for:
+    \begin{itemize}
+        \item Application layer information
+        \item Transport layer port assignments
+    \end{itemize}
+\end{enumerate}
+
+% Web traffic capture image and filter
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/web-traffic-image.png}
+    \caption{Web Traffic Capture (Computer Lab Website)}
+    \label{fig:web_traffic}
+\end{figure}
+
+\noindent\textbf{Wireshark filter used:} \texttt{http.host =="http://laboratorio.is.escuelaing.edu.co" || tcp}
+
+\subsubsection{4.2 DHCP Traffic Capture}
+\textbf{Procedure:}
+\begin{enumerate}
+    \item Initiate Wireshark capture
+    \item Release current IP address:
+    \begin{lstlisting}[language=bash]
+ipconfig /release
+    \end{lstlisting}
+    \item Request new IP address:
+    \begin{lstlisting}[language=bash]
+ipconfig /renew
+    \end{lstlisting}
+    \item Analyze DHCP packets for:
+    \begin{itemize}
+        \item Client-server communication patterns
+        \item Application layer content
+        \item Transport layer port usage
+    \end{itemize}
+\end{enumerate}
+
+% DHCP command and Wireshark evidence images
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/dhcp-cmd-image.png}
+    \caption{DHCP Client Commands (ipconfig /release and /renew)}
+    \label{fig:dhcp_cmd}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/dhcp-wireshark-image.png}
+    \caption{Wireshark Capture of DHCP/BOOTP Traffic}
+    \label{fig:dhcp_wireshark}
+\end{figure}
+
+\noindent\textbf{Wireshark filter used:} \texttt{dhcp || bootp || udp.port == 67 || udp.port == 68}
+
+\subsubsection{4.3 HTTP vs TELNET Protocol Comparison}
+
+\textbf{Prerequisites:}
+\begin{enumerate}
+    \item Enable TELNET protocol on your system
+    \item Prepare Wireshark for packet capture
+\end{enumerate}
+
+\textbf{Target URL:} 
+\url{http://profesores.is.escuelaing.edu.co/~csantiago/RECO/index.html}
+
+\textbf{TELNET Protocol Testing:}
+\begin{lstlisting}[language=bash]
+# Connect to web server
+telnet profesores.is.escuelaing.edu.co 80
+
+# HTTP GET requests
+GET /~csantiago/RECO/index.html HTTP/1.1
+Host: profesores.is.escuelaing.edu.co
+
+# Download specific files
+GET /~csantiago/RECO/prueba.pdf HTTP/1.1
+Host: profesores.is.escuelaing.edu.co
+
+GET /~csantiago/RECO/network.png HTTP/1.1
+Host: profesores.is.escuelaing.edu.co
+\end{lstlisting}
+
+% Telnet installation image
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/telnet-install-image.png}
+    \caption{Enabling Telnet Client on Windows}
+    \label{fig:telnet_install}
+\end{figure}
+
+% Telnet GET test images
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/telnet-httpget-image.png}
+    \caption{TELNET: HTTP GET Request Result (index.html)}
+    \label{fig:telnet_httpget}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/telnet-network-image.png}
+    \caption{TELNET: HTTP GET Request for network.png}
+    \label{fig:telnet_network}
+\end{figure}
+
+
+\textbf{HTTP Browser Testing:}
+\begin{enumerate}
+    \item Access identical pages using web browser
+    \item Compare capture results between protocols
+    \item Document differences in file handling between TELNET and browser methods
+\end{enumerate}
+
+\noindent\textbf{Wireshark filter used for browser capture:} \texttt{http.host == "profesores.is.escuelaing.edu.co"}
+
+% HTTP browser comparison image and filter
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/http-comparation-image.png}
+    \caption{HTTP Browser Capture Comparison}
+    \label{fig:http_comparison}
+\end{figure}
+
+\paragraph{Differences observed between TELNET and Browser-based HTTP requests}
+\begin{itemize}
+    \item \textbf{Headers HTTP:}
+    \begin{itemize}
+        \item \textbf{Telnet:} Solo los headers básicos que se escribieron anteriormente
+        \item \textbf{Browser:} Headers adicionales automáticos (User-Agent, Accept, cookies, etc.)
+    \end{itemize}
+    \item \textbf{Gestión de conexiones:}
+    \begin{itemize}
+        \item \textbf{Telnet:} Una conexión por archivo, se cierra después de cada descarga
+        \item \textbf{Browser:} Se puede reutilizar conexiones (keep-alive), conexiones paralelas
+    \end{itemize}
+    \item \textbf{Archivos descargados:}
+    \begin{itemize}
+        \item \textbf{Telnet:} Archivos con headers HTTP mezclados
+        \item \textbf{Browser:} Archivos procesados y guardados correctamente
+    \end{itemize}
+    \item \textbf{Comportamiento de red:}
+    \begin{itemize}
+        \item \textbf{Telnet:} Comunicación HTTP manual, una solicitud simple
+        \item \textbf{Browser:} Puede hacer solicitudes adicionales (CSS, JS, imágenes automáticas)
+    \end{itemize}
+\end{itemize}
+
+\begin{exercise}{Exercise 5: DNS Service Analysis}
+\textbf{Target Group:} Teams of 1-3 students
+
+Conduct comprehensive DNS analysis using \url{https://centralops.net/co}
+\end{exercise}
+
+\textbf{Target Domains for Analysis:}
+\begin{itemize}
+    \item escuelaing.edu.co
+    \item jbb.gov.co
+    \item google.com
+    \item One additional non-American organization domain - samsung.com
+\end{itemize}
+
+\textbf{Required Analysis Parameters:}
+\begin{enumerate}
+    \item Number of domain servers
+    \item Domain assignment date
+    \item Registration authority
+    \item Registration entity ID
+    \item Last record update timestamp
+    \item Record validity period
+    \item Assigned IP address ranges
+    \item IP assignment authority
+    \item Assigned organization details
+\end{enumerate}
+
+% --- Exercise 5: DNS Analysis Results (student-provided answers) ---
+\vspace{6pt}
+\subsubsection*{5.1 escuelaing.edu.co}
+\begin{itemize}
+    \item \textbf{Number of domain servers:} only 2 servers: ns1.escuelaing.edu.co and ns2.escuelaing.edu.co.
+    \item \textbf{Domain assignment date:} since 02/05/1998 (+26 years).
+    \item \textbf{Registration authority:} cointernet.
+    \item \textbf{Registration entity ID:} 111111.
+    \item \textbf{Last record update timestamp:} 06/10/2022 (+2 years).
+    \item \textbf{Record validity period:} until 31/12/2025 (10 months remaining).
+    \item \textbf{Assigned IP address ranges:} 45.239.88.0/22.
+    \item \textbf{IP assignment authority:} LACNIC.
+    \item \textbf{Assigned organization details:} Escuela Colombiana de Ingeniería Julio Garavito.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/escuelaing-image.png}
+    \caption{DNS analysis - escuelaing.edu.co}
+    \label{fig:escuelaing_dns}
+\end{figure}
+
+\subsubsection*{5.2 jbb.gov.co}
+\begin{itemize}
+    \item \textbf{Number of domain servers:} 2 servers: ns31.domaincontrol.com and ns32.domaincontrol.com.
+    \item \textbf{Domain assignment date:} since 20/01/2000 (+25 years).
+    \item \textbf{Registration authority:} cointernet.
+    \item \textbf{Registration entity ID:} Private for privacy.
+    \item \textbf{Last record update timestamp:} 06/10/2022 (+2 years).
+    \item \textbf{Record validity period:} until 20/01/2026 (10 months remaining).
+    \item \textbf{Assigned IP address ranges:} 20.33.0.0 – 20.128.255.255.
+    \item \textbf{IP assignment authority:} ARIN.
+    \item \textbf{Assigned organization details:} Microsoft Corporation.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/jbbgov-image.png}
+    \caption{DNS analysis - jbb.gov.co}
+    \label{fig:jbbgov_dns}
+\end{figure}
+
+\subsubsection*{5.3 google.com}
+\begin{itemize}
+    \item \textbf{Number of domain servers:} 6 IPv4 and 4 IPv6, total of 10 servers.
+    \item \textbf{Domain assignment date:} since 15/09/1997 (+27 years).
+    \item \textbf{Registration authority:} MarkMonitor.
+    \item \textbf{Registration entity ID:} 292.
+    \item \textbf{Last record update timestamp:} 10/08/2024 (+0.5 year).
+    \item \textbf{Record validity period:} until 13/09/2028 (+3 years remaining).
+    \item \textbf{Assigned IP address ranges:} 142.250.0.0 – 142.251.255.255.
+    \item \textbf{IP assignment authority:} ARIN.
+    \item \textbf{Assigned organization details:} Google LLC.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/google-image.png}
+    \caption{DNS analysis - google.com}
+    \label{fig:google_dns}
+\end{figure}
+
+\subsubsection*{5.4 samsung.com}
+\begin{itemize}
+    \item \textbf{Number of domain servers:} 1 IPv4.
+    \item \textbf{Domain assignment date:} since 29/11/1994 (+31 years).
+    \item \textbf{Registration authority:} Whois Corp.
+    \item \textbf{Registration entity ID:} 100.
+    \item \textbf{Last record update timestamp:} 23/09/2025.
+    \item \textbf{Record validity period:} until 28/11/2025.
+    \item \textbf{Assigned IP address ranges:} 211.45.27.231.
+    \item \textbf{IP assignment authority:} APNIC.
+    \item \textbf{Assigned organization details:} Samsung Electronics CO., Ltd.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/samsung-image.png}
+    \caption{DNS analysis - samsung.com}
+    \label{fig:samsung_dns}
+\end{figure}
+
+
+
+\begin{exercise}{Exercise 6: Network Time Protocol (NTP) Implementation}
+
+\vspace{4pt}
+\noindent
+This exercise demonstrates a concise NTP deployment: one Slackware host acts as the NTP server (10.2.77.176) while other hosts act as clients (Solaris, Windows Server with GUI, Windows Server Core, and Android). The section lists the implementation requirements, team assignment, essential commands, troubleshooting notes and evidence screenshots.
+
+\subsection*{Implementation requirements}
+\begin{enumerate}
+    \item Install and configure an NTP server on the designated machine.
+    \item Configure the remaining systems to synchronize to the server as NTP clients.
+    \item Verify synchronization and document troubleshooting steps and evidence.
+\end{enumerate}
+
+\subsection*{Team configuration}
+\begin{itemize}
+    \item Slackware \textendash{} NTP Server (10.2.77.176)
+    \item Solaris \textendash{} NTP Client
+    \item Windows Server (GUI) \textendash{} NTP Client
+    \item Windows Server (Core) \textendash{} NTP Client
+    \item Android \textendash{} NTP Client
+\end{itemize}
+
+\subsection*{Brief summary}
+Slackware is configured as the authoritative local NTP server and synchronizes with public pool servers. Clients are configured to use 10.2.77.176 as their time source. Typical issues encountered: missing ntp system user/group on some distributions and large initial clock offsets that require a manual one-time correction.
+
+\subsection*{Slackware (server) \textemdash{} essential commands}
+\begin{lstlisting}[language=bash]
+# Stop the NTP daemon
+/etc/rc.d/rc.ntpd stop
+# Create a minimal /etc/ntp.conf
+cat > /etc/ntp.conf << 'EOF'
+server 0.pool.ntp.org iburst
+server 1.pool.ntp.org iburst
+server 2.pool.ntp.org iburst
+driftfile /var/lib/ntp/drift
+restrict 127.0.0.1
+restrict ::1
+restrict 10.2.77.0 mask 255.255.255.0 nomodify notrap
+EOF
+# Start the NTP daemon
+/etc/rc.d/rc.ntpd start
+# Verify
+ntpq -p
+ntpstat
+\end{lstlisting}
+
+\subsection*{Solaris client \textemdash{} notes}
+\begin{itemize}
+    \item Disable service to edit configuration: \texttt{svcadm disable ntp}
+    \item Edit \texttt{/etc/inet/ntp.conf} to point to \texttt{10.2.77.176}
+    \item If the \texttt{ntp} user/group is missing: create and adjust permissions for \texttt{/var/ntp}
+    \item If the clock offset is large: use \texttt{ntpdate -s 10.2.77.176} or \texttt{sntp -sS 10.2.77.176} for initial sync
+    \item Re-enable service and verify: \texttt{svcadm enable ntp} and \texttt{ntpq -p}
+\end{itemize}
+
+\subsection*{Windows Server (GUI and Core) \textemdash{} essential commands}
+\begin{lstlisting}[language=bash]
+# Stop Windows Time service (PowerShell)
+Stop-Service w32time -Force
+# Configure the NTP peer
+w32tm /config /manualpeerlist:"10.2.77.176" /syncfromflags:manual /reliable:yes /update
+# Start and force resync
+Start-Service w32time
+w32tm /resync /force
+# Check status
+w32tm /query /status
+\end{lstlisting}
+Use the GUI on Windows Server with Desktop Experience to verify the time source and service status; use the Core command sequence above on Server Core installations.
+
+\subsection*{Android client \textemdash{} notes}
+\begin{itemize}
+    \item Android devices typically use "Automatic date \& time" (network-provided). If enabled, time sync is automatic.
+    \item To point a device to a specific NTP server requires elevated privileges or a device-specific configuration app. Example commands (root required): \texttt{settings put global ntp\_server 10.2.77.176} or \texttt{setprop net.ntp.server1 10.2.77.176}
+\end{itemize}
+
+\subsection*{Troubleshooting summary}
+\begin{itemize}
+    \item Missing \texttt{ntp} user/group: create it (e.g. \texttt{groupadd ntp; useradd -g ntp -s /bin/false -d /var/ntp ntp}) and adjust ownership of NTP-related directories.
+    \item Large initial offset: perform a one-time manual sync with \texttt{ntpdate -s <server>} or \texttt{sntp -sS <server>} before starting the NTP daemon.
+    \item Verify with: \texttt{ntpq -p} (small offset, increasing reach, and a "*" marking the selected server).
+\end{itemize}
+
+\subsection*{Evidence (screenshots)}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/ntp-windowsgui-image.jpg}
+    \includegraphics[width=0.45\columnwidth]{media/ntp-windowswgui-image.jpg}
+    \caption{Windows Server (GUI and CLI) \textendash{} configuration and service status}
+    \label{fig:ntp_windows}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\columnwidth]{media/ntp-android-image.jpg}
+    \caption{Android \textendash{} Automatic date \& time and network synchronization}
+    \label{fig:ntp_android}
+\end{figure}
+
+\end{exercise}
+
+\section{Physical Layer Implementation}
+
+\begin{exercise}{Exercise 7: Structured Cabling and Cable Construction}
+\textbf{Target Group:} Teams of 1-3 students
+
+Proper technological infrastructure requires standardized physical connectivity components. Structured cabling standards ensure organized connections, facilitate network growth, and promote efficient management of physical network elements.
+\end{exercise}
+
+\subsection{7.1 Patch Cord Construction (Individual Task)}
+
+\textbf{Construction Requirements:}
+\begin{enumerate}
+    \item Following instructor guidance and classroom presentation materials
+    \item Crimp two RJ45-RJ45 cables:
+    \begin{itemize}
+        \item One straight-through cable
+    
+        \item One crossover cable
+        
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Analysis Questions:}
+\begin{itemize}
+    \item \textbf{What is the specific purpose of each cable type?}
+    
+    Straight-through cables connect devices operating at different OSI layers (host to switch, switch to router). The wire arrangement follows the same standard (T568A or T568B) on both ends. Crossover cables connect devices operating at the same OSI layer (host to host, switch to switch) by crossing the transmit and receive pairs between connectors.
+    
+    The cable configuration is determined by the color arrangement: a cable is straight-through when both ends use the same standard (T568A to T568A or T568B to T568B), and it is crossover when one end uses T568A and the other uses T568B.
+
+        \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\columnwidth]{media/t568ab-image.png}
+        \caption{T568A and T568B wiring standards comparison}
+        \end{figure}
+
+
+    \item \textbf{When would you use straight-through vs crossover cables?}
+    
+    Use straight-through cables for: computer to switch, switch to router, computer to hub connections. Use crossover cables for: computer to computer direct connection, switch to switch, hub to hub, router to router connections. Modern devices with Auto-MDIX can automatically detect and adapt to either cable type.
+\end{itemize}
+
+\textbf{Quality Assurance:}
+
+The cable construction process was systematically executed following professional standards. Initially, cables were cut to an estimated length of 2.5 meters each to ensure adequate working distance. The cable jacket was carefully stripped to the appropriate length matching the RJ45 connector specifications.
+
+Wire organization followed strict color-coding standards to differentiate between straight-through and crossover configurations. For straight-through cables, both ends follow the same wiring standard (T568B: white-orange, orange, white-green, blue, white-blue, green, white-brown, brown). For crossover cables, one end uses T568A while the other uses T568B standard, effectively crossing the transmit and receive pairs.
+
+After proper wire arrangement, each connector was inserted ensuring all wires reached the connector's far end completely. Visual verification confirmed proper seating before crimping. The crimping process applied consistent pressure to establish reliable electrical contact between wires and connector pins.
+
+Each cable end underwent identical construction procedures, resulting in two straight-through cables and two crossover cables. Quality verification was performed using professional cable testing equipment to ensure proper continuity and wiring configuration.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.45\columnwidth}
+\includegraphics[width=\textwidth]{media/C-tester-RECO.jpg}
+\caption{Crossover cable test results}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.45\columnwidth}
+\includegraphics[width=\textwidth]{media/D-tester-RECO.jpg}
+\caption{Straight-through cable test results}
+\end{subfigure}
+\caption{Cable tester verification for both cable types}
+\end{figure}
+
+\subsubsection{7.2 Patch Panel Implementation (Team Task)}
+
+\textbf{Objective:} Perform horizontal cabling crimping to connect two computers using professional patch panel infrastructure with faceplates.
+
+\textbf{Setup Requirements:}
+\begin{itemize}
+    \item Patch panel with multiple ports
+    \item Two faceplates (minimum one information outlet each)
+    \item Appropriate cable lengths
+    \item Professional crimping tools
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\columnwidth]{media/patch-panel-crimping.png}
+\caption{Horizontal Cabling Setup with Patch Panel}
+\end{figure}
+
+\textbf{Testing Methodologies:}
+
+Network configuration was established by assigning IPv4 addresses to each computer within the designated IP range (10.2.77.176 to 10.2.77.181) with subnet mask 255.255.0.0, gateway 10.2.65.1, and DNS server 10.2.65.1. This configuration enabled connectivity testing through the patch panel infrastructure without relying on external network access.
+
+The following test scenarios were systematically evaluated:
+
+\textbf{Test Case 1: Triple Crossover Configuration}
+Three crossover connections were established between computers, with an additional crossover connection to the university's network server. This configuration tested crossover cable functionality in a multi-hop environment.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\columnwidth]{media/CCC-image.png}
+\caption{Triple crossover configuration test results}
+\end{figure}
+
+\textbf{Test Case 2: Mixed Crossover-Straight Configuration}
+Two crossover connections followed by one straight-through connection tested hybrid cabling scenarios commonly found in professional network installations.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\columnwidth]{media/CCD-image.png}
+\caption{Mixed crossover-straight configuration test results}
+\end{figure}
+
+\textbf{Test Case 3: Double Straight-Through Configuration}
+Two straight-through connections tested standard computer-to-switch-to-computer communication paths typical in structured cabling environments.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\columnwidth]{media/DD-image.png}
+\caption{Double straight-through configuration test results}
+\end{figure}
+
+\textbf{Test Case 4: Mixed Straight-Crossover Configuration}
+Two straight-through connections followed by one crossover connection evaluated transitional network topologies.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\columnwidth]{media/DDC-image.png}
+\caption{Mixed straight-crossover configuration test results}
+\end{figure}
+
+\textbf{Test Case 5: Triple Straight-Through Configuration}
+Three straight-through connections tested optimal structured cabling implementation with proper device layer separation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\columnwidth]{media/DDD-image.png}
+\caption{Triple straight-through configuration test results}
+\end{figure}
+
+\textbf{Test Case 6: Double Crossover Configuration}
+Two crossover connections were implemented to test direct device-to-device communication scenarios. This configuration evaluated the performance of crossover cables in peer-to-peer network connections without intermediate switching devices.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\columnwidth]{media/CC-image.png}
+\caption{Double crossover configuration test results}
+\end{figure}
+
+\textbf{University Network Server Connection}
+Connection testing with the university's network server verified external connectivity through the structured cabling system.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\columnwidth]{media/server-connection-image.png}
+\caption{University network server connection test}
+\end{figure}
+
+
+\subsubsection{7.3 University Infrastructure Analysis}
+
+\textbf{Field Study Objective:} Analyze structured cabling implementation in Building I at the School.
+
+\textbf{Investigation Requirements:}
+\begin{enumerate}
+    \item Identify structured cabling components throughout the building
+    \item Document cable management systems
+    \item Photograph infrastructure elements (with proof of personal documentation)
+    \item Analyze compliance with structured cabling standards
+\end{enumerate}
+
+\textbf{Field Study Results:}
+
+In this final phase, we conducted a comprehensive site visit to Building I to observe and analyze the distribution and structuring of network components throughout the facility. The primary objective was to understand and document the implementation of structured cabling systems in a real-world academic environment.
+
+The investigation focused on analyzing two fundamental types of structural cabling. Vertical cabling refers to network infrastructure that runs within the building structure and is typically not easily visible to casual observation. This includes backbone cabling that connects different floors and major network distribution points. In contrast, horizontal cabling is more visible and represents the connections between various network devices that interact directly with end users.
+
+Building I provides an excellent case study for infrastructure analysis due to its open architectural design. Unlike many conventional buildings where cabling is completely concealed within walls and ceiling spaces, this facility features exposed structural elements that allow for direct observation of the cable organization and management systems throughout the building.
+
+During our analysis, we observed the systematic implementation of cable management techniques, including proper cable routing, labeling systems, and adherence to industry standards for cable separation and protection. The vertical cabling infrastructure demonstrated professional installation practices with appropriate cable trays, conduits, and fire-stopping measures where cables traverse floor boundaries.
+
+The horizontal cabling distribution showed effective use of patch panels, telecommunications rooms, and structured pathways that facilitate both current operations and future expansion requirements. Cable management hardware, including cable trays, J-hooks, and cable ties, was properly implemented to maintain organization and prevent cable stress.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\columnwidth]{media/buildingi-image.png}
+\caption{Building I structured cabling infrastructure overview}
+\end{figure}
+
+\section{Conclusions}
+
+
+Based on the laboratory implementation and analysis, provide comprehensive conclusions addressing:
+
+\begin{enumerate}
+    \item \textbf{Application Layer Protocol Understanding:} Insights gained from protocol analysis and simulation
+    \item \textbf{Physical Infrastructure Importance:} Role of structured cabling in network reliability
+    \item \textbf{Integration Challenges:} Relationship between logical and physical network layers
+    \item \textbf{Professional Best Practices:} Industry-standard implementation techniques learned
+    \item \textbf{Troubleshooting Skills:} Problem-solving methodologies developed
+\end{enumerate}
+
+\section{References}
+
+\begin{enumerate}
+    \item Cisco Systems, Inc. \textit{Cisco Packet Tracer User Guide}. Version 8.2, 2023.
+    \item Wireshark Foundation. \textit{Wireshark User's Guide}. Available: \url{https://www.wireshark.org/docs/wsug_html_chunked/}
+    \item TIA/EIA-568 Commercial Building Telecommunications Cabling Standard. Telecommunications Industry Association, 2020.
+    \item RFC 5905 - Network Time Protocol Version 4: Protocol and Algorithms Specification. IETF, 2010.
+    \item RFC 1035 - Domain Names - Implementation and Specification. IETF, 1987.
+    \item RFC 2616 - Hypertext Transfer Protocol -- HTTP/1.1. IETF, 1999.
+    \item RFC 959 - File Transfer Protocol (FTP). IETF, 1985.
+    \item RFC 5321 - Simple Mail Transfer Protocol. IETF, 2008.
+\end{enumerate}
+
+\end{document}

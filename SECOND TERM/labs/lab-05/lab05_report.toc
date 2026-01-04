@@ -1,0 +1,41 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Objectives}{3}{section.1}%
+\contentsline {section}{\numberline {2}Tools and Equipment}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Required Software}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Operating Systems}{3}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Introduction}{3}{section.3}%
+\contentsline {section}{\numberline {4}Part 1: Network Protocol Analysis}{3}{section.4}%
+\contentsline {section}{\numberline {5}Part 2: PostgreSQL on Linux Slackware}{4}{section.5}%
+\contentsline {subsection}{\numberline {5.1}4.1 Installation Process}{4}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}4.2 Database Initialization}{4}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}4.3 User and Database Creation}{5}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}4.4 Database Schema Design}{5}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}4.5 Data Insertion}{5}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Part 3: SQL Server on Windows Server}{6}{section.6}%
+\contentsline {subsection}{\numberline {6.1}5.1 Remote Access Configuration}{6}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}5.2 SQL Server Installation}{6}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}5.3 User and Database Creation}{6}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}5.4 Database Schema Design}{6}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}5.5 Data Insertion}{6}{subsection.6.5}%
+\contentsline {section}{\numberline {7}Part 4: Azure SQL Database}{7}{section.7}%
+\contentsline {subsection}{\numberline {7.1}6.1 Cloud Computing Concepts}{7}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}6.2 Azure SQL Database Creation}{7}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}6.3 Database Schema}{7}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}6.4 Sample Data}{8}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}6.5 Video Demonstration}{8}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}6.6 Resource Cleanup}{8}{subsection.7.6}%
+\contentsline {section}{\numberline {8}Part 5: Remote Access Configuration}{8}{section.8}%
+\contentsline {subsection}{\numberline {8.1}7.1 PostgreSQL Auto-Start (Slackware)}{8}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}7.2 SQL Server Auto-Start (Windows)}{9}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}7.3 DBeaver Remote Connection}{9}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Sample Queries and Analysis}{9}{section.9}%
+\contentsline {subsection}{\numberline {9.1}PostgreSQL Query Examples}{9}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}SQL Server Query Examples}{9}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Azure SQL Database Query Examples}{10}{subsection.9.3}%
+\contentsline {section}{\numberline {10}Troubleshooting and Lessons Learned}{10}{section.10}%
+\contentsline {subsection}{\numberline {10.1}PostgreSQL Installation Challenges}{10}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}SQL Server Installation Issues}{10}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Remote Connection Configuration}{10}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Azure SQL Database Connection}{10}{subsection.10.4}%
+\contentsline {section}{\numberline {11}Conclusions}{10}{section.11}%
+\contentsline {section}{\numberline {12}References}{11}{section.12}%

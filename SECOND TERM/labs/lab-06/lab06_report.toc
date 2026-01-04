@@ -1,0 +1,49 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Objectives}{4}{section.1}%
+\contentsline {section}{\numberline {2}Tools and Equipment}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Required Software}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Server Infrastructure}{4}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Introduction}{4}{section.3}%
+\contentsline {section}{\numberline {4}Part 1: Web Server Installation}{4}{section.4}%
+\contentsline {subsection}{\numberline {4.1}1.1 Apache Installation}{4}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}1.2 Creating Web Page}{4}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}1.3 Automatic Startup}{5}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}2.1 Nginx Installation}{5}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}2.2 Creating Web Page}{5}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}2.3 Automatic Startup Configuration}{5}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}3.1 IIS Installation}{5}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.8}3.2 Creating Web Page}{6}{subsection.4.8}%
+\contentsline {section}{\numberline {5}Part 2: DNS Configuration}{6}{section.5}%
+\contentsline {subsection}{\numberline {5.1}4.1 BIND Installation and Configuration}{6}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}4.2 DNS Zone Files}{6}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}4.3 Service Activation}{6}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}4.4 Client Configuration}{7}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Part 3: Virtual Host Configuration}{7}{section.6}%
+\contentsline {subsection}{\numberline {6.1}5.1 Directory Structure}{7}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}5.2 Virtual Host Configuration}{7}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}5.3 Enable Virtual Hosts}{7}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}5.4 DNS Configuration for Virtual Hosts}{7}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}5.5 Testing Virtual Hosts}{8}{subsection.6.5}%
+\contentsline {section}{\numberline {7}Testing and Verification}{8}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Connectivity Tests}{8}{subsection.7.1}%
+\contentsline {section}{\numberline {8}Infrastructure Summary}{8}{section.8}%
+\contentsline {section}{\numberline {9}Troubleshooting and Solutions}{8}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Apache Virtual Hosts Issue}{8}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}DNS Resolution Delay}{8}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Nginx Compilation}{9}{subsection.9.3}%
+\contentsline {section}{\numberline {10}Key Learnings}{9}{section.10}%
+\contentsline {section}{\numberline {11}Application Layer Protocols}{9}{section.11}%
+\contentsline {subsection}{\numberline {11.1}HTTP Protocol}{9}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}DNS Protocol}{9}{subsection.11.2}%
+\contentsline {section}{\numberline {12}Network Architecture}{9}{section.12}%
+\contentsline {section}{\numberline {13}Security Considerations}{9}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Access Control}{9}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}Best Practices Implemented}{9}{subsection.13.2}%
+\contentsline {section}{\numberline {14}Performance Optimization}{10}{section.14}%
+\contentsline {subsection}{\numberline {14.1}Web Server Tuning}{10}{subsection.14.1}%
+\contentsline {subsection}{\numberline {14.2}DNS Optimization}{10}{subsection.14.2}%
+\contentsline {section}{\numberline {15}Comparison: Apache vs Nginx vs IIS}{10}{section.15}%
+\contentsline {section}{\numberline {16}Future Enhancements}{10}{section.16}%
+\contentsline {subsection}{\numberline {16.1}Potential Improvements}{10}{subsection.16.1}%
+\contentsline {section}{\numberline {17}Conclusions}{10}{section.17}%
+\contentsline {section}{\numberline {18}References}{11}{section.18}%

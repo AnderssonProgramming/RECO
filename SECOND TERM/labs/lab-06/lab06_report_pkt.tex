@@ -1,0 +1,620 @@
+\documentclass[10pt,a4paper,twocolumn]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{microtype}
+\usepackage{parskip}
+
+% Geometry settings
+\geometry{
+    a4paper,
+    top=2cm,
+    bottom=2cm,
+    left=1.5cm,
+    right=1.5cm,
+    headsep=0.5cm,
+    footskip=1cm
+}
+
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Lab 06 - Router Simulation}
+\lhead{Computer Networks}
+\cfoot{\thepage}
+
+\pagenumbering{arabic}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=leftline,
+    framerule=2pt,
+    rulecolor=\color{blue!30},
+    backgroundcolor=\color{gray!5},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    columns=flexible,
+    aboveskip=\medskipamount,
+    belowskip=\medskipamount,
+    xleftmargin=15pt
+}
+
+% Section formatting
+\titleformat{\section}
+{\color{blue!80!black}\normalfont\large\bfseries}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\color{blue!60!black}\normalfont\normalsize\bfseries}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\color{blue!40!black}\normalfont\small\bfseries}
+{\thesubsubsection}{1em}{}
+
+% Custom boxes
+\newtcolorbox{exercise}[1]{
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    colbacktitle=blue!80!black,
+    coltitle=white,
+    title={\textbf{#1}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+\newtcolorbox{note}{
+    colback=yellow!10!white,
+    colframe=orange!75!black,
+    colbacktitle=orange!80!black,
+    coltitle=white,
+    title={\textbf{Important Note}},
+    fonttitle=\bfseries\small,
+    boxrule=0.8pt,
+    before skip=8pt,
+    after skip=8pt,
+    left=4pt,
+    right=4pt,
+    top=6pt,
+    bottom=6pt,
+    breakable
+}
+
+% List formatting
+\setlist[itemize]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+\setlist[enumerate]{
+    leftmargin=15pt,
+    itemsep=2pt,
+    parsep=0pt,
+    topsep=5pt
+}
+
+% Hyperref setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!80!black,
+    urlcolor=blue!80!black,
+    citecolor=blue!80!black,
+    pdfborder={0 0 0}
+}
+
+% Title page
+\title{\vspace{-1cm}
+    \begin{center}
+        \includegraphics[width=0.25\textwidth]{media/university_logo.png}
+    \end{center}
+    \vspace{1.5cm}
+    \textbf{\Large Computer Networks Laboratory}\\
+    \vspace{1cm}
+    \textbf{\huge Laboratory No. 6}\\
+    \textbf{\huge Router Simulation and Static Routing}\\
+    \vspace{1.5cm}
+    \large Network Configuration, Access Control, and Inter-Router Communication
+}
+
+\author{
+    \vspace{2cm}
+    \textbf{Students:} \\
+    \vspace{0.3cm}
+    Andersson David Sánchez Méndez \\
+    Cristian Santiago Pedraza Rodríguez \\
+    \vspace{1.5cm} \\
+    \textbf{Instructor:} Professor Fabián Eduardo Sierra Sánchez \\
+    \vspace{0.5cm}
+    \textbf{Course:} Computer Networks \\
+    \vspace{0.3cm}
+    \textbf{Institution:} Escuela Colombiana de Ingeniería Julio Garavito \\
+    \vspace{0.3cm}
+}
+
+\date{\today}
+
+\begin{document}
+
+% Title page (single column)
+\onecolumn
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% Table of contents (single column)
+\tableofcontents
+\newpage
+
+% Start two-column layout
+\twocolumn
+
+\section{Router Simulation - Student 02}
+
+\begin{exercise}{Exercise 1: Router Configuration and Static Routing}
+\textbf{Network Assignment:} Student 02\\
+\textbf{Networks:} 72.0.0.0/8, 73.0.0.0/8, 74.0.0.0/8, 75.0.0.0/8\\
+\textbf{Serial Interconnection:} 20.0.0.0/8
+\end{exercise}
+
+\subsection{Network Topology Overview}
+
+The implemented topology consists of two routers interconnected via a serial link, with each router serving multiple LAN segments. The design follows the addressing scheme assigned to Student 02.
+
+\textbf{Router0 (Cris):}
+\begin{itemize}
+    \item GigabitEthernet0/0: 72.0.0.1/8 (Red No. 1)
+    \item GigabitEthernet0/1: 73.0.0.1/8 (Red No. 2)
+    \item Serial0/1/0: 20.0.0.1/8 (DTE - no clock rate)
+\end{itemize}
+
+\textbf{Router1 (Pedraza):}
+\begin{itemize}
+    \item GigabitEthernet0/0: 74.0.0.1/8 (Red No. 3)
+    \item GigabitEthernet0/1: 75.0.0.1/8 (Red No. 4)
+    \item Serial0/1/0: 20.0.0.2/8 (DCE - with clock rate)
+\end{itemize}
+
+\subsection{Understanding Router Access Levels}
+
+Before configuration, it is essential to understand the three permission levels in Cisco routers:
+
+\textbf{1. User Mode (Router>)}
+
+The most basic and restricted mode, identified by the \texttt{>} prompt. Users can only execute basic viewing commands like \texttt{ping} and limited \texttt{show} commands. No configuration changes are possible at this level.
+
+\textbf{2. Privileged Mode (Router\#)}
+
+Accessed via the \texttt{enable} command, this mode provides full viewing capabilities and system management functions. The \texttt{\#} prompt indicates privileged access. From here, administrators can view complete configurations, manage files, and access configuration mode.
+
+\textbf{3. Global Configuration Mode (Router(config)\#)}
+
+Entered from privileged mode using \texttt{configure terminal}, this mode allows actual router configuration including interface settings, routing protocols, and security parameters.
+
+\begin{note}
+This hierarchical structure provides security through separation of privileges. Access to higher levels requires authentication, preventing unauthorized configuration changes.
+\end{note}
+
+\subsection{Router0 Configuration (Cris)}
+
+\subsubsection{Initial Setup}
+
+\begin{lstlisting}[language=bash]
+Router> enable
+Router# configure terminal
+
+! Set hostname
+Router(config)# hostname Cris
+
+! Configure banner message
+Cris(config)# banner motd # For exclusive use by RECO students #
+
+! Disable DNS lookup to prevent delays
+Cris(config)# no ip domain-lookup
+
+! Set privileged mode password
+Cris(config)# enable secret ClaveE
+\end{lstlisting}
+
+\subsubsection{Console and Remote Access Configuration}
+
+\begin{lstlisting}[language=bash]
+! Configure console line
+Cris(config)# line console 0
+Cris(config-line)# logging synchronous
+Cris(config-line)# password ClaveC
+Cris(config-line)# login
+Cris(config-line)# exit
+
+! Configure virtual terminal lines
+Cris(config)# line vty 0 15
+Cris(config-line)# logging synchronous
+Cris(config-line)# password ClaveT
+Cris(config-line)# login
+Cris(config-line)# exit
+\end{lstlisting}
+
+\textbf{Explanation:} The \texttt{logging synchronous} command prevents console messages from interrupting command input, significantly improving user experience during configuration sessions.
+
+\subsubsection{Interface Configuration}
+
+\begin{lstlisting}[language=bash]
+! Configure GigabitEthernet 0/0
+Cris(config)# interface gigabitEthernet 0/0
+Cris(config-if)# description LAN Red 72.0.0.0/8
+Cris(config-if)# ip address 72.0.0.1 255.0.0.0
+Cris(config-if)# no shutdown
+Cris(config-if)# exit
+
+! Configure GigabitEthernet 0/1
+Cris(config)# interface gigabitEthernet 0/1
+Cris(config-if)# description LAN Red 73.0.0.0/8
+Cris(config-if)# ip address 73.0.0.1 255.0.0.0
+Cris(config-if)# no shutdown
+Cris(config-if)# exit
+
+! Configure Serial 0/1/0
+Cris(config)# interface serial 0/1/0
+Cris(config-if)# description Enlace a Router1
+Cris(config-if)# ip address 20.0.0.1 255.0.0.0
+Cris(config-if)# no shutdown
+Cris(config-if)# exit
+\end{lstlisting}
+
+\subsubsection{Saving Configuration}
+
+\begin{lstlisting}[language=bash]
+Cris(config)# exit
+Cris# copy running-config startup-config
+Destination filename [startup-config]? [Enter]
+\end{lstlisting}
+
+\begin{note}
+\textbf{Understanding Configuration Storage:}
+
+Cisco routers maintain two configurations:
+
+\textbf{Running-config:} Stored in RAM (volatile memory), this is the active configuration. Changes take effect immediately but are lost upon reboot.
+
+\textbf{Startup-config:} Stored in NVRAM (non-volatile memory), this configuration loads automatically at boot time and persists through power cycles.
+
+The \texttt{copy running-config startup-config} command saves current changes permanently. Without this step, all configuration would be lost upon router restart.
+\end{note}
+
+\subsection{Router1 Configuration (Pedraza)}
+
+\subsubsection{Basic Configuration}
+
+\begin{lstlisting}[language=bash]
+Router> enable
+Router# configure terminal
+
+Router(config)# hostname Pedraza
+Pedraza(config)# banner motd # For exclusive use by RECO students #
+Pedraza(config)# no ip domain-lookup
+Pedraza(config)# enable secret ClaveE
+\end{lstlisting}
+
+\subsubsection{Console and VTY Configuration}
+
+\begin{lstlisting}[language=bash]
+Pedraza(config)# line console 0
+Pedraza(config-line)# logging synchronous
+Pedraza(config-line)# password ClaveC
+Pedraza(config-line)# login
+Pedraza(config-line)# exit
+
+Pedraza(config)# line vty 0 15
+Pedraza(config-line)# logging synchronous
+Pedraza(config-line)# password ClaveT
+Pedraza(config-line)# login
+Pedraza(config-line)# exit
+\end{lstlisting}
+
+\subsubsection{Interface Configuration}
+
+\begin{lstlisting}[language=bash]
+! Configure GigabitEthernet 0/0
+Pedraza(config)# interface gigabitEthernet 0/0
+Pedraza(config-if)# description LAN Red 74.0.0.0/8
+Pedraza(config-if)# ip address 74.0.0.1 255.0.0.0
+Pedraza(config-if)# no shutdown
+Pedraza(config-if)# exit
+
+! Configure GigabitEthernet 0/1
+Pedraza(config)# interface gigabitEthernet 0/1
+Pedraza(config-if)# description LAN Red 75.0.0.0/8
+Pedraza(config-if)# ip address 75.0.0.1 255.0.0.0
+Pedraza(config-if)# no shutdown
+Pedraza(config-if)# exit
+
+! Configure Serial 0/1/0 (DCE side)
+Pedraza(config)# interface serial 0/1/0
+Pedraza(config-if)# description Enlace a Router0
+Pedraza(config-if)# ip address 20.0.0.2 255.0.0.0
+Pedraza(config-if)# clock rate 64000
+Pedraza(config-if)# no shutdown
+Pedraza(config-if)# exit
+
+Pedraza(config)# exit
+Pedraza# copy running-config startup-config
+\end{lstlisting}
+
+\textbf{Critical Note:} The \texttt{clock rate 64000} command is required only on the DCE (Data Communications Equipment) side of a serial connection. Router1 acts as DCE in this topology, providing timing signals for synchronous communication.
+
+\subsection{PC Configuration}
+
+Each PC was configured with static IP addressing:
+
+\textbf{PC0 (Connected to Router0 - Gi0/0):}
+\begin{itemize}
+    \item IP Address: 72.0.0.2
+    \item Subnet Mask: 255.0.0.0
+    \item Default Gateway: 72.0.0.1
+\end{itemize}
+
+\textbf{PC1 (Connected to Router0 - Gi0/1):}
+\begin{itemize}
+    \item IP Address: 73.0.0.2
+    \item Subnet Mask: 255.0.0.0
+    \item Default Gateway: 73.0.0.1
+\end{itemize}
+
+\textbf{PC2 (Connected to Router1 - Gi0/0):}
+\begin{itemize}
+    \item IP Address: 74.0.0.2
+    \item Subnet Mask: 255.0.0.0
+    \item Default Gateway: 74.0.0.1
+\end{itemize}
+
+\textbf{PC3 (Connected to Router1 - Gi0/1):}
+\begin{itemize}
+    \item IP Address: 75.0.0.2
+    \item Subnet Mask: 255.0.0.0
+    \item Default Gateway: 75.0.0.1
+\end{itemize}
+
+\subsection{Initial Connectivity Testing}
+
+\subsubsection{Question: Which connections work and which don't?}
+
+After basic configuration, connectivity tests revealed:
+
+\textbf{Working Connections (✓):}
+\begin{itemize}
+    \item PC0 $\leftrightarrow$ Gateway 72.0.0.1 (same router, direct network)
+    \item PC0 $\leftrightarrow$ Gateway 73.0.0.1 (same router, direct network)
+    \item PC0 $\leftrightarrow$ PC1 (same router, both networks directly connected)
+    \item PC2 $\leftrightarrow$ Gateway 74.0.0.1 (same router, direct network)
+    \item PC2 $\leftrightarrow$ Gateway 75.0.0.1 (same router, direct network)
+    \item PC2 $\leftrightarrow$ PC3 (same router, both networks directly connected)
+\end{itemize}
+
+\textbf{Non-Working Connections (✗):}
+\begin{itemize}
+    \item PC0 $\rightarrow$ Gateway 74.0.0.1 (different router)
+    \item PC0 $\rightarrow$ Gateway 75.0.0.1 (different router)
+    \item PC0 $\rightarrow$ PC2 or PC3 (different router)
+    \item PC2 $\rightarrow$ Gateway 72.0.0.1 (different router)
+    \item PC2 $\rightarrow$ Gateway 73.0.0.1 (different router)
+    \item PC2 $\rightarrow$ PC0 or PC1 (different router)
+\end{itemize}
+
+\subsubsection{Why This Behavior Occurs}
+
+This behavior is completely normal and expected. Routers only know about directly connected networks by default. When examining the routing tables:
+
+\textbf{Router0 Routing Table:}
+\begin{lstlisting}[language=bash]
+Cris# show ip route
+
+C    72.0.0.0/8 is directly connected, GigabitEthernet0/0
+C    73.0.0.0/8 is directly connected, GigabitEthernet0/1
+C    20.0.0.0/8 is directly connected, Serial0/1/0
+\end{lstlisting}
+
+Router0 only knows networks 72, 73, and 20. It has no information about networks 74 and 75.
+
+\textbf{Router1 Routing Table:}
+\begin{lstlisting}[language=bash]
+Pedraza# show ip route
+
+C    74.0.0.0/8 is directly connected, GigabitEthernet0/0
+C    75.0.0.0/8 is directly connected, GigabitEthernet0/1
+C    20.0.0.0/8 is directly connected, Serial0/1/0
+\end{lstlisting}
+
+Similarly, Router1 only knows networks 74, 75, and 20, but not networks 72 and 73.
+
+\textbf{Packet Flow Example - PC0 to PC2 (Failed):}
+\begin{enumerate}
+    \item PC0 (72.0.0.2) attempts to ping PC2 (74.0.0.2)
+    \item PC0 recognizes 74.0.0.2 is not in its local network
+    \item PC0 forwards packet to default gateway (72.0.0.1 - Router0)
+    \item Router0 consults routing table: "How do I reach 74.0.0.0/8?"
+    \item Routing table response: "Unknown network"
+    \item Router0 discards packet, sends ICMP "Destination Host Unreachable" to PC0
+\end{enumerate}
+
+\subsection{Static Route Configuration}
+
+To enable complete network connectivity, static routes must be configured on both routers. Static routes explicitly tell routers how to reach networks that are not directly connected.
+
+\subsubsection{Router0 Static Routes}
+
+Router0 needs routes to networks 74.0.0.0/8 and 75.0.0.0/8, which exist beyond Router1:
+
+\begin{lstlisting}[language=bash]
+Cris# configure terminal
+
+! Route to network 74.0.0.0/8 via Serial0/1/0
+Cris(config)# ip route 74.0.0.0 255.0.0.0 serial 0/1/0
+
+! Route to network 75.0.0.0/8 via Serial0/1/0
+Cris(config)# ip route 75.0.0.0 255.0.0.0 serial 0/1/0
+
+Cris(config)# exit
+Cris# copy running-config startup-config
+\end{lstlisting}
+
+\textbf{Command Syntax Explanation:}
+\begin{lstlisting}
+ip route [destination_network] [subnet_mask] [exit_interface]
+\end{lstlisting}
+
+\begin{itemize}
+    \item \textbf{destination\_network}: The remote network to reach
+    \item \textbf{subnet\_mask}: The network mask of the destination
+    \item \textbf{exit\_interface}: Interface through which packets should be forwarded
+\end{itemize}
+
+\subsubsection{Router1 Static Routes}
+
+Router1 needs routes to networks 72.0.0.0/8 and 73.0.0.0/8, which exist beyond Router0:
+
+\begin{lstlisting}[language=bash]
+Pedraza# configure terminal
+
+! Route to network 72.0.0.0/8 via Serial0/1/0
+Pedraza(config)# ip route 72.0.0.0 255.0.0.0 serial 0/1/0
+
+! Route to network 73.0.0.0/8 via Serial0/1/0
+Pedraza(config)# ip route 73.0.0.0 255.0.0.0 serial 0/1/0
+
+Pedraza(config)# exit
+Pedraza# copy running-config startup-config
+\end{lstlisting}
+
+\subsection{Verification of Static Routes}
+
+After configuration, routing tables now include static routes:
+
+\textbf{Router0:}
+\begin{lstlisting}[language=bash]
+Cris# show ip route
+
+C    72.0.0.0/8 is directly connected, GigabitEthernet0/0
+C    73.0.0.0/8 is directly connected, GigabitEthernet0/1
+C    20.0.0.0/8 is directly connected, Serial0/1/0
+S    74.0.0.0/8 [1/0] via Serial0/1/0
+S    75.0.0.0/8 [1/0] via Serial0/1/0
+\end{lstlisting}
+
+\textbf{Router1:}
+\begin{lstlisting}[language=bash]
+Pedraza# show ip route
+
+S    72.0.0.0/8 [1/0] via Serial0/1/0
+S    73.0.0.0/8 [1/0] via Serial0/1/0
+C    74.0.0.0/8 is directly connected, GigabitEthernet0/0
+C    75.0.0.0/8 is directly connected, GigabitEthernet0/1
+C    20.0.0.0/8 is directly connected, Serial0/1/0
+\end{lstlisting}
+
+\textbf{Legend:}
+\begin{itemize}
+    \item \textbf{C} = Connected (directly connected network)
+    \item \textbf{S} = Static (manually configured route)
+    \item \textbf{[1/0]} = Administrative distance and metric
+\end{itemize}
+
+\subsection{Final Connectivity Testing}
+
+With static routes configured, all connectivity tests now succeed:
+
+\textbf{From PC0:}
+\begin{lstlisting}[language=bash]
+ping 74.0.0.1  # Gateway of Router1 - SUCCESS
+ping 74.0.0.2  # PC2 - SUCCESS
+ping 75.0.0.1  # Gateway of Router1 - SUCCESS
+ping 75.0.0.2  # PC3 - SUCCESS
+\end{lstlisting}
+
+\textbf{From PC2:}
+\begin{lstlisting}[language=bash]
+ping 72.0.0.1  # Gateway of Router0 - SUCCESS
+ping 72.0.0.2  # PC0 - SUCCESS
+ping 73.0.0.1  # Gateway of Router0 - SUCCESS
+ping 73.0.0.2  # PC1 - SUCCESS
+\end{lstlisting}
+
+\subsection{Traceroute Analysis}
+
+The \texttt{tracert} command reveals the path packets take through the network:
+
+\textbf{From PC0 to PC2 (74.0.0.2):}
+\begin{lstlisting}[language=bash]
+C:\> tracert 74.0.0.2
+
+Tracing route to 74.0.0.2 over a maximum of 30 hops:
+
+  1    <1 ms    <1 ms    <1 ms    72.0.0.1
+  2    <1 ms    <1 ms    <1 ms    20.0.0.2
+  3    <1 ms    <1 ms    <1 ms    74.0.0.2
+
+Trace complete.
+\end{lstlisting}
+
+\textbf{Path Explanation:}
+\begin{enumerate}
+    \item Hop 1: PC0 to Router0 (72.0.0.1) - first gateway
+    \item Hop 2: Router0 to Router1 (20.0.0.2) - serial link
+    \item Hop 3: Router1 to PC2 (74.0.0.2) - destination
+\end{enumerate}
+
+This confirms packets traverse both routers using the serial interconnection as configured in the static routes.
+
+\subsection{Key Takeaways}
+
+\textbf{1. Router Knowledge Limitation:}
+
+Routers only know about directly connected networks by default. Remote networks require explicit routing information through either static routes or dynamic routing protocols.
+
+\textbf{2. Static Routing Requirements:}
+
+Each router must be configured with routes to all remote networks. In our topology, this meant four static routes total (two per router).
+
+\textbf{3. Configuration Persistence:}
+
+Always save configurations using \texttt{copy running-config startup-config} to ensure settings survive router reboots.
+
+\textbf{4. DCE/DTE Considerations:}
+
+Serial connections require one side (DCE) to provide clocking. In our setup, Router1 served as DCE with \texttt{clock rate 64000} configured.
+
+\textbf{5. Hierarchical Access Control:}
+
+Router security relies on three permission levels (User, Privileged, Configuration), each requiring appropriate authentication.
+
+\end{document}

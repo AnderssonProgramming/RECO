@@ -1,0 +1,24 @@
+El equipo de seguridad recibe la solicitud de analizar el tráfico de un computador que está reportando lentitud al acceder a páginas web y servicios en la nube. Sospechan de problemas de configuración DNS o incluso de un ataque en la red. 
+
+Actividades a realizar 
+1. Captura inicial 
+- Inicia una captura de tráfico en Wireshark durante 5 minutos.
+- Accede a los siguientes servicios desde un navegador:
+  • Página web normal: http://www.example.com
+  • Página con HTTPS: https://www.wikipedia.org
+  • Haz ping a un servidor externo: 8.8.8.8
+
+  • Realiza una búsqueda en Google para generar tráfico DNS. 
+
+
+
+2. Filtros de análisis 
+
+Aplica los siguientes filtros en Wireshark:
+- dns → Identificar consultas y respuestas DNS.
+- http → Revisar peticiones GET y respuestas HTTP.
+- tcp.analysis.flags → Detectar retransmisiones y problemas de latencia en TCP.
+- arp → Verificar si existen múltiples respuestas (posible ataque ARP Spoofing).
+- icmp → Revisar si el ping generó tráfico correcto o con errores.
+
+- tls.handshake → Analizar cómo se establece la conexión segura en HTTPS. 
